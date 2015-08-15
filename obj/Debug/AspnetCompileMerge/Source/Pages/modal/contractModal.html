@@ -1,0 +1,187 @@
+﻿<div>
+    <div class="modal-header">
+        <h3 class="modal-title">购房信息</h3>
+    </div>
+    <div class="modal-body">
+        <form name="msForm" ng-submit="submit()" class="form-horizontal" novalidate>
+
+            <div class="form-group  has-feedback">
+                <label class="col-sm-2 control-label">基价（元）</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="app.Price1" readonly>
+                </div>
+                <label class="col-sm-2 control-label">面积（平方米）</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="newitem.Size1" required="">
+                   
+                </div>
+              
+            </div>
+            <div class="form-group  has-feedback">
+                <label class="col-sm-2 control-label">优惠价（元）</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="app.Price2" readonly>
+                </div>
+                <label class="col-sm-2 control-label">面积（平方米）</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="newitem.Size2" required="">
+                 
+                </div>
+                
+            </div>
+            <div class="form-group  has-feedback">
+                <label class="col-sm-2 control-label">市场价1（元）</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="app.Price3" readonly>
+                </div>
+                <label class="col-sm-2 control-label">面积（平方米）</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="newitem.Size3" required="">
+                    
+                </div>
+           
+            </div>
+            <div class="form-group  has-feedback">
+                <label class="col-sm-2 control-label">市场价2（元）</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="app.Price4" readonly>
+                </div>
+                <label class="col-sm-2 control-label">面积（平方米）</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="newitem.Size4" required="">
+                </div>
+                <div ng-show="newitem.Size4 > 10" class="col-sm-4">
+                   <label class="text-danger">注意：市场面积2大于10平方米，请确保符合选房规定</label>
+                </div>
+                
+            </div>
+            <div class="form-group  has-feedback">
+                <label class="col-sm-2 control-label">总价</label>
+                <div class="col-sm-8">
+                    <label class="form-control label-default" >{{totalprice()}}</label>
+                </div>
+            </div>
+            <div class="form-group  has-feedback">
+                <label class="col-sm-2 control-label">过度天数</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="newitem.TransitionDays" required ng-init="newitem.TransitionDays=newitem.TransitionDays==null?0:newitem.TransitionDays">
+                </div>
+                <label class="col-sm-2 control-label">过渡费(元)</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="newitem.TransitionFee" required ng-init="newitem.TransitionFee=newitem.TransitionFee==null?0:newitem.TransitionFee">
+                </div>
+            </div>
+            <div class="form-group  has-feedback">
+                <label class="col-sm-2 control-label">截止日期</label>
+                <div class="col-sm-3">
+                    <p class="input-group datepicker">
+                        <input type="text" class="form-control" datepicker-popup datepicker-options="dateOptions" ng-model="newitem.Deadline" is-open="datepickers.dt1" show-weeks="false" ng-required="true"
+                               close-text="关闭" current-text="今天" clear-text="清除" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="open($event,'dt1')"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </p>
+
+                </div>
+                <label class="col-sm-2 control-label">购房日期</label>
+                <div class="col-sm-3">
+                    <p class="input-group datepicker">
+                        <input type="text" class="form-control" datepicker-popup datepicker-options="dateOptions" ng-model="newitem.ContractDate" is-open="datepickers.dt2" show-weeks="false" ng-required="true"
+                               close-text="关闭" current-text="今天" clear-text="清除" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="open($event,'dt2')"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </p>
+
+                </div>
+            </div>
+            <div class="form-group  has-feedback">
+                <label class="col-sm-2 control-label">利率</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="newitem.InterestRate" required ng-init="newitem.InterestRate=newitem.InterestRate==null?0:newitem.InterestRate">
+                </div>
+                <label class="col-sm-2 control-label">利息(元)</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="newitem.InterestFee" required ng-init="newitem.InterestFee=newitem.InterestFee==null?0:newitem.InterestFee">
+                </div>
+            </div>
+            <div class="form-group  has-feedback">
+               
+            </div>
+            <div class="form-group  has-feedback">
+                <label class="col-sm-2 control-label">天然气开户费(元)</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="newitem.GasFee" required ng-init="newitem.GasFee=newitem.GasFee==null?895:newitem.GasFee">
+                </div>
+                <label class="col-sm-2 control-label">电视开户费(元)</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="newitem.TVFee" required ng-init="newitem.TVFee=newitem.TVFee==null?0:newitem.TVFee">
+                </div>
+            </div>
+            <div class="form-group  has-feedback">
+                <label class="col-sm-2 control-label">维修基金单价(元/平方米)</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="newitem.RepairUnitPrice" required ng-init="newitem.RepairUnitPrice=newitem.RepairUnitPrice==null?25.9:newitem.RepairUnitPrice">
+                </div>
+                <label class="col-sm-2 control-label">维修基金金额(元)</label>
+                <div class="col-sm-2">
+                    <label class="form-control label-default">{{newitem.RepairUnitPrice * app.Size}}</label>
+                </div>
+            </div>
+           
+            <div class="form-group  has-feedback">
+                <label class="col-sm-2 control-label">其他费用(元)</label>
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" ng-model="newitem.OtherFee" required ng-init="newitem.OtherFee=newitem.OtherFee==null?0:newitem.OtherFee">
+                </div>
+            </div>
+            <div class="form-group  has-feedback">
+                <label class="col-sm-2 control-label">合计支付金额(元)</label>
+                <div class="col-sm-2">
+                    <label class="form-control label-default" >{{totalprice() + newitem.GasFee+  newitem.OtherFee + newitem.TransitionFee + newitem.TVFee + newitem.InterestFee + newitem.RepairUnitPrice * app.Size}}</label>
+                </div>
+            </div>
+            
+        </form>
+    </div>
+
+    <div>
+        <p class="bg-info">房产证人员</p>
+        <form name="msForm2" class="form-horizontal" novalidate>
+            <div class="form-group  has-feedback">
+                <label class="col-sm-1 control-label">姓名</label>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control" ng-model="temp.Name" required>
+                </div>
+                <label class="col-sm-1 control-label">身份证</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" ng-model="temp.IdentityCard" idcard>
+                </div>
+                <div class="col-sm-2">
+                    <input type="button" class="btn btn-primary btn-sm" ng-disabled="msForm2.$invalid" value="添加" ng-click="add()" />
+                </div>
+            </div>
+           
+            <table class="table table-striped table-hover table-bordered">
+                <tr>
+                    <th>姓名</th>
+                    <th>身份证号</th>
+                    <th>操作</th>
+
+                </tr>
+                <tr ng-repeat="person in newitem.AppartmentOwners">
+                    <td>{{person.Name}}</td>
+                    <td>{{person.IdentityCard}}</td>
+                    <td>
+                        <input type="button" class="btn btn-warning btn-xs" value="删除" ng-click="del($index)" />
+                    </td>
+                </tr>
+            </table>
+        </form>
+</div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-disabled="disable()" ng-click="ok()">提交</button>
+            <button class="btn btn-warning" ng-click="cancel()">取消</button>
+        </div>
+
+</div>

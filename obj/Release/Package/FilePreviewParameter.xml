@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="IIS Web Application Name" description="" value="htms" tags="IisApp">
+    <parameterEntry kind="ProviderPath" scope="IisApp" match="^C:\\Users\\mikech\\Documents\\Visual\ Studio\ 2013\\Projects\\WebApplication6\\WebApplication6\\obj\\Release\\Package\\PackageTmp$" />
+    <parameterEntry kind="ProviderPath" scope="setAcl" match="^C:\\Users\\mikech\\Documents\\Visual\ Studio\ 2013\\Projects\\WebApplication6\\WebApplication6\\obj\\Release\\Package\\PackageTmp$" />
+  </parameter>
+  <parameter name="DefaultConnection-Web.config Connection String" description="" value="Data Source=tcp:htms.database.windows.net,1433;Initial Catalog=htms_db;User Id=mikech@htms;Password=User@123" tags="">
+    <parameterEntry kind="XmlFile" scope="C:\\Users\\mikech\\Documents\\Visual\ Studio\ 2013\\Projects\\WebApplication6\\WebApplication6\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='DefaultConnection']/@connectionString" />
+  </parameter>
+  <parameter name="WebApplication6Context-Web.config Connection String" description="" value="Data Source=tcp:htms.database.windows.net,1433;Initial Catalog=htms_db;User ID=mikech@htms;Password=User@123" tags="">
+    <parameterEntry kind="XmlFile" scope="C:\\Users\\mikech\\Documents\\Visual\ Studio\ 2013\\Projects\\WebApplication6\\WebApplication6\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='WebApplication6Context']/@connectionString" />
+  </parameter>
+</parameters>

@@ -1,0 +1,73 @@
+﻿<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+    <ol class="breadcrumb">
+        <li><a href="#">动迁户搜索</a></li>
+       
+    </ol>
+    
+    <form name="s1" class="form-horizontal" novalidate>
+
+        <div class="form-group  has-feedback">
+            <label class="col-sm-2 control-label">姓名</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" ng-model="searchparams.Name" >
+            </div>
+            <label class="col-sm-2 control-label">身份证号</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" ng-model="searchparams.IdentityCard" >
+            </div>
+            <div class="col-sm-1">
+                <button type="button" class="btn btn-primary" ng-click="searchbyR()" ng-disabled="!(searchparams.Name || searchparams.IdentityCard)">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 搜索
+                </button>
+            </div>
+        </div>
+       
+    </form>
+    <form name="s2" class="form-horizontal" novalidate>
+        <div class="form-group  has-feedback">
+            <label class="col-sm-2 control-label">拆迁编号</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" ng-model="searchparams.RRId" required="">
+            </div>
+            <div class="col-sm-1">
+                <button type="button" class="btn btn-primary" ng-click="searchbyRR()" ng-disabled="!searchparams.RRId">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 搜索
+                </button>
+            </div>
+        </div>
+    </form>
+    <hr />
+    <ol class="breadcrumb" ng-show="showresult">
+        <li><label>搜索结果</label></li>
+
+    </ol>
+    <div class="table-responsive" ng-show="showresult">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>拆迁基地</th>
+                    <th>拆迁编号</th>
+                    <th>户主姓名</th>
+                
+                    <th>手机</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="rr in rrlist">
+                    <td>{{rr.RelocationBase}}</td>
+                    <td>{{rr.RRId}}</td>
+                    <td>{{rr.Residents[0].Name}}</td>
+               
+                    <td>{{rr.Residents[0].Phone}}</td>
+                    <td>
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="navtodetail(rr,true)">查看</button>
+                        <button type="button" class="btn btn-default btn-sm" ng-click="navtodetail(rr,false)">修改</button>
+                        <button type="button" class="btn btn-danger btn-sm" ng-click="del($index)">删除</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

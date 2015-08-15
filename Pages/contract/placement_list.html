@@ -1,0 +1,111 @@
+﻿<div class="col-sm-9 col-sm-offset-3 col-md-40 col-md-offset-2 main">
+
+    <form name="msForm" ng-submit="submit()" class="form-horizontal" novalidate>
+      
+        <div class="form-group  has-feedback">
+            <label class="col-sm-1 control-label">户主姓名</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" ng-model="searchparams.Name">
+            </div>
+        </div>
+        <div class="form-group  has-feedback">
+            <label class="col-sm-1 control-label">身份证号</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" ng-model="searchparams.IdentityCard">
+            </div>
+            <div class="col-sm-1">
+                <button type="button" class="btn btn-primary" ng-click="query()" ng-disabled=" !searchparams.IdentityCard && !searchparams.Name">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 搜索
+                </button>
+            </div>
+
+        </div>
+        <div ng-show="showresidents">
+                <p class="bg-info">您选择的拆迁记录</p>
+
+           
+                <table class="table table-striped table-hover table-bordered">
+                    <tr>
+                        <th>动迁基地</th>
+                        <th>所在村</th>
+                        <th>所在组</th>
+                        <th>门牌号</th>
+                        <th>安置面积</th>
+                        <th>安置金额</th>
+                    </tr>
+                    <tr>
+                        <td>{{rr.RelocationBase.Name}}</td>
+                        <td>{{rr.Village}}</td>
+                        <td>{{rr.Group}}</td>
+                        <td>{{rr.DoorNumber}}</td>
+                        <td>{{rr.MeasuredSize}}</td>
+                        <td>{{rr.TotalCompensation}}</td>
+                        
+                    </tr>
+                </table>
+        </div>
+
+
+        <div ng-show="showresidents">
+            
+                <p class="bg-info">家庭成员及安置情况</p>
+            
+                <table class="table table-striped table-hover table-bordered">
+                    <tr>
+                        <th>姓名</th>
+                        <th>身份证号</th>
+                        <th>性别</th>
+                        <th>关系</th>
+                        <th>安置记录</th>
+                    </tr>
+                    <tr ng-repeat="person in rr.Residents">
+                        <td>{{person.Name}}</td>
+                        <td>{{person.IdentityCard}}</td>
+                        <td>{{person.IdentityCard | togender}}</td>
+                        <td>{{person.RelationshipType }}</td>
+                        <td ng-show="person.PlacementRecordId == null">
+                            未生成
+                        </td>
+                        <td ng-show="person.PlacementRecordId != null">
+                            已生成
+                        </td>
+                    </tr>
+                </table>
+               
+           
+        </div>
+
+      
+
+        <div ng-show="showresidents">
+            <p class="bg-info">现有安置情况</p>
+            <table class="table table-striped table-hover table-bordered">
+                <tr>
+                    <th>人员</th>
+                    <th>可安置面积</th>
+                    <th>安置面积剩余</th>
+                    <th>安置补偿款</th>
+                    <th>安置补偿款剩余</th>
+                    <th><input ng-show="user.Roles[0].Id==2 || user.Roles[0].Id==1" type="button" class="btn btn-primary btn-sm" value="生成安置记录" ng-click="add()" ng-disabled="rr ==null ||  (rr.Residents | filter: {PlacementRecordId:null}).length ==0" /></th>
+                </tr>
+                <tr ng-repeat="pr in prs">
+                    <td>{{pr.Name}}</td>
+                    <td>{{pr.Size}}</td>
+                    <td>{{pr.LeftSize}}</td>
+                    <td>{{pr.TotalCompensation}}</td>
+                    <td>{{pr.LeftCompensation}}</td>
+                    <td>
+                        <input ng-show="user.Roles[0].Id==2" type="button" class="btn btn-primary btn-sm" value="修改" ng-click="modify($index)" />
+                        <input ng-show="user.Roles[0].Id==2" type="button" class="btn btn-primary btn-sm" value="删除" ng-click="del($index)" />
+                    </td>
+
+                </tr>
+            </table>
+        </div>
+
+    </form>
+   
+     
+
+
+</div>

@@ -1,0 +1,19 @@
+﻿<div class="col-sm-9 col-sm-offset-3 col-md-40 col-md-offset-2 main">
+    <table class="table table-striped table-hover table-bordered">
+        <tr>
+            <th>动迁基地编号</th>
+            <th>动迁基地名称</th>
+     
+            <th><input type="button" class="btn btn-primary btn-sm" value="添加动迁基地" ng-click="add()" /></th>
+        </tr>
+        <tr ng-repeat="base in items">
+            <td>{{base.Id}}</td>
+            <td>{{base.Name}}</td>
+       
+            <td>
+                <input type="button" class="btn btn-default btn-xs" value="修改" ng-click="modify($index)" />
+                <input type="button" class="btn btn-warning btn-xs" value="删除" ng-click="del($index)" />
+            </td>
+        </tr>
+    </table>
+</div>

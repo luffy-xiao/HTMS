@@ -1,0 +1,157 @@
+﻿<div class="col-sm-9 col-sm-offset-3 col-md-40 col-md-offset-2 main">
+
+    <form name="msForm" ng-submit="submit()" class="form-horizontal" novalidate>
+       
+        <div class="form-group  has-feedback">
+            <label class="col-sm-1 control-label">户主姓名</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" ng-model="searchparams.Name">
+            </div>
+        </div>
+        <div class="form-group  has-feedback">
+            <label class="col-sm-1 control-label">身份证号</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" ng-model="searchparams.IdentityCard">
+            </div>
+            <div class="col-sm-1">
+                <button type="button" class="btn btn-primary" ng-click="query()" ng-disabled=" !searchparams.IdentityCard && !searchparams.Name">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 搜索
+                </button>
+            </div>
+
+        </div>
+
+        <div  ng-show="showresidents">
+           
+                <p class="bg-info">第一步：选择安置记录</p>
+    
+           
+                <table class="table table-striped table-hover table-bordered">
+                    <tr>
+                        <th>选择</th>
+                        <th>安置人员</th>
+                        <th>安置面积</th>
+                        <th>操作</th>
+
+                     
+                    </tr>
+                    <tr ng-repeat="pr in prs">
+                        <td>
+                            <input name="placement" type="radio" ng-model="$parent.contract.PlacementRecordId" ng-value="pr.Id" ng-change="contracts()" />
+                        </td>
+                        <td>{{pr.Name}}</td>
+                        <td>{{pr.Size}}</td>
+                        <td><button class="btn btn-primary" ng-click="printB($index)">打印购房记录</button></td>
+                
+                       
+                    </tr>
+                </table>
+            <div ng-show ="contract.PlacementRecordId!=null">
+            <h5 class="text-info" >安置记录下的购房记录</h5>
+                <table class="table table-striped table-hover table-bordered" ng-show="showcontracts">
+                    <tr>
+                        <th>小区</th>
+                        <th>幢号</th>
+                        <th>单元号</th>
+                        <th>室号</th>
+                        <th>建筑面积</th>
+                 
+                        <th>操作</th>
+                    </tr>
+                    <tr ng-repeat="c in contractlist">
+                        <td>{{c.Appartment.Community.Name}}</td>
+                        <td>{{c.Appartment.BuildingNumber}}</td>
+                        <td>{{c.Appartment.UnitNumber}}</td>
+                        <td>{{c.Appartment.DoorNumber}}</td>
+                        <td>{{c.Appartment.Size}}</td>
+                       
+
+                        <td>
+                            <button class="btn btn-danger" ng-click="modify($index)">编辑</button>
+                            <button class="btn btn-danger" ng-click="del($index)">取消选房</button>
+                            <button class="btn btn-info" ng-click="printA($index)">打印购房确认单清单</button>
+                        </td>
+                    </tr>
+                </table>
+                </div>
+        </div>
+
+        <hr />
+        <div ng-show="contract.PlacementRecordId">
+            <p class="bg-info">第二步：选择房源</p>
+            <div class="form-group">
+
+                <label class="col-sm-1 control-label">小区</label>
+                <div class="col-sm-3">
+                    <span class="nullable">
+                        <select class="form-control" ng-model="searchparams.CommunityId" ng-options="c.Id as c.Name for c in clist" required="">
+                            <option value="">--请选择--</option>
+                        </select>
+                    </span>
+                </div>
+                <label class="col-sm-1 control-label">幢号</label>
+                <div class="col-sm-1">
+                    <input type="text" class="form-control" ng-model="searchparams.BuildingNumber">
+                </div>
+                <label class="col-sm-1 control-label">面积</label>
+                <div class="col-sm-2">
+                    <select class="form-control" ng-model="searchparams.SizeRange">
+                        <option value="">--请选择--</option>
+                        <option value="1">60平米以下</option>
+                        <option value="2">60平米到90平米</option>
+                        <option value="3">90平米以上</option>
+                    </select>
+                </div>
+                <div class="col-sm-1">
+                    <button type="button" class="btn btn-primary" ng-disabled="msForm.$invalid" ng-click="queryapp()">
+                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 查询
+                    </button>
+
+                </div>
+            </div>
+          
+            <div ng-show="contract.AppartmentId!=null">
+                <h5 class="text-info">已选择的房源</h5>
+                <table class="table table-striped table-hover table-bordered">
+                    <tr>
+                        <th>小区</th>
+                        <th>栋号</th>
+                        <th>单元</th>
+                        <th>门牌号</th>
+                        <th>房型</th>
+                        <th>面积</th>
+                        <th>朝向</th>
+                        <th>基价</th>
+                        <th>优惠价</th>
+                        <th>市场价格1</th>
+                        <th>市场价格2</th>
+                        <th>状态</th>
+
+                    </tr>
+                    <tr>
+                        <td>{{selectedapp.Community.Name}}</td>
+                        <td>{{selectedapp.BuildingNumber}}</td>
+                        <td>{{selectedapp.UnitNumber}}</td>
+                        <td>{{selectedapp.DoorNumber}}</td>
+                        <td>{{selectedapp.Type}}</td>
+                        <td>{{selectedapp.Size}}</td>
+                        <td>{{selectedapp.Facing}}</td>
+                        <td>{{selectedapp.Price1}}</td>
+                        <td>{{selectedapp.Price2}}</td>
+                        <td>{{selectedapp.Price3}}</td>
+                        <td>{{selectedapp.Price4}}</td>
+                        <td>{{selectedapp.Status}}</td>
+                       
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+        <button class="btn btn-primary" ng-disabled="contract.AppartmentId==null || contract.PlacementRecordId == null || appselected == null" ng-click="add()">选购</button>
+
+    </form>
+   
+     
+
+
+</div>
