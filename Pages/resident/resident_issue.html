@@ -1,7 +1,7 @@
 ﻿<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
     <div>
-        <p class="bg-info">以下拆迁户记录中存在重复身份证信息。请确认后，点击"通过"按钮或修改该差钱记录</p>
+        <p class="bg-info">以下拆迁户记录中存在重复身份证信息。请确认后，点击“通过”按钮或修改该拆迁记录</p>
     </div>
     
     <div class="table-responsive">
@@ -31,4 +31,7 @@
             </tbody>
         </table>
     </div>
+
+    <pager total-items="totalItems" num-pages="numPages" ng-model="currentPage" ng-change="pageChanged()" previous-text="<<上一页" next-text="下一页>>"></pager>
+    <pre>{{(currentPage - 1) * itemsPerPage + 1}} - {{currentPage * itemsPerPage > totalItems ? totalItems : currentPage * itemsPerPage}} | Total: {{totalItems}}</pre>
 </div>

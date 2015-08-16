@@ -164,11 +164,31 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     InitDataPicker($scope)
     
 }]).controller('ResidentIssueCtrl', ['$scope', '$modal', 'RestService', '$location', function ($scope, $modal, RestService, $location) {
-    $scope.items = RestService.getclient('resident').query({ $filter: "Status eq 0" }, function (rs) {
-        rs.forEach(function(r){
-            r.RelocationRecord = RestService.getclient('rr').get({id:r.RelocationRecordId})
-        })
-    })
+    // Pagination.
+    $scope.totalItems = 0;
+    $scope.currentPage = 1;
+    $scope.itemsPerPage = 50;
+    $scope.numPages = 1;
+
+    $scope.setPage = function (pageNo) {
+        $scope.currentPage = pageNo;
+    };
+
+    $scope.pageChanged = function () {
+        console.log("!!! " + $scope.currentPage);
+        var skip = ($scope.currentPage - 1) * $scope.itemsPerPage;
+
+        RestService.getclient('resident').query({ $filter: "Status eq 0", $inlinecount: 'allpages', $skip: skip }, function (rs) {
+            $scope.items = rs.Results;
+            $scope.totalItems = rs.__count;
+            rs.Results.forEach(function (r) {
+                r.RelocationRecord = RestService.getclient('rr').get({ id: r.RelocationRecordId });
+            });
+        });
+    };
+    
+    $scope.pageChanged();
+
     $scope.pass = function (idx) {
         var modalInstance = $modal.open({
             templateUrl: "/pages/modal/confirmModal.html",
