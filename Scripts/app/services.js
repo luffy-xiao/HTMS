@@ -2,7 +2,7 @@
 
 /* Services */
 
-var appServices = angular.module('ms.site.services', ['ngResource']);
+var appServices = angular.module('ms.site.services', ['ngResource', 'ngCookies']);
 
 
 appServices.factory('Constants', ['$resource','$filter',
@@ -36,14 +36,14 @@ appServices.factory('Constants', ['$resource','$filter',
           }
       }
    
-  }]).factory('UserService', ['$http', '$rootScope', '$resource','$window', function ($http, $rootScope, $resource,$window) {
+  }]).factory('UserService', ['$http', '$rootScope', '$resource', '$window', '$cookies', function ($http, $rootScope, $resource, $window, $cookies) {
 
       var user = null;
-      if (sessionStorage.getItem('user') != null) {
+      if ($cookies.user != null) {
           try {
-              user = angular.fromJson(sessionStorage.getItem('user'));
+              user = angular.fromJson($cookies.user);
           }catch(e){
-              sessionStorage.clear();
+              $cookies.user=null
           }
           
       }
@@ -59,16 +59,16 @@ appServices.factory('Constants', ['$resource','$filter',
 
               $http.post("/token",loginData).success(function (data) {
                   // Cache the access token in session storage.
-                  sessionStorage.setItem('token', data.access_token);
-                  $http.defaults.headers.common.Authorization = 'Bearer ' + sessionStorage.getItem('token')
+                  $cookies.token= data.access_token;
+                  $http.defaults.headers.common.Authorization = 'Bearer ' + $cookies.token
                   $http.get("/api/Account/info").success(function (data) {
                       user = data
-                      sessionStorage.setItem('user', angular.toJson(user));
+                      $cookies.user= angular.toJson(user);
                       //$rootScope.user = user;
                       //$rootScope.$broadcast('user_changed', user);
                       $window.location.reload()
                   }).error(function () {
-                      sessionStorage.clear();
+                      $cookies.user = null;
                   })
                   success()
               }).error(function () {
@@ -77,7 +77,7 @@ appServices.factory('Constants', ['$resource','$filter',
           },
           logout: function () {
               user = null;
-              sessionStorage.clear();
+              $cookies.user = null;
               $rootScope.user = user;
               $rootScope.$broadcast('user_changed', user);
               $window.location.reload()
