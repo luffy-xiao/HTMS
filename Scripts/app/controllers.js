@@ -420,7 +420,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     RestService.getclient('resident').query(function (residents) {
                         var rearray = []
 
-                        residents.forEach(function (r) {
+                        residents.Items.forEach(function (r) {
                             
                             if (r.IdentityCard == null) {
                                 return
@@ -536,7 +536,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                         RestService.getclient('resident').query(function(relist) {
                             var IDprarray = []
                             var contracts = []
-                            relist.forEach(function (re) {
+                            relist.Items.forEach(function (re) {
                                 if (re.IdentityCard == null) {
                                     return
                                 }
@@ -699,8 +699,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             $scope.rrlist = []
             RestService.getclient('resident').query({
                 $filter: filterstring
-            }, function (residents) {
-
+            }, function (rs) {
+                var residents = rs.Items;
                 if (residents.length == 0) {
                     alert("该姓名不存在")
                 }
@@ -928,8 +928,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             $scope.rrlist = []
             RestService.getclient('resident').query({
                 $filter: filterstring
-            }, function (residents) {
-
+            }, function (rs) {
+                var residents = rs.Items;
                 if (residents.length == 0) {
                     alert("该姓名不存在")
                 }
