@@ -3,8 +3,8 @@
 /* App Module */
 
 
-var appmodule = angular.module('ms.site', ['ngRoute', 'ms.site.controllers',
-  'ms.site.services', 'ms.site.directives', 'ms.site.filters', 'ui.bootstrap'
+var appmodule = angular.module('ms.site', ['ngCookies','ngRoute', 'ms.site.controllers',
+  'ms.site.services', 'ms.site.directives', 'ms.site.filters', 'ui.bootstrap', 
  // 'ms.site.filters'
 ])
         .config(['$routeProvider',
@@ -76,6 +76,9 @@ var appmodule = angular.module('ms.site', ['ngRoute', 'ms.site.controllers',
                 })
           }])
 
-appmodule.run(function ($http) {
-    $http.defaults.headers.common.Authorization = 'Bearer ' + sessionStorage.getItem("token")
+
+appmodule.run(function ($http, $cookies) {
+    if ($cookies.token != null) {
+        $http.defaults.headers.common.Authorization = 'Bearer ' + $cookies.token
+    }
 });
