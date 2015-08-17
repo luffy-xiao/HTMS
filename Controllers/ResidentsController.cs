@@ -22,27 +22,11 @@ namespace WebApplication6.Controllers
         private WebApplication6Context db = new WebApplication6Context();
 
         // GET: api/Residents
-        [PagingQueryable(PageSize=50)]
+        [PagingQueryable(PageSize=100)]
         public IQueryable<Resident> GetResidents()
         {
             return db.Residents.AsQueryable();
         }
-
-        // GET: api/Residents
-        /*public PageResult<Resident> Get(ODataQueryOptions<Resident> options)
-        {
-            ODataQuerySettings settings = new ODataQuerySettings()
-            {
-                PageSize = 5
-            };
-
-            IQueryable results = options.ApplyTo(db.Residents.AsQueryable(), settings);
-
-            return new PageResult<Resident>(
-                results as IEnumerable<Resident>,
-                Request.GetNextPageLink(),
-                Request.GetInlineCount());
-        }*/
 
         // GET: api/Residents/5
         [ResponseType(typeof(Resident))]

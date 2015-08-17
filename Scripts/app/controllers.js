@@ -165,28 +165,25 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     
 }]).controller('ResidentIssueCtrl', ['$scope', '$modal', 'RestService', '$location', function ($scope, $modal, RestService, $location) {
     // Pagination.
-    $scope.totalItems = 0;
     $scope.currentPage = 1;
-    $scope.itemsPerPage = 50;
-    $scope.numPages = 1;
-
-    $scope.setPage = function (pageNo) {
-        $scope.currentPage = pageNo;
-    };
+    $scope.maxSize = 10; // How many page links shown.
+    $scope.itemsPerPage = 100; // This size should equal to PageSize in backend.
 
     $scope.pageChanged = function () {
-        console.log("!!! " + $scope.currentPage);
         var skip = ($scope.currentPage - 1) * $scope.itemsPerPage;
 
         RestService.getclient('resident').query({ $filter: "Status eq 0", $inlinecount: 'allpages', $skip: skip }, function (rs) {
             $scope.items = rs.Results;
+            // Set total items.
             $scope.totalItems = rs.__count;
+
             rs.Results.forEach(function (r) {
                 r.RelocationRecord = RestService.getclient('rr').get({ id: r.RelocationRecordId });
             });
         });
     };
     
+    // Load 1st page.
     $scope.pageChanged();
 
     $scope.pass = function (idx) {
