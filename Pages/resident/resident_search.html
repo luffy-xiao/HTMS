@@ -32,8 +32,7 @@
             <thead>
                 <tr>
                     <th>拆迁基地</th>
-                    <th>户主姓名</th>
-                
+                    <th>户主姓名</th>      
                     <th>手机</th>
                     <th>操作</th>
                 </tr>
@@ -42,7 +41,6 @@
                 <tr ng-repeat="rr in rrlist">
                     <td>{{rr.RelocationBase.Name}}</td>
                     <td>{{rr.Residents[0].Name}}</td>
-               
                     <td>{{rr.Residents[0].Phone}}</td>
                     <td>
                         <button type="button" class="btn btn-primary btn-sm" ng-click="navtodetail(rr,true)">查看</button>
@@ -52,5 +50,13 @@
                 </tr>
             </tbody>
         </table>
+    </div>
+
+    <!-- pagination -->
+    <div ng-show="showresult">
+        <pagination total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage" ng-change="pageChanged()"
+                    max-size="maxSize" num-pages="numPages" class="pagination-sm" boundary-links="true" rotate="false"
+                    first-text="首页" previous-text="<上一页" next-text="下一页>" last-text="尾页"></pagination>
+        <span class="pull-right" style="margin: 20px 0;">显示 {{(currentPage - 1) * itemsPerPage + 1}} - {{currentPage * itemsPerPage > totalItems ? totalItems : currentPage * itemsPerPage}} | 总计: {{totalItems}}</span>
     </div>
 </div>

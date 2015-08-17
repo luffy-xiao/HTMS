@@ -83,32 +83,54 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.items = RestService.getclient('rb').query();
     InitCtrl($scope, $modal, 'rb', RestService, {})
 }]).controller('ResidentSearchCtrl', ['$scope', '$modal', 'RestService', '$location', function ($scope, $modal, RestService, $location) {
-    
-    $scope.searchbyR = function () {
-        $scope.rrlist = []
-        var filters = []
-        if ($scope.searchparams.Name != null || $scope.searchparams.IdentityCard != null) {
+    // Pagination.
+    $scope.currentPage = 1;
+    $scope.maxSize = 10; // How many page links shown.
+    $scope.itemsPerPage = 100;
 
+    // Cache filterstring used in query.
+    var filterstring;
+
+    $scope.pageChanged = function () {
+        $scope.rrlist = [];
+        var skip = ($scope.currentPage - 1) * $scope.itemsPerPage;
+
+        RestService.getclient('resident').query({
+            $filter: filterstring, $inlinecount: 'allpages',
+            $skip: skip, $top: $scope.itemsPerPage
+        }, function (residents) {
+            // Set total count.
+            $scope.totalItems = residents.Count;
+            residents.Items.forEach(function (r) {
+                var rr = RestService.getclient('rr').get({ id: r.RelocationRecordId })
+                $scope.rrlist.push(rr)
+
+            })
+            $scope.showresult = true;
+        });
+    };
+
+    $scope.searchbyR = function () {
+        var filters = [];
+        if ($scope.searchparams.Name != null || $scope.searchparams.IdentityCard != null) {
             if ($scope.searchparams.Name != null) {
                 filters.push("substringof('" + $scope.searchparams.Name + "',Name)")
             }
             if ($scope.searchparams.IdentityCard != null) {
                 filters.push("substringof('" + $scope.searchparams.IdentityCard + "',IdentityCard)")
             }
-            var filterstring = "true";
-            filters.forEach(function(f){
+            // Reset filterstring occording to current filters.
+            filterstring = "true";
+            filters.forEach(function (f) {
                 filterstring += (" and " + f)
-            })
-            RestService.getclient('resident').query({ $filter: filterstring }, function (residents) {
-                residents.forEach(function (r) {
-                    var rr = RestService.getclient('rr').get({ id: r.RelocationRecordId })
-                    $scope.rrlist.push(rr)
+            });
 
-                })
-                $scope.showresult = true
-            })
+            // Search from beginning when click search button.
+            $scope.currentPage = 1;
+            $scope.pageChanged();
         }
-    }
+    };
+
     $scope.navtodetail = function (rr,readonly) {
         $location.path('/resident/detail/'+rr.Id +"/readonly=" + readonly)
     }
@@ -167,17 +189,20 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     // Pagination.
     $scope.currentPage = 1;
     $scope.maxSize = 10; // How many page links shown.
-    $scope.itemsPerPage = 100; // This size should equal to PageSize in backend.
+    $scope.itemsPerPage = 100;
 
     $scope.pageChanged = function () {
         var skip = ($scope.currentPage - 1) * $scope.itemsPerPage;
 
-        RestService.getclient('resident').query({ $filter: "Status eq 0", $inlinecount: 'allpages', $skip: skip }, function (rs) {
-            $scope.items = rs.Results;
+        RestService.getclient('resident').query({
+            $filter: "Status eq 0", $inlinecount: 'allpages',
+            $skip: skip, $top: $scope.itemsPerPage
+        }, function (rs) {
+            $scope.items = rs.Items;
             // Set total items.
-            $scope.totalItems = rs.__count;
+            $scope.totalItems = rs.Count;
 
-            rs.Results.forEach(function (r) {
+            rs.Items.forEach(function (r) {
                 r.RelocationRecord = RestService.getclient('rr').get({ id: r.RelocationRecordId });
             });
         });

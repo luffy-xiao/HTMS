@@ -22,7 +22,7 @@ namespace WebApplication6.Controllers
         private WebApplication6Context db = new WebApplication6Context();
 
         // GET: api/Residents
-        [PagingQueryable(PageSize=100)]
+        [PagingQueryable]
         public IQueryable<Resident> GetResidents()
         {
             return db.Residents.AsQueryable();
