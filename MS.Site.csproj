@@ -247,6 +247,7 @@
     <Compile Include="Controllers\RelocationRecordsController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
     <Compile Include="Controllers\VillagesController.cs" />
+    <Compile Include="Custom\PagingQueryableAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

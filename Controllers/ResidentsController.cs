@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Web.Http.OData;
+using System.Web.Http.OData.Query;
+using Webapplication6.Custom;
 using WebApplication6.Models;
 
 namespace WebApplication6.Controllers
@@ -20,7 +22,7 @@ namespace WebApplication6.Controllers
         private WebApplication6Context db = new WebApplication6Context();
 
         // GET: api/Residents
-         [EnableQuery]
+        [PagingQueryable(PageSize=100)]
         public IQueryable<Resident> GetResidents()
         {
             return db.Residents.AsQueryable();

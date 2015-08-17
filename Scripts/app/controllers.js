@@ -164,11 +164,28 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     InitDataPicker($scope)
     
 }]).controller('ResidentIssueCtrl', ['$scope', '$modal', 'RestService', '$location', function ($scope, $modal, RestService, $location) {
-    $scope.items = RestService.getclient('resident').query({ $filter: "Status eq 0" }, function (rs) {
-        rs.forEach(function(r){
-            r.RelocationRecord = RestService.getclient('rr').get({id:r.RelocationRecordId})
-        })
-    })
+    // Pagination.
+    $scope.currentPage = 1;
+    $scope.maxSize = 10; // How many page links shown.
+    $scope.itemsPerPage = 100; // This size should equal to PageSize in backend.
+
+    $scope.pageChanged = function () {
+        var skip = ($scope.currentPage - 1) * $scope.itemsPerPage;
+
+        RestService.getclient('resident').query({ $filter: "Status eq 0", $inlinecount: 'allpages', $skip: skip }, function (rs) {
+            $scope.items = rs.Results;
+            // Set total items.
+            $scope.totalItems = rs.__count;
+
+            rs.Results.forEach(function (r) {
+                r.RelocationRecord = RestService.getclient('rr').get({ id: r.RelocationRecordId });
+            });
+        });
+    };
+    
+    // Load 1st page.
+    $scope.pageChanged();
+
     $scope.pass = function (idx) {
         var modalInstance = $modal.open({
             templateUrl: "/pages/modal/confirmModal.html",

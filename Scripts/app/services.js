@@ -99,7 +99,7 @@ appServices.factory('Constants', ['$resource','$filter',
   }]).factory('RestService', ['$http', '$resource', function ($http, $resource) {
       var clients = []
       clients['rb'] = $resource('/api/RelocationBases/:id', { id: '@id' }, { 'update': { method: 'PUT' } })
-      clients['resident'] = $resource('/api/Residents/:id', { id: '@id' }, { 'update': { method: 'PUT' } })
+      clients['resident'] = $resource('/api/Residents/:id', { id: '@id' }, { 'update': { method: 'PUT' }, 'query': { isArray: false } })
       clients['rr'] = $resource('/api/RelocationRecords/:id', { id: '@id' }, { 'update': { method: 'PUT' } })
       clients['rt'] = $resource('/api/RelationshipTypes/:id', { id: '@id' }, { 'update': { method: 'PUT' } })
       clients['village'] = $resource('/api/Villages/:id', { id: '@id' }, { 'update': { method: 'PUT' } })
