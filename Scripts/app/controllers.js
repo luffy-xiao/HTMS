@@ -86,7 +86,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     // Pagination.
     $scope.currentPage = 1;
     $scope.maxSize = 10; // How many page links shown.
-    $scope.itemsPerPage = 100;
+    $scope.itemsPerPage = 20;
 
     // Cache filterstring used in query.
     var filterstring;
@@ -189,7 +189,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     // Pagination.
     $scope.currentPage = 1;
     $scope.maxSize = 10; // How many page links shown.
-    $scope.itemsPerPage = 100;
+    $scope.itemsPerPage = 20;
 
     $scope.pageChanged = function () {
         var skip = ($scope.currentPage - 1) * $scope.itemsPerPage;
@@ -284,7 +284,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     filters.push("Size gt 90")
                 }
                 
-            }B
+            }
             var filterstring = "true";
             filters.forEach(function (f) {
                 filterstring += (" and " + f)

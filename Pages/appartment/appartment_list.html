@@ -1,7 +1,7 @@
 ﻿<div class="col-sm-9 col-sm-offset-3 col-md-40 col-md-offset-2 main">
     <form name="msForm" ng-submit="submit()" class="form-horizontal" novalidate>
         <div class="form-group ">
-            <label class="col-sm-1 control-label">选择小区</label>
+            <label class="col-sm-2 control-label">选择小区</label>
             <div class="col-sm-3">
                 <span class="nullable">
                     <select class="form-control" ng-model="searchparams.CommunityId" ng-options="c.Id as c.Name for c in clist" required="" ng-change="loadbuildings()">
@@ -11,15 +11,14 @@
             </div>        
         </div>
         <div class="form-group ">
-           
-            <label class="col-sm-1 control-label">幢号(可选)</label>
-            <div class="col-sm-5">
+            <label class="col-sm-2 control-label">幢号（可选）</label>
+            <div class="col-sm-3">
                 <input type="text" class="form-control" ng-model="searchparams.BuildingNumber">
             </div>
         </div>
         <div class="form-group ">
-            <label class="col-sm-1 control-label">面积大小（可选）</label>
-            <div class="col-sm-5">
+            <label class="col-sm-2 control-label">面积大小（可选）</label>
+            <div class="col-sm-3">
                 <select class="form-control" ng-model="searchparams.SizeRange">
                     <option value="">--请选择--</option>
                     <option value="1">60平米以下</option>
@@ -27,12 +26,11 @@
                     <option value="3">90平米以上</option>
                 </select>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-2">
                 <button type="button" class="btn btn-primary" ng-disabled="msForm.$invalid" ng-click="query()">
                     <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 查询
                 </button>
             </div>
-
         </div>
 
     </form>
