@@ -106,7 +106,7 @@ appServices.factory('Constants', ['$resource','$filter',
       clients['group'] = $resource('/api/Groups/:id', { id: '@id' }, { 'update': { method: 'PUT' } })
       clients['community'] = $resource('/api/Communities/:id', { id: '@id' }, { 'update': { method: 'PUT' } })
       clients['building'] = $resource('/api/Buildings/:id', { id: '@id' }, { 'update': { method: 'PUT' } })
-      clients['appartment'] = $resource('/api/Appartments/:id', { id: '@id' }, { 'update': { method: 'PUT' } })
+      clients['appartment'] = $resource('/api/Appartments/:id', { id: '@id' }, { 'update': { method: 'PUT' }, 'query': { isArray: false } })
       clients['apptype'] = $resource('/api/AppartmentTypes/:id', { id: '@id' }, { 'update': { method: 'PUT' } })
       clients['ftype'] = $resource('/api/FacingTypes/:id', { id: '@id' }, { 'update': { method: 'PUT' } })
       clients['dtype'] = $resource('/api/DecorationTypes/:id', { id: '@id' }, { 'update': { method: 'PUT' } })

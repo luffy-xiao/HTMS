@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Web.Http.OData;
+using Webapplication6.Custom;
 using WebApplication6.Models;
 
 namespace WebApplication6.Controllers
@@ -20,7 +21,7 @@ namespace WebApplication6.Controllers
         private WebApplication6Context db = new WebApplication6Context();
 
         // GET: api/Appartments
-        [EnableQuery]
+        [PagingQueryable]
         public IQueryable<Appartment> GetAppartments()
         {
             return db.Appartments.Include(a=>a.Community);

@@ -262,38 +262,66 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
    
 
 }]).controller('AppartmentCtrl', ['$scope', '$modal', 'RestService', function ($scope, $modal, RestService) {
-    $scope.searchparams = {}
-    $scope.clist = RestService.getclient('community').query()
+    $scope.searchparams = {};
+    $scope.clist = RestService.getclient('community').query();
+
+    // Pagination.
+    $scope.currentPage = 1;
+    $scope.maxSize = 10; // How many page links shown.
+    $scope.itemsPerPage = 100;
+
+    // Cache filterstring used in query.
+    var filterstring;
+
+    $scope.pageChanged = function () {
+        var skip = ($scope.currentPage - 1) * $scope.itemsPerPage;
+
+        RestService.getclient('appartment').query({
+            $filter: filterstring, $orderby: 'BuildingNumber,UnitNumber,DoorNumber',
+            $inlinecount: 'allpages', $skip: skip, $top: $scope.itemsPerPage
+        }, function (apartments) {
+            // Set total count.
+            $scope.totalItems = apartments.Count;
+            $scope.items = apartments.Items;
+            $scope.showresult = true;
+        });
+    };
 
     $scope.query = function () {
         var filters = []
         filters.push("CommunityId eq " + $scope.searchparams.CommunityId)
-        if ($scope.searchparams.BuildingNumber != null || $scope.searchparams.SizeRange != null) {
 
-            if ($scope.searchparams.BuildingNumber != null) {
-                filters.push("BuildingNumber eq " + $scope.searchparams.BuildingNumber)
-            }
-            if ($scope.searchparams.SizeRange != null && $scope.searchparams.SizeRange !="") {
-                if ($scope.searchparams.SizeRange == 1) {
-                    filters.push("Size lt 60")
-                }
-                else if ($scope.searchparams.SizeRange == 2) {
-                    filters.push("(Size ge 60 and Size le 90)")
-                }
-                else if ($scope.searchparams.SizeRange == 3) {
-                    filters.push("Size gt 90")
-                }
-                
-            }
-            var filterstring = "true";
-            filters.forEach(function (f) {
-                filterstring += (" and " + f)
-            })
+        if ($scope.searchparams.BuildingNumber != null && $scope.searchparams.BuildingNumber.trim() != '') {
+            filters.push("BuildingNumber eq " + $scope.searchparams.BuildingNumber)
         }
-        $scope.items = RestService.getclient('appartment').query({ $filter: filterstring ,$orderby: 'BuildingNumber,UnitNumber,DoorNumber' }, function () {
-            $scope.showresult = true;
-        })
-        InitCtrl($scope, $modal, 'appartment', RestService, { CommunityId: $scope.searchparams.CommunityId })
+        if ($scope.searchparams.SizeRange != null && $scope.searchparams.SizeRange !="") {
+            if ($scope.searchparams.SizeRange == 1) {
+                filters.push("Size lt 60")
+            }
+            else if ($scope.searchparams.SizeRange == 2) {
+                filters.push("(Size ge 60 and Size le 90)")
+            }
+            else if ($scope.searchparams.SizeRange == 3) {
+                filters.push("Size gt 90")
+            }
+        }
+        if ($scope.searchparams.Status != null && $scope.searchparams.Status != "") {
+            if ($scope.searchparams.Status == 0) {
+                filters.push("Status eq '可售'");
+            }
+            else if ($scope.searchparams.Status == 1) {
+                filters.push("Status eq '已售'");
+            }
+        }
+
+        filterstring = "true";
+        filters.forEach(function (f) {
+            filterstring += (" and " + f)
+        });
+        $scope.currentPage = 1;
+        $scope.pageChanged();
+
+        InitCtrl($scope, $modal, 'appartment', RestService, { CommunityId: $scope.searchparams.CommunityId });
     }
 
 }])
@@ -517,8 +545,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                    
                 }
                 if ($scope.model.Name == 'contract') {
-                    RestService.getclient('appartment').query(function (applist) {
-                        var apparray = []
+                    RestService.getclient('appartment').query(function (rs) {
+                        var applist = rs.Items;
+                        var apparray = [];
                         applist.forEach(function (app) {
                             if (apparray[app.Community.Name] == null) {
                                 apparray[app.Community.Name] = []
@@ -771,11 +800,12 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         var filterstring = "true";
         filters.forEach(function (f) {
             filterstring += (" and " + f)
-        })
-        $scope.applist = RestService.getclient('appartment').query({
+        });
+        RestService.getclient('appartment').query({
             $filter: filterstring +  " and Status ne '已售'" 
             , $orderby: 'BuildingNumber,UnitNumber,DoorNumber'
-        }, function () {
+        }, function (rs) {
+            $scope.applist = rs.Items;
             var modalInstance = $modal.open({
                 templateUrl: "/pages/modal/selectappModal.html",
                 size: 'lg',
@@ -1118,7 +1148,7 @@ function deleteitem($modal, RestService, type, $scope, idx, commit) {
     if (typeof commit === 'undefined') { commit = true; }
     modalInstance.result.then(function () {
         if (commit) {
-            RestService.getclient(type).remove({ id: items[idx].Id }, function () {
+            RestService.getclient(type).remove({ id: items[idx].Id }, function (item) {
                 items.splice(idx, 1)
                 $scope.$broadcast('deleted', item)
             }, function (data) {
