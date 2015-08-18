@@ -1008,6 +1008,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     }
 }]).controller('PrintBCtrl', ['$scope', '$modal', 'RestService', '$routeParams', function ($scope, $modal, RestService, $routeParams) {
     var id = $routeParams.id
+    $scope.now = moment().format("YYYY-MM-DD")
     $scope.pr = RestService.getclient('pr').get({ id: id }, function (pr) {
         $scope.contracts = RestService.getclient('contract').query({$filter: "PlacementRecordId eq "+ pr.Id }, function (contracts) {
            

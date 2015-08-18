@@ -93,7 +93,7 @@
                     <td>{{pr.Size}}</td>
                     <td>{{pr.LeftSize}}</td>
                     <td>{{pr.TotalCompensation}}</td>
-                    <td>{{pr.LeftCompensation}}</td>
+                    <td>{{pr.LeftCompensation.toFixed(2)}}</td>
                     <td>
                         <input ng-show="user.Roles[0].Id==3 || user.Roles[0].Id==1" type="button" class="btn btn-primary btn-sm" value="修改" ng-click="modify($index)" />
                         <input ng-show="user.Roles[0].Id==3 || user.Roles[0].Id==1" type="button" class="btn btn-primary btn-sm" value="删除" ng-click="del($index)" />
