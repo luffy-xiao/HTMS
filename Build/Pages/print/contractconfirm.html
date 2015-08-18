@@ -1,0 +1,139 @@
+﻿<div style="width:21cm; margin-left:3cm">
+    <button class="btn btn-primary hidden-print" onclick="window.print()">打印</button>
+    <table width="660" border="0">
+        <tr>
+            <td width="660" height="20" align="center" class="noprint"><p class="STYLE6">购 房 确 认 清 单</p></td>
+        </tr>
+        <tr>
+            <td width="660" height="20" class="STYLE4">&nbsp;&nbsp;&nbsp;<span class="noprint">项目名称：</span><input name="pjname" type="text" class="noline_textarea3" id="pjname" size="20" value="{{rr.RelocationBase.Name}}" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="noprint">户主姓名</span><input class="noline_textarea3" name="hname" id="hname" type="text" value="{{contract.PlacementRecord.Name}}" size="8" /></td>
+        </tr>
+        <tr>
+        <tr>
+            <td>
+                <table width="660" border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#000000">
+                    <tr>
+                        <td height="138" colspan="3" align="left" valign="top">
+                            <table width="660" class="mytable" border="1" cellspacing="0" cellpadding="0" bordercolor="#000000">
+                                <tr>
+                                    <td width="38" rowspan="9" class="STYLE4">
+                                        <span class="noprint">
+                                            被拆<br />
+                                            迁户<br />基本<br />情况
+                                        </span><input name="id" type="hidden" value="" />
+                                    </td>
+                                    <td width="130" height="26" align="center" class="STYLE4"><div class="noprint">姓名</div></td>
+                                    <td width="136" align="center" class="STYLE4"><div class="noprint">出生年月</div></td>
+                                    <td width="223" align="center" class="STYLE4"><div class="noprint">工作单位</div></td>
+                                    <td width="130" align="center" class="STYLE4"><div class="noprint">身份证号码</div></td>
+                                </tr>
+
+                                <tr ng-repeat="p in contract.PlacementRecord.Residents">
+
+                                    <td height="22" align="center" class="STYLE4"><input type="text" class="noline_textarea" size="8" ng-model="p.Name" /></td>
+                                    <td height="22" align="center" class="STYLE4"><input type="text" class="noline_textarea" size="8" value="{{p.IdentityCard.substring(6,14)}}" /></td>
+                                    <td height="22" class="STYLE4">&nbsp;</td>
+                                    <td height="22" align="center" class="STYLE4"><input type="text" class="noline_textarea" size="18" ng-model="p.IdentityCard" /></td>
+
+                                </tr>
+
+                                <tr>
+                                    <td height="34" colspan="2" class="STYLE4"><span class="noprint">&nbsp;原住房建筑面积:</span><input type="text" size="12" class="noline_textarea" ng-model="rr.MeasuredSize" /><span class="noprint">平方米</span></td>
+                                    <td colspan="2" class="STYLE4"><span class="noprint">&nbsp;原住房地址&nbsp;：</span><input name="name" type="text" class="noline_textarea2" id="name" size="5" value="浦东新" /><span class="noprint">区</span><input name="yroad" type="text" class="noline_textarea3" id="yroad" size="28" value="{{rr.Village}}" /></td>
+                                </tr>
+                                <tr>
+                                    <td height="34" colspan="2" class="STYLE4"><span class="noprint">&nbsp;拆迁人:</span><input name="mcqr" type="text" class="noline_textarea" id="mcqr" size="27" ng-model="rr.RelocationBase.Relocator" /></td>
+                                    <td colspan="2" class="STYLE4">
+                                        <span class="noprint">&nbsp;拆迁实施单位：</span>
+                                        <input name="cqss" type="text" class="noline_textarea" id="cqss" size="35" ng-model="rr.RelocationBase.RelocationCompany" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="4" class="STYLE4">&nbsp;</td>
+                                    <td height="34" colspan="2" class="STYLE4"><span class="noprint">&nbsp;小区名称:</span><input name="area" type="text" class="noline_textarea" id="area" size="25" ng-model="contract.Appartment.Community.Name" /></td>
+                                    <td colspan="2" class="STYLE4">
+                                        <span class="noprint">&nbsp;所购房屋地址&nbsp;：</span>
+                                        <input name="nong" type="text" class="noline_textarea2" id="nong" size="18" ng-model="contract.Appartment.Community.Address" />
+                                        <input name="name" type="text" class="noline_textarea2" id="name" size="3" ng-model="contract.Appartment.BuildingNumber" /><span class="noprint">号</span><input name="name" type="text" class="noline_textarea2" id="name" size="3" ng-model="contract.Appartment.DoorNumber" /><span class="noprint">室</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="34" colspan="2" class="STYLE4"><span class="noprint">&nbsp;开发单位:</span><input name="kfdw" type="text" class="noline_textarea" id="kfdw" size="30" ng-model="contract.Appartment.Community.Company" /></td>
+                                    <td colspan="2" class="STYLE4"><span class="noprint">&nbsp;房屋交付时间：</span><input name="yy" type="text" class="noline_textarea" id="name" size="9" ng-model="dd.year" /><span class="noprint">年</span><input name="mm" type="text" class="noline_textarea" id="mm" size="5" ng-model="dd.month" /><span class="noprint">月</span><input name="dd" type="text" class="noline_textarea" id="dd" size="5" ng-model="dd.day" /><span class="noprint">日前</span></td>
+                                </tr>
+                                <tr>
+                                    <td height="30" colspan="2" class="STYLE4"><span class="noprint">&nbsp;建筑面积单价：</span><input name="k_prize" type="text" class="noline_textarea" id="k_prize" size="10" ng-model="contract.Appartment.Price1" /><span class="noprint">元/平方米</span></td>
+                                    <td colspan="2" rowspan="2" class="STYLE4"><span class="noprint">&nbsp;总房价：</span><input name="fjall" type="text" class="noline_textarea" id="name" size="22" value="{{totalprice().toFixed(2)}}" /><span class="noprint">元（以购房合同为准）</span></td>
+                                </tr>
+                                <tr>
+                                    <td height="30" colspan="2" class="STYLE4"><span class="noprint">&nbsp;建筑面积：</span><input name="name" type="text" class="noline_textarea" id="name" size="5" ng-model="contract.Appartment.Size" /><span class="noprint">平方米(以购房合同为准)</span></td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="8" class="STYLE4">&nbsp;</td>
+                                    <td height="26" align="center" class="STYLE4"><span class="noprint">姓名</span></td>
+                                    <td align="center" class="STYLE4"><span class="noprint">出生年月</span></td>
+                                    <td align="center" class="STYLE4"><span class="noprint">工作单位</span></td>
+                                    <td align="center" class="STYLE4"><span class="noprint">身份证号码</span></td>
+                                </tr>
+
+                                <tr ng-repeat="p in contract.AppartmentOwners">
+                                    <td height="22" align="center" class="STYLE4"><input name="gname" type="text" class="noline_textarea" id="gidenty" size="8" ng-model="p.Name" /><input name="gusid" type="hidden" value="" /></td>
+                                    <td height="22" align="center" class="STYLE4"><input name="gbirthday" type="text" class="noline_textarea" id="gbirthday" size="10" value="{{p.IdentityCard.substring(6,14)}}" readonly="true" /></td>
+                                    <td height="22" class="STYLE4">&nbsp;</td>
+                                    <td height="22" align="center" class="STYLE4"><input name="gidentity" type="text" class="noline_textarea" id="gidentity" size="18" ng-model="p.IdentityCard" /></td>
+                                </tr>
+
+
+
+                                <tr>
+                                    <td height="34" colspan="2" class="STYLE4"><span class="noprint">&nbsp;拆迁补偿费用：</span><input name="cqbc" type="text" class="noline_textarea" id="cqbc" size="20" ng-model="rr.TotalCompensation" /><span class="noprint">元</span></td>
+                                    <td colspan="2" class="STYLE4"><span class="noprint">&nbsp;一次性支付购房差价：</span><input name="gfcj" type="text" class="noline_textarea" id="gfcj" size="21" value="" /><span class="noprint">元</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" valign="top">
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td colspan="3" rowspan="2" valign="top" class="STYLE4">
+                                                    <span class="noprint">
+                                                        &nbsp;<br />&nbsp;购房人(签章)<br /><br />
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;______________________________<br /><br />
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;______________________________<br /><br />
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;______________________________<br /><br /><br />
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;日期：20___年___月___日<br /><br />
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;（签章人对本供应单所填各项内容和背面的<br /><br />
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;“有关事项”确认且无异议）
+                                                    </span>
+                                                </td>
+
+                                                <td width="27%" height="122" valign="top" class="STYLE4">
+                                                    <br />
+                                                    <span class="noprint">
+                                                        &nbsp;拆迁实施单位 （盖章)<br /><br />
+                                                        &nbsp;负责人：_____________<br /><br />
+                                                        &nbsp;日期：20___年___月___日
+                                                    </span>
+                                                </td>
+                                                <td width="27%" class="STYLE4">&nbsp;</td>
+                                            </tr>
+                                            <tr>
+                                                <td height="134" class="STYLE4">
+                                                    <span class="noprint">
+                                                        &nbsp;拆迁人(或重大工程拆迁<br /><br />
+                                                        &nbsp;项目主管单位(盖章)<br />
+                                                        <br />
+                                                        &nbsp;负责人：_____________<br />
+                                                        <br />
+                                                        &nbsp;日期：20___年___月___日
+                                                    </span>
+                                                </td>
+                                                <td>&nbsp;</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+    </table>
+</div>

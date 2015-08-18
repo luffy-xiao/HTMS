@@ -1,0 +1,62 @@
+﻿<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+    <div>
+        <p class="bg-info">请输入要查询动迁户的姓名或身份证号，然后点击搜索。当您填写至少其中一项时，搜索按钮才被激活</p>
+    </div>
+    <form name="s1" class="form-horizontal" novalidate>
+
+        <div class="form-group  has-feedback">
+            <label class="col-sm-1 control-label">姓名</label>
+            <div class="col-sm-2">
+                <input type="text" class="form-control" ng-model="searchparams.Name" >
+            </div>
+            <label class="col-sm-2 control-label">身份证号</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" ng-model="searchparams.IdentityCard" >
+            </div>
+            <div class="col-sm-1">
+                <button type="button" class="btn btn-primary" ng-click="searchbyR()" ng-disabled="!(searchparams.Name || searchparams.IdentityCard)">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 搜索
+                </button>
+            </div>
+        </div>
+       
+    </form>
+    <hr />
+    <ol class="breadcrumb" ng-show="showresult">
+        <li><label>搜索结果</label></li>
+
+    </ol>
+    <div class="table-responsive" ng-show="showresult">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>拆迁基地</th>
+                    <th>户主姓名</th>      
+                    <th>手机</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="rr in rrlist">
+                    <td>{{rr.RelocationBase.Name}}</td>
+                    <td>{{rr.Residents[0].Name}}</td>
+                    <td>{{rr.Residents[0].Phone}}</td>
+                    <td>
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="navtodetail(rr,true)">查看</button>
+                        <button ng-show="user.Roles[0].Id==2" type="button" class="btn btn-default btn-sm" ng-click="navtodetail(rr,false)">修改</button>
+                        <button ng-show="user.Roles[0].Id==2" type="button" class="btn btn-danger btn-sm" ng-click="del($index)">删除</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- pagination -->
+    <div ng-show="showresult">
+        <pagination total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage" ng-change="pageChanged()"
+                    max-size="maxSize" num-pages="numPages" class="pagination-sm" boundary-links="true" rotate="false"
+                    first-text="首页" previous-text="<上一页" next-text="下一页>" last-text="尾页"></pagination>
+        <span class="pull-right" style="margin: 20px 0;">显示 {{(currentPage - 1) * itemsPerPage + 1}} - {{currentPage * itemsPerPage > totalItems ? totalItems : currentPage * itemsPerPage}} | 总计: {{totalItems}}</span>
+    </div>
+</div>
