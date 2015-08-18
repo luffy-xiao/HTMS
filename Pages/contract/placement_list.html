@@ -86,7 +86,7 @@
                     <th>安置面积剩余</th>
                     <th>安置补偿款</th>
                     <th>安置补偿款剩余</th>
-                    <th><input ng-show="user.Roles[0].Id==2 || user.Roles[0].Id==1" type="button" class="btn btn-primary btn-sm" value="生成安置记录" ng-click="add()" ng-disabled="rr ==null ||  (rr.Residents | filter: {PlacementRecordId:null}).length ==0" /></th>
+                    <th><input ng-show="user.Roles[0].Id==3 || user.Roles[0].Id==1" type="button" class="btn btn-primary btn-sm" value="生成安置记录" ng-click="add()" ng-disabled="rr ==null ||  (rr.Residents | filter: {PlacementRecordId:null}).length ==0" /></th>
                 </tr>
                 <tr ng-repeat="pr in prs">
                     <td>{{pr.Name}}</td>
@@ -95,8 +95,8 @@
                     <td>{{pr.TotalCompensation}}</td>
                     <td>{{pr.LeftCompensation}}</td>
                     <td>
-                        <input ng-show="user.Roles[0].Id==2" type="button" class="btn btn-primary btn-sm" value="修改" ng-click="modify($index)" />
-                        <input ng-show="user.Roles[0].Id==2" type="button" class="btn btn-primary btn-sm" value="删除" ng-click="del($index)" />
+                        <input ng-show="user.Roles[0].Id==3 || user.Roles[0].Id==1" type="button" class="btn btn-primary btn-sm" value="修改" ng-click="modify($index)" />
+                        <input ng-show="user.Roles[0].Id==3 || user.Roles[0].Id==1" type="button" class="btn btn-primary btn-sm" value="删除" ng-click="del($index)" />
                     </td>
 
                 </tr>

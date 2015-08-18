@@ -13,7 +13,7 @@ using WebApplication6.Models;
 
 namespace WebApplication6.Controllers
 {
-    [Authorize(Roles="Administrator,Operator")]
+    [Authorize]
     public class RelocationBasesController : ApiController
     {
         private WebApplication6Context db = new WebApplication6Context();
@@ -88,6 +88,7 @@ namespace WebApplication6.Controllers
         }
 
         // DELETE: api/RelocationBases/5
+          [Authorize(Roles = "Administrator")]
         [ResponseType(typeof(RelocationBase))]
         public async Task<IHttpActionResult> DeleteRelocationBase(int id)
         {
