@@ -23,10 +23,6 @@
        
     </form>
     <hr />
-    <ol class="breadcrumb" ng-show="showresult">
-        <li><label>搜索结果</label></li>
-
-    </ol>
     <div class="table-responsive" ng-show="showresult">
         <table class="table table-striped">
             <thead>
@@ -59,4 +55,5 @@
                     first-text="首页" previous-text="<上一页" next-text="下一页>" last-text="尾页"></pagination>
         <span class="pull-right" style="margin: 20px 0;">显示 {{(currentPage - 1) * itemsPerPage + 1}} - {{currentPage * itemsPerPage > totalItems ? totalItems : currentPage * itemsPerPage}} | 总计: {{totalItems}}</span>
     </div>
+    <div ng-show="showresult && totalItems == 0" class="alert alert-info">没有搜索到对应的记录。</div>
 </div>
