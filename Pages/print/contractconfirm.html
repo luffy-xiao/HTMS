@@ -62,7 +62,7 @@
                                 </tr>
                                 <tr>
                                     <td height="30" colspan="2" class="STYLE4"><span class="noprint">&nbsp;建筑面积单价：</span><input name="k_prize" type="text" class="noline_textarea" id="k_prize" size="10" ng-model="contract.Appartment.Price1" /><span class="noprint">元/平方米</span></td>
-                                    <td colspan="2" rowspan="2" class="STYLE4"><span class="noprint">&nbsp;总房价：</span><input name="fjall" type="text" class="noline_textarea" id="name" size="22" value="{{totalprice()}}" /><span class="noprint">元（以购房合同为准）</span></td>
+                                    <td colspan="2" rowspan="2" class="STYLE4"><span class="noprint">&nbsp;总房价：</span><input name="fjall" type="text" class="noline_textarea" id="name" size="22" value="{{totalprice().toFixed(2)}}" /><span class="noprint">元（以购房合同为准）</span></td>
                                 </tr>
                                 <tr>
                                     <td height="30" colspan="2" class="STYLE4"><span class="noprint">&nbsp;建筑面积：</span><input name="name" type="text" class="noline_textarea" id="name" size="5" ng-model="contract.Appartment.Size" /><span class="noprint">平方米(以购房合同为准)</span></td>

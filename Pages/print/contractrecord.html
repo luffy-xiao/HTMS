@@ -43,11 +43,11 @@
                                                 <td class="STYLE4">开单日期</td>
                                                 <td class="STYLE4"><input name="kdrq" type="text" class="noline_textarea" id="kdrq" size="10" value="{{rr.DateCreated.substring(0,10)}}" /></td>
                                                 <td class="STYLE4">安置金额</td>
-                                                <td class="STYLE4"><div id="BCZJ">{{rr.TotalCompensation}}</div></td>
+                                                <td class="STYLE4"><div id="BCZJ">{{pr.TotalCompensation}}</div></td>
                                                 <td class="STYLE4">打印日期</td>
                                                 <td class="STYLE4"></td>
-                                                <td class="STYLE4">有证面积</td>
-                                                <td class="STYLE4">{{rr.MeasuredSize}}</td>
+                                                <td class="STYLE4">安置面积</td>
+                                                <td class="STYLE4">{{pr.Size}}</td>
                                             </tr>
 
                                         </table>
@@ -65,7 +65,7 @@
                                                 <td class="STYLE4"><span class="STYLE7">室号</span></td>
                                                 <td class="STYLE4">{{c.Appartment.DoorNumber}}</td>
                                                 <td class="STYLE4">购房金额</td>
-                                                <td class="STYLE4"><input type="text" class="noline_textarea" size="18" value="{{c.Appartment.Price1 * c.Size1}}" /></td>
+                                                <td class="STYLE4"><input type="text" class="noline_textarea" size="18" value="{{(c.Appartment.Price1 * c.Size1-delta($index)).toFixed(2)}}" /></td>
                                                 <td class="STYLE4">购房日期</td>
                                                 <td class="STYLE4"><input type="text" class="noline_textarea" size="10" value="{{c.ContractDate.substring(0,10)}}" /></td>
                                             </tr>
@@ -111,17 +111,17 @@
                                             </tr>
                                             <tr>
                                                 <td class="STYLE4">金额</td>
-                                                <td class="STYLE4"><input type="text" class="noline_textarea" size="10" value="{{c.Appartment.Price1 * c.Size1}}" /></td>
+                                                <td class="STYLE4"><input type="text" class="noline_textarea" size="10" value="{{(c.Appartment.Price1 * c.Size1).toFixed(2)}}" /></td>
                                                 <td class="STYLE4">金额</td>
-                                                <td class="STYLE4"><input type="text" class="noline_textarea" size="10" value="{{c.Appartment.Price2 * c.Size2}}" /></td>
+                                                <td class="STYLE4"><input type="text" class="noline_textarea" size="10" value="{{(c.Appartment.Price2 * c.Size2).toFixed(2)}}" /></td>
                                                 <td class="STYLE4">金额</td>
                                                 <td class="STYLE4">
-                                                    <input type="text" class="noline_textarea" size="10" value="{{c.Appartment.Price3 * c.Size3}}" />
+                                                    <input type="text" class="noline_textarea" size="10" value="{{(c.Appartment.Price3 * c.Size3).toFixed(2)}}" />
                                                 </td>
                                                 <td class="STYLE4">金额</td>
                                                 <td class="STYLE4">
 
-                                                    <input type="text" class="noline_textarea" size="10" value="{{c.Appartment.Price4 * c.Size4}}" />
+                                                    <input type="text" class="noline_textarea" size="10" value="{{(c.Appartment.Price4 * c.Size4).toFixed(2)}}" />
                                                 </td>
                                             </tr>
 
@@ -143,9 +143,9 @@
                                                     <input type="text" class="noline_textarea" size="8" value={{c.Deadline.substring(0,10)}} />  利率：<input name="lilv<%=i%>" type="text" class="noline_textarea" id="lilv<%=i%>" size="4" ng-model="c.InterestRate" />
                                                 </td>
                                                 <td width="120" class="STYLE4">购房差额款</td>
-                                                <td width="120" class="STYLE4"><input type="text" class="noline_textarea" size="18" value="{{delta($index)}}" /></td>
+                                                <td width="120" class="STYLE4"><input type="text" class="noline_textarea" size="18" value="{{delta($index).toFixed(2)}}" /></td>
                                                 <td width="120" class="STYLE4">开票金额</td>
-                                                <td width="120" class="STYLE4"><div id="kpje<%=i%>">{{totalprice($index)}}</div></td>
+                                                <td width="120" class="STYLE4"><div id="kpje<%=i%>">{{totalprice($index).toFixed(2)}}</div></td>
                                             </tr>
                                             <tr>
                                                 <td class="STYLE4">天然气开户费</td>
@@ -172,7 +172,7 @@
                                             <tr>
                                                 <td class="STYLE4" width="120">合计支付金额</td>
 
-                                                <td class="STYLE4" align="left"><input type="text" class="noline_textarea" size="18" value="{{totalfee($index)}}" /></td>
+                                                <td class="STYLE4" align="left"><input type="text" class="noline_textarea" size="18" value="{{totalfee($index).toFixed(2)}}" /></td>
                                                 <td class="STYLE4">&nbsp;</td>
                                                 <td class="STYLE4" align="left">&nbsp;</td>
                                                 <td class="STYLE4">&nbsp;</td>
