@@ -955,7 +955,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             filters.forEach(function (f) {
                 filterstring += (" and " + f)
             })
-            $scope.rrlist = []
+            $scope.rrlist = [];
+            // Limit query results.
             RestService.getclient('resident').query({
                 $filter: filterstring
             }, function (rs) {
@@ -965,9 +966,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 }
                 else if (residents.length > 1) {
                     residents.forEach(function (r) {
-                        var rr = RestService.getclient('rr').get({ id: r.RelocationRecordId })
-                        $scope.rrlist.push(rr)
-
+                        var rr = RestService.getclient('rr').get({ id: r.RelocationRecordId });
+                        $scope.rrlist.push(rr);
                     })
                     var modalInstance = $modal.open({
                         templateUrl: "/pages/modal/selectRRModal.html",
@@ -992,8 +992,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                         $scope.rr = rr
                         loadpr()
                     })
-
-
                 }
 
             })

@@ -1,7 +1,6 @@
 ﻿<div>
     <div class="modal-header">
         <h3 class="modal-title">选择动迁记录</h3>
-       
     </div>
     <div class="modal-body">
         <p class="bg-info">您的查询条件返回了多条记录</p>
@@ -25,10 +24,11 @@
                 <td>{{rr.Residents[0].IdentityCard}}</td>
             </tr>
         </table>
-        
+        <p class="bg-info" ng-show="tip.length">{{tip}}</p>
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary" ng-click="ok()">选择</button>
+        <button class="btn btn-default" ng-click="cancel()">取消</button>
     </div>
 
 </div>

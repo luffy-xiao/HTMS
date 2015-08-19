@@ -40,12 +40,17 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
         $modalInstance.dismiss()
     };
 }]).controller('SelectItemModalCtrl', ['$scope', '$modalInstance', 'list', function ($scope, $modalInstance, list) {
-    $scope.list = list
+    $scope.list = list;
+    $scope.tip = '';
     $scope.ok = function () {
-        $modalInstance.close($scope.selected)
+        if ($scope.selected == null) {
+            $scope.tip = '请选择相应的记录。';
+        } else {
+            $modalInstance.close($scope.selected);
+        }
     };
     $scope.cancel = function () {
-        $modalInstance.dismiss()
+        $modalInstance.dismiss();
     };
 }]).controller('SaveItemModalCtrl', ['$scope', 'RestService', '$modalInstance', 'type', 'item', 'commit', '$filter', function ($scope, RestService, $modalInstance, type, item, commit, $filter) {
     InitDataPicker($scope)
