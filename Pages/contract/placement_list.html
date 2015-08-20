@@ -1,5 +1,5 @@
 ﻿<div class="col-sm-9 col-sm-offset-3 col-md-40 col-md-offset-2 main">
-    <form name="msForm" ng-submit="submit()" class="form-horizontal" novalidate>
+    <form name="msForm" ng-submit="query()" class="form-horizontal" novalidate>
         <div class="form-group has-feedback">
             <label class="col-sm-3 control-label">户主姓名</label>
             <div class="col-sm-4">
@@ -12,13 +12,16 @@
                 <input type="text" class="form-control" ng-model="searchparams.IdentityCard">
             </div>
             <div class="col-sm-2">
-                <button type="button" class="btn btn-primary" ng-click="query()" ng-disabled=" !searchparams.IdentityCard && !searchparams.Name">
+                <button type="submit" class="btn btn-primary" ng-disabled="!searchparams.IdentityCard && !searchparams.Name">
                     <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 搜索
                 </button>
             </div>
         </div>
     </form>
     <hr/>
+    
+    <div ng-show="totalItems == 0" class="alert alert-info">没有搜索到对应的记录。</div>
+    
     <div ng-show="showresidents">
             <p class="bg-info">您选择的拆迁记录</p>
             <table class="table table-striped table-hover table-bordered">

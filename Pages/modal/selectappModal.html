@@ -21,7 +21,7 @@
 
                 <th>选择</th>
             </tr>
-            <tr ng-repeat="item in list">
+            <tr ng-repeat="item in applist">
                 <td>{{item.Community.Name}}</td>
                 <td>{{item.BuildingNumber}}</td>
                 <td>{{item.UnitNumber}}</td>
@@ -39,10 +39,20 @@
                 </td>
             </tr>
         </table>
-        
+
+        <!-- pagination -->
+        <div ng-show="totalItems">
+            <pagination total-items="paging.totalItems" items-per-page="paging.itemsPerPage" ng-model="$parent.paging.currentPage" ng-change="paging.pageChanged()"
+                        max-size="paging.maxSize" num-pages="paging.numPages" class="pagination-sm" boundary-links="true" rotate="false"
+                        first-text="首页" previous-text="<上一页" next-text="下一页>" last-text="尾页"></pagination>
+            <span class="pull-right" style="margin: 20px 0;">显示 {{(paging.currentPage - 1) * paging.itemsPerPage + 1}} - {{paging.currentPage * paging.itemsPerPage > paging.totalItems ? paging.totalItems : paging.currentPage * paging.itemsPerPage}} | 总计: {{paging.totalItems}}</span>
+        </div>
+
+        <p class="bg-info" ng-show="tip.length">{{tip}}</p>
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary" ng-click="ok()">选择</button>
+        <button class="btn btn-warning" ng-click="cancel()">取消</button>
     </div>
 
 </div>

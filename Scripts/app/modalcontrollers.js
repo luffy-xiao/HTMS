@@ -39,12 +39,11 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
     $scope.cancel = function () {
         $modalInstance.dismiss()
     };
-}]).controller('SelectItemModalCtrl', ['$scope', '$modalInstance', 'list', function ($scope, $modalInstance, list) {
-    $scope.list = list;
+}]).controller('SelectItemModalCtrl', ['$scope', '$modalInstance', function ($scope, $modalInstance) {
     $scope.tip = '';
     $scope.ok = function () {
         if ($scope.selected == null) {
-            $scope.tip = '请选择相应的记录。';
+            $scope.tip = '请选择一条记录。';
         } else {
             $modalInstance.close($scope.selected);
         }

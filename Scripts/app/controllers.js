@@ -710,6 +710,69 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             calculatepr(prs,RestService)
         })
     }
+
+    // Pagination.
+    $scope.currentPage = 1;
+    $scope.maxSize = 10; // How many page links shown.
+    $scope.itemsPerPage = 20;
+
+    // Cache filterstring used in query.
+    var filterstring;
+
+    $scope.pageChanged = function (showModal) {
+        // Relocation records show in modal.
+        $scope.rrlist = [];
+
+        var skip = ($scope.currentPage - 1) * $scope.itemsPerPage;
+        // Limit query results.
+        RestService.getclient('resident').query({
+            $filter: filterstring, $skip: skip,
+            $top: $scope.itemsPerPage, $inlinecount: 'allpages'
+        }, function (rs) {
+            var residents = rs.Items;
+            // Set count.
+            $scope.totalItems = rs.Count;
+
+            if (residents.length > 1) {
+                residents.forEach(function (r) {
+                    var rr = RestService.getclient('rr').get({ id: r.RelocationRecordId });
+                    $scope.rrlist.push(rr);
+                });
+
+                // At first loading modal.
+                if (showModal) {
+                    var modalInstance = $modal.open({
+                        templateUrl: "/pages/modal/selectRRModal.html",
+                        size: 'lg',
+                        controller: "SelectItemModalCtrl",
+                        // In order to support paging.
+                        scope: $scope
+                    });
+                    modalInstance.result.then(function (rr) {
+                        $scope.rr = rr
+                        RestService.getclient('pr').query({ $filter: "RelocationRecordId eq '" + rr.Id + "'" }, function (prs) {
+                            $scope.prs = prs;
+                            calculatepr(prs, RestService);
+                            //$scope.contract.RelocationId = rr.RelocationId
+                        });
+                    }, function () {
+                        // Do nothing.
+                    });
+                }
+            }
+            else if (residents.length == 1) {
+                $scope.rr = RestService.getclient('rr').get({ id: residents[0].RelocationRecordId });
+                RestService.getclient('pr').query({ $filter: "RelocationRecordId eq '" + residents[0].RelocationRecordId + "'" }, function (prs) {
+                    $scope.prs = prs;
+                    calculatepr(prs, RestService);
+                    //$scope.contract.RelocationId = rr.RelocationId
+                });
+            }
+
+            $scope.showresidents = true;
+        });
+    }
+
     $scope.query = function () {
         var filters = []
         filters.push("RelationshipType eq '户主'")
@@ -721,64 +784,72 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             if ($scope.searchparams.IdentityCard != null) {
                 filters.push("substringof('" + $scope.searchparams.IdentityCard + "',IdentityCard)")
             }
-            var filterstring = "true";
+            filterstring = "true";
             filters.forEach(function (f) {
                 filterstring += (" and " + f)
             })
-            $scope.rrlist = []
-            RestService.getclient('resident').query({
-                $filter: filterstring
-            }, function (rs) {
-                var residents = rs.Items;
-                if (residents.length == 0) {
-                    alert("该姓名不存在")
-                }
-                else if (residents.length == 1) {
-                    $scope.rr = RestService.getclient('rr').get({ id: residents[0].RelocationRecordId })
-                    RestService.getclient('pr').query({ $filter: "RelocationRecordId eq '" + residents[0].RelocationRecordId + "'" }, function (prs) {
-                        $scope.prs = prs
-                        calculatepr(prs, RestService)
-                        //$scope.contract.RelocationId = rr.RelocationId
-                    })
-                }
-                else {
-                    residents.forEach(function (r) {
-                        var rr = RestService.getclient('rr').get({ id: r.RelocationRecordId })
-                        $scope.rrlist.push(rr)
 
-                    })
-                    var modalInstance = $modal.open({
-                        templateUrl: "/pages/modal/selectRRModal.html",
-                        size: 'lg',
-                        controller: "SelectItemModalCtrl",
-                        resolve: {
-                            list: function () {
-                                return $scope.rrlist
-                            }
-                        }
-                    });
-                    modalInstance.result.then(function (rr) {
-                        $scope.rr = rr
-                        RestService.getclient('pr').query({ $filter: "RelocationRecordId eq '" + rr.Id + "'" }, function (prs) {
-                            $scope.prs = prs
-                            calculatepr(prs, RestService)
-                            //$scope.contract.RelocationId = rr.RelocationId
-                        })
-                    }, function () {
-
-                    });
-                }
-                $scope.showresidents = true;
-            })
+            $scope.currentPage = 1;
+            $scope.pageChanged(true);
         }
-        
-    }
-    $scope.clist = RestService.getclient('community').query()
-    $scope.selectedapps = []
+    };
+
+    $scope.clist = RestService.getclient('community').query();
+    $scope.selectedapps = [];
+
+    // Pagination for apartments.
+    $scope.paging = {};
+    $scope.paging.currentPage = 1;
+    $scope.paging.maxSize = 10; // How many page links shown.
+    $scope.paging.itemsPerPage = 2;
+
+    // Cache filterstring used in query.
+    var appFilterstring;
+    $scope.paging.pageChanged = function (showModal) {
+        $scope.selectedapps = [];
+
+        var skip = ($scope.paging.currentPage - 1) * $scope.paging.itemsPerPage;
+        // Limit query results.
+        RestService.getclient('appartment').query({
+            $filter: appFilterstring + " and Status ne '已售'", $orderby: 'BuildingNumber,UnitNumber,DoorNumber',
+            $skip: skip, $top: $scope.paging.itemsPerPage, $inlinecount: 'allpages'
+        }, function (rs) {
+            $scope.applist = rs.Items;
+            // Set count.
+            $scope.paging.totalItems = rs.Count;
+
+            if (showModal) {
+                var modalInstance = $modal.open({
+                    templateUrl: "/pages/modal/selectappModal.html",
+                    size: 'lg',
+                    controller: "SelectItemModalCtrl",
+                    scope: $scope
+                });
+                modalInstance.result.then(function (item) {
+                    var pr = $filter('filter')($scope.prs, { Id: $scope.contract.PlacementRecordId }, true)[0]
+                    var total = 0
+                    $scope.selectedapps.forEach(function (app) {
+                        total += app.Size;
+                    })
+                    if (total + item.Size - pr.LeftSize > 50) {
+                        alert("您选择的面积远超过可安置面积，不符合规定");
+                        return;
+                    }
+                    $scope.selectedapps.push(item);
+                    //$scope.contract.AppartmentId = item.Id
+                    $scope.appselected = true;
+                    calculateapps();
+                    //initialize()
+                }, function () {
+
+                });
+            }
+        });
+    };
     $scope.queryapp = function () {
         var filters = []
         filters.push("CommunityId eq " + $scope.searchparams.CommunityId)
-        if (($scope.searchparams.BuildingNumber != null && $scope.searchparams.BuildingNumber!="") ||
+        if (($scope.searchparams.BuildingNumber != null && $scope.searchparams.BuildingNumber != "") ||
             ($scope.searchparams.SizeRange != null && $scope.searchparams.SizeRange)) {
 
             if ($scope.searchparams.BuildingNumber != null) {
@@ -797,45 +868,15 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
             }
         }
-        var filterstring = "true";
+        appFilterstring = "true";
         filters.forEach(function (f) {
-            filterstring += (" and " + f)
+            appFilterstring += (" and " + f)
         });
-        RestService.getclient('appartment').query({
-            $filter: filterstring +  " and Status ne '已售'" 
-            , $orderby: 'BuildingNumber,UnitNumber,DoorNumber'
-        }, function (rs) {
-            $scope.applist = rs.Items;
-            var modalInstance = $modal.open({
-                templateUrl: "/pages/modal/selectappModal.html",
-                size: 'lg',
-                controller: "SelectItemModalCtrl",
-                resolve: {
-                    list: function () {
-                        return $scope.applist
-                    }
-                }
-            });
-            modalInstance.result.then(function (item) {
-                var pr = $filter('filter')($scope.prs, { Id: $scope.contract.PlacementRecordId }, true)[0]
-                var total = 0
-                $scope.selectedapps.forEach(function(app){
-                    total+=app.Size
-                })
-                if (total + item.Size - pr.LeftSize > 50) {
-                    alert("您选择的面积远超过可安置面积，不符合规定");
-                    return;
-                }
-                $scope.selectedapps.push(item)
-                //$scope.contract.AppartmentId = item.Id
-                $scope.appselected = true;
-                calculateapps()
-                //initialize()
-            }, function () {
 
-            }); 
-        })
-    }
+        $scope.paging.currentPage = 1;
+        $scope.paging.pageChanged(true);
+    };
+
     $scope.removeselect = function (idx) {
         $scope.selectedapps.splice(idx, 1)
         calculateapps()
@@ -916,30 +957,86 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         window.open("/print.html#/placementrecords/" + $scope.prs[idx].Id + "/print")
     }
 
-}]).controller('PlacementRecordCtrl', ['$scope', '$modal', 'RestService','$filter', function ($scope, $modal, RestService,$filter) {
-   
-    $scope.searchparams = {}
-    $scope.rbs = RestService.getclient('rb').query()
-    $scope.contract = {}
+}]).controller('PlacementRecordCtrl', ['$scope', '$modal', 'RestService', '$filter', '$q', function ($scope, $modal, RestService, $filter, $q) {
+    $scope.searchparams = {};
+    $scope.rbs = RestService.getclient('rb').query();
+    $scope.contract = {};
     $scope.$on("added", function (item) {
         RestService.getclient('rr').get({ id: $scope.rr.Id }, function (rr) {
-            $scope.rr = rr
-            loadpr()
-        })
-    })
+            $scope.rr = rr;
+            loadpr();
+        });
+    });
     $scope.$on("updated", function (item) {
         RestService.getclient('rr').get({ id: $scope.rr.Id }, function (rr) {
-            $scope.rr = rr
-            loadpr()
+            $scope.rr = rr;
+            loadpr();
         })
-    })
+    });
 
     $scope.$on("deleted", function (item) {
         RestService.getclient('rr').get({ id: $scope.rr.Id }, function (rr) {
-            $scope.rr = rr
-            loadpr()
+            $scope.rr = rr;
+            loadpr();
         })
-    })
+    });
+
+    // Pagination.
+    $scope.currentPage = 1;
+    $scope.maxSize = 10; // How many page links shown.
+    $scope.itemsPerPage = 20;
+
+    // Cache filterstring used in query.
+    var filterstring;
+
+    $scope.pageChanged = function (showModal) {
+        // Relocation records show in modal.
+        $scope.rrlist = [];
+
+        var skip = ($scope.currentPage - 1) * $scope.itemsPerPage;
+        // Limit query results.
+        RestService.getclient('resident').query({
+            $filter: filterstring, $skip: skip,
+            $top: $scope.itemsPerPage, $inlinecount: 'allpages'
+        }, function (rs) {
+            var residents = rs.Items;
+            // Set count.
+            $scope.totalItems = rs.Count;
+
+            if (residents.length > 1) {
+                residents.forEach(function (r) {
+                    var rr = RestService.getclient('rr').get({ id: r.RelocationRecordId });
+                    $scope.rrlist.push(rr);
+                });
+
+                // At first loading modal.
+                if (showModal) {
+                    var modalInstance = $modal.open({
+                        templateUrl: "/pages/modal/selectRRModal.html",
+                        size: 'lg',
+                        controller: "SelectItemModalCtrl",
+                        // In order to support paging.
+                        scope: $scope
+                    });
+                    modalInstance.result.then(function (rr) {
+                        $scope.rr = rr;
+                        loadpr();
+                    }, function () {
+                        // Do nothing.
+                    });
+                }
+            }
+            else if (residents.length == 1) {
+                RestService.getclient('rr').get({
+                    id: residents[0].RelocationRecordId
+                }, function (rr) {
+                    $scope.rr = rr;
+                    loadpr();
+                });
+            }
+        });
+    }
+
     $scope.query = function () {
         var filters = []
         filters.push("RelationshipType eq '户主'")
@@ -951,62 +1048,24 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             if ($scope.searchparams.IdentityCard != null) {
                 filters.push("substringof('" + $scope.searchparams.IdentityCard + "',IdentityCard)")
             }
-            var filterstring = "true";
+            filterstring = "true";
             filters.forEach(function (f) {
                 filterstring += (" and " + f)
             })
-            $scope.rrlist = [];
-            // Limit query results.
-            RestService.getclient('resident').query({
-                $filter: filterstring
-            }, function (rs) {
-                var residents = rs.Items;
-                if (residents.length == 0) {
-                    alert("该姓名不存在")
-                }
-                else if (residents.length > 1) {
-                    residents.forEach(function (r) {
-                        var rr = RestService.getclient('rr').get({ id: r.RelocationRecordId });
-                        $scope.rrlist.push(rr);
-                    })
-                    var modalInstance = $modal.open({
-                        templateUrl: "/pages/modal/selectRRModal.html",
-                        size: 'lg',
-                        controller: "SelectItemModalCtrl",
-                        resolve: {
-                            list: function () {
-                                return $scope.rrlist
-                            }
-                        }
-                    });
-                    modalInstance.result.then(function (rr) {
-                        $scope.rr = rr
-                        loadpr()
 
-                    }, function () {
-
-                    });
-                }
-                else if (residents.length == 1) {
-                    RestService.getclient('rr').get({ id: residents[0].RelocationRecordId }, function (rr) {
-                        $scope.rr = rr
-                        loadpr()
-                    })
-                }
-
-            })
-
+            $scope.currentPage = 1;
+            $scope.pageChanged(true);
         }
-    }
-    function loadpr() {
+    };
 
+    function loadpr() {
         $scope.showresidents = true;
-        $scope.items = []
+        $scope.items = [];
 
         $scope.prs = RestService.getclient('pr').query({ $filter: "RelocationRecordId eq '" + $scope.rr.Id + "'" }, function (prs) {
-            calculatepr(prs, RestService)
-            $scope.items = prs
-            InitCtrl($scope, $modal, 'pr', RestService, { RelocationRecordId: $scope.rr.Id })
+            calculatepr(prs, RestService);
+            $scope.items = prs;
+            InitCtrl($scope, $modal, 'pr', RestService, { RelocationRecordId: $scope.rr.Id });
         })
     }   
 }])

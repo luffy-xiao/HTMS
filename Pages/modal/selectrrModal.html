@@ -14,7 +14,7 @@
                 <th>姓名</th>
                 <th>身份证号</th>
             </tr>
-            <tr ng-repeat="rr in list">
+            <tr ng-repeat="rr in rrlist">
                 <td><input name="selected" type="radio" ng-model="$parent.selected" ng-value="rr" /></td>
                 <td>{{rr.RelocationBase.Name}}</td>
                 <td>{{rr.Village}}</td>
@@ -24,11 +24,19 @@
                 <td>{{rr.Residents[0].IdentityCard}}</td>
             </tr>
         </table>
+        <!-- pagination -->
+        <div ng-show="totalItems">
+            <pagination total-items="totalItems" items-per-page="itemsPerPage" ng-model="$parent.currentPage" ng-change="pageChanged()"
+                        max-size="maxSize" num-pages="numPages" class="pagination-sm" boundary-links="true" rotate="false"
+                        first-text="首页" previous-text="<上一页" next-text="下一页>" last-text="尾页"></pagination>
+            <span class="pull-right" style="margin: 20px 0;">显示 {{(currentPage - 1) * itemsPerPage + 1}} - {{currentPage * itemsPerPage > totalItems ? totalItems : currentPage * itemsPerPage}} | 总计: {{totalItems}}</span>
+        </div>
+
         <p class="bg-info" ng-show="tip.length">{{tip}}</p>
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary" ng-click="ok()">选择</button>
-        <button class="btn btn-default" ng-click="cancel()">取消</button>
+        <button class="btn btn-warning" ng-click="cancel()">取消</button>
     </div>
 
 </div>
