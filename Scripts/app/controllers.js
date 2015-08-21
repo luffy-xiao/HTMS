@@ -801,7 +801,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.paging = {};
     $scope.paging.currentPage = 1;
     $scope.paging.maxSize = 10; // How many page links shown.
-    $scope.paging.itemsPerPage = 2;
+    $scope.paging.itemsPerPage = 20;
 
     // Cache filterstring used in query.
     var appFilterstring;
