@@ -78,8 +78,8 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
         
     }
    
-
-    $scope.newitem = angular.copy(item)
+    $scope.newitem = angular.copy(item);
+    // Contract modal.
     if (type == 'contract') {
         $scope.app = RestService.getclient('appartment').get({ id: $scope.newitem.AppartmentId }, function (app) {
             $scope.pr = RestService.getclient('pr').get({ id: $scope.newitem.PlacementRecordId }, function (pr) {
@@ -120,8 +120,7 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
             return $scope.msForm.$invalid || ($scope.newitem.Size1 + $scope.newitem.Size2 + $scope.newitem.Size3 + $scope.newitem.Size4 != $scope.app.Size)
         }
         $scope.totalprice = function () {
-
-            return $scope.app == null || $scope.newitem == null ? 0 : $scope.app.Price1 * $scope.newitem.Size1 + $scope.app.Price2 * $scope.newitem.Size2 + $scope.app.Price3 * $scope.newitem.Size3 + $scope.app.Price4 * $scope.newitem.Size4
+            return $scope.app == null || $scope.newitem == null ? 0 : $scope.app.Price1 * $scope.newitem.Size1 + $scope.app.Price2 * $scope.newitem.Size2 + $scope.app.Price3 * $scope.newitem.Size3 + $scope.app.Price4 * $scope.newitem.Size4;
         }
     }
     $scope.ok = function () {
