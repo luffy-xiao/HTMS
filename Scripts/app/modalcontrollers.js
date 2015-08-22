@@ -117,7 +117,8 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
             })
         })
         $scope.disable = function () {
-            return $scope.msForm.$invalid || ($scope.newitem.Size1 + $scope.newitem.Size2 + $scope.newitem.Size3 + $scope.newitem.Size4 != $scope.app.Size)
+            return $scope.msForm.$invalid || !($scope.newitem.Size1 + $scope.newitem.Size2 + $scope.newitem.Size3 + $scope.newitem.Size4 < $scope.app.Size + 0.000001
+                && $scope.newitem.Size1 + $scope.newitem.Size2 + $scope.newitem.Size3 + $scope.newitem.Size4 > $scope.app.Size - 0.000001)
         }
         $scope.totalprice = function () {
             return $scope.app == null || $scope.newitem == null ? 0 : $scope.app.Price1 * $scope.newitem.Size1 + $scope.app.Price2 * $scope.newitem.Size2 + $scope.app.Price3 * $scope.newitem.Size3 + $scope.app.Price4 * $scope.newitem.Size4;

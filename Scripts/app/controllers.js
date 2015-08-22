@@ -1149,7 +1149,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     }
     $scope.totalfee = function (idx) {
         var contract = $scope.contracts[idx]
-        return  contract.GasFee + contract.OtherFee + contract.TransitionFee + contract.TVFee + contract.InterestFee + contract.RepairUnitPrice * contract.Appartment.Size + $scope.delta(idx)
+        return  contract.GasFee + contract.OtherFee + contract.TransitionFee + contract.TVFee - contract.InterestFee + contract.RepairUnitPrice * contract.Appartment.Size + $scope.delta(idx)
     }
     $scope.owners = function (idx) {
         var contract = $scope.contracts[idx]
