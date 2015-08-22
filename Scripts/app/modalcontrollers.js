@@ -100,6 +100,10 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
                         $scope.newitem.Size2 = app.Size - $scope.newitem.Size1 > 5 ? 5 : app.Size - $scope.newitem.Size1
                         $scope.newitem.Size3 = app.Size - $scope.newitem.Size1 - $scope.newitem.Size2 > 5 ? 5 : app.Size - $scope.newitem.Size1 - $scope.newitem.Size2
                         $scope.newitem.Size4 = app.Size - $scope.newitem.Size1 - $scope.newitem.Size2 - $scope.newitem.Size3
+                        $scope.newitem.Size1 = parseFloat($scope.newitem.Size1.toFixed(2))
+                        $scope.newitem.Size2 = parseFloat($scope.newitem.Size2.toFixed(2))
+                        $scope.newitem.Size3 = parseFloat($scope.newitem.Size3.toFixed(2))
+                        $scope.newitem.Size4 = parseFloat($scope.newitem.Size4.toFixed(2))
 
                     } else {
                         $scope.newitem = RestService.getclient('contract').get({ id: item.Id })
