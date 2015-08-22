@@ -65,7 +65,7 @@
                                                 <td class="STYLE4"><span class="STYLE7">室号</span></td>
                                                 <td class="STYLE4">{{c.Appartment.DoorNumber}}</td>
                                                 <td class="STYLE4">购房金额</td>
-                                                <td class="STYLE4"><input type="text" class="noline_textarea" size="18" value="{{(c.Appartment.Price1 * c.Size1-delta($index)).toFixed(2)}}" /></td>
+                                                <td class="STYLE4"><input type="text" class="noline_textarea" size="18" value="{{usedamount($index).toFixed(2)}}" /></td>
                                                 <td class="STYLE4">购房日期</td>
                                                 <td class="STYLE4"><input type="text" class="noline_textarea" size="10" value="{{c.ContractDate.substring(0,10)}}" /></td>
                                             </tr>
@@ -167,7 +167,7 @@
                                                 <td class="STYLE4">户主姓名</td>
                                                 <td class="STYLE4"><input  type="text" class="noline_textarea" size="18" value="{{owners($index)}}" /></td>
                                                 <td class="STYLE4">身份证</td>
-                                                <td class="STYLE4"><input  type="text" class="noline_textarea" size="18" value="" /></td>
+                                                <td class="STYLE4"><input  type="text" class="noline_textarea" size="18" value="{{idcard($index)}}" /></td>
                                             </tr>
                                             <tr>
                                                 <td class="STYLE4" width="120">合计支付金额</td>

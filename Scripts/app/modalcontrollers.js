@@ -83,7 +83,7 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
     if (type == 'contract') {
         $scope.app = RestService.getclient('appartment').get({ id: $scope.newitem.AppartmentId }, function (app) {
             $scope.pr = RestService.getclient('pr').get({ id: $scope.newitem.PlacementRecordId }, function (pr) {
-                RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + pr.Id }, function (contracts) {
+                RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + pr.Id , $orderby:"Id" }, function (contracts) {
                     var total = 0
                     var size = 0;
                     contracts.forEach(function (c) {
