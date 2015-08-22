@@ -100,9 +100,10 @@
                     </button>
                 </div>
             </div>
-          
+            <div class="alert alert-info" ng-if="paging.totalItems == 0">没有查询到相应的房源，请重新查询。</div>
             <div >
                 <h5 class="text-info">已选择的房源</h5>
+                <div class="alert alert-warning" ng-if="appduplicated">选择了重复的房源，请重新选择。</div>
                 <table class="table table-striped table-hover table-bordered">
                     <tr>
                         <th>小区</th>

@@ -816,6 +816,10 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             // Set count.
             $scope.paging.totalItems = rs.Count;
 
+            if (rs.Count == 0) {
+                return;
+            }
+
             if (showModal) {
                 var modalInstance = $modal.open({
                     templateUrl: "/pages/modal/selectappModal.html",
@@ -824,11 +828,22 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     scope: $scope
                 });
                 modalInstance.result.then(function (item) {
-                    var pr = $filter('filter')($scope.prs, { Id: $scope.contract.PlacementRecordId }, true)[0]
-                    var total = 0
+                    var pr = $filter('filter')($scope.prs, { Id: $scope.contract.PlacementRecordId }, true)[0];
+                    var total = 0;
+                    // Whether selected same apartment.
+                    $scope.appduplicated = false;
+
                     $scope.selectedapps.forEach(function (app) {
+                        if (app.Id == item.Id) {
+                            $scope.appduplicated = true;
+                        }
                         total += app.Size;
-                    })
+                    });
+
+                    if ($scope.appduplicated) {
+                        return;
+                    }
+
                     if (total + item.Size - pr.LeftSize > 50) {
                         alert("您选择的面积远超过可安置面积，不符合规定");
                         return;
@@ -847,11 +862,13 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.queryapp = function () {
         var filters = [];
         filters.push("CommunityId eq " + $scope.searchparams.CommunityId);
-        if (($scope.searchparams.BuildingNumber != null && $scope.searchparams.BuildingNumber != "") ||
+        if (($scope.searchparams.BuildingNumber != null && $scope.searchparams.BuildingNumber.trim() != "") ||
             ($scope.searchparams.SizeRange != null && $scope.searchparams.SizeRange)) {
 
-            if ($scope.searchparams.BuildingNumber != null) {
-                filters.push("BuildingNumber eq " + $scope.searchparams.BuildingNumber)
+            if ($scope.searchparams.BuildingNumber != null && $scope.searchparams.BuildingNumber.trim() != "") {
+                if (!isNaN($scope.searchparams.BuildingNumber)) {
+                    filters.push("BuildingNumber eq " + $scope.searchparams.BuildingNumber);
+                }
             }
             if ($scope.searchparams.SizeRange != null && $scope.searchparams.SizeRange != "") {
                 if ($scope.searchparams.SizeRange == 1) {
