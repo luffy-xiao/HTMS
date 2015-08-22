@@ -806,8 +806,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     // Cache filterstring used in query.
     var appFilterstring;
     $scope.paging.pageChanged = function (showModal) {
-        $scope.selectedapps = [];
-
         var skip = ($scope.paging.currentPage - 1) * $scope.paging.itemsPerPage;
         // Limit query results.
         RestService.getclient('appartment').query({
@@ -847,8 +845,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         });
     };
     $scope.queryapp = function () {
-        var filters = []
-        filters.push("CommunityId eq " + $scope.searchparams.CommunityId)
+        var filters = [];
+        filters.push("CommunityId eq " + $scope.searchparams.CommunityId);
         if (($scope.searchparams.BuildingNumber != null && $scope.searchparams.BuildingNumber != "") ||
             ($scope.searchparams.SizeRange != null && $scope.searchparams.SizeRange)) {
 
