@@ -155,6 +155,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     })
 
     $scope.notnew = true;
+    $scope.readonly = $routeParams.readonly
     var readonly = $routeParams.readonly
    
     if (readonly == "true") {
@@ -173,6 +174,12 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         }, function (err) {
             alert(err)
         })
+
+    }
+    $scope.edit = function () {
+        //update the record
+
+        $location.path('/resident/detail/' + $scope.rr.Id + "/readonly=false")
 
     }
     $scope.loadgroups = function () {
