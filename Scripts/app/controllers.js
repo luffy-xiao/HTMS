@@ -969,10 +969,13 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         },true)
     }
     $scope.printA = function (idx) {
-        window.open( "/print.html#/contracts/"+$scope.contractlist[idx].Id+"/print")
+        window.open("/print.html#/placementrecords/"+ $scope.contract.PlacementRecordId+"/contracts/" + $scope.contractlist[idx].Id + "/printconfirmation")
     }
     $scope.printB = function (idx) {
-        window.open("/print.html#/placementrecords/" + $scope.prs[idx].Id + "/print")
+        window.open("/print.html#/placementrecords/" + $scope.prs[idx].Id + "/printrecords")
+    }
+    $scope.printC = function (idx) {
+        window.open("/print.html#/placementrecords/" + $scope.contract.PlacementRecordId + "/contracts/" + $scope.contractlist[idx].Id + "/printrecord")
     }
 
 }]).controller('PlacementRecordCtrl', ['$scope', '$modal', 'RestService', '$filter', '$q', function ($scope, $modal, RestService, $filter, $q) {
@@ -1087,7 +1090,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         })
     }   
 }])
-.controller('PrintACtrl', ['$scope', '$modal', 'RestService', '$routeParams', function ($scope, $modal, RestService, $routeParams) {
+/*.controller('PrintACtrl', ['$scope', '$modal', 'RestService', '$routeParams', function ($scope, $modal, RestService, $routeParams) {
     var id = $routeParams.id
     $scope.contract = RestService.getclient('contract').get({ id: id }, function (item) {
         $scope.rr = RestService.getclient('rr').get({ id: item.PlacementRecord.RelocationRecordId }, function (rr) {
@@ -1103,7 +1106,15 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         while (item.AppartmentOwners.length < 6) {
             item.AppartmentOwners.push({})
         }
+        $scope.pr = item.PlacementRecord;
+        $scope.contracts = RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + $scope.pr.Id, $orderby: "Id" }, function (contracts) {
+            contracts.forEach(function (contract) {
+
+            })
+        })
     })
+
+
     $scope.totalprice = function () {
         if($scope.contract == null || $scope.contract.Appartment==null) return "N/A"
         else return $scope.contract.Appartment.Price1 * $scope.contract.Size1+　
@@ -1111,18 +1122,63 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             $scope.contract.Appartment.Price3 * $scope.contract.Size3 + 
             $scope.contract.Appartment.Price4 * $scope.contract.Size4
     }
-}]).controller('PrintBCtrl', ['$scope', '$modal', 'RestService', '$routeParams', function ($scope, $modal, RestService, $routeParams) {
-    var id = $routeParams.id
+}])*/.controller('PrintBCtrl', ['$scope', '$modal', 'RestService', '$routeParams', function ($scope, $modal, RestService, $routeParams) {
+    var prid = $routeParams.prid
+    var cid = $routeParams.cid
+    $scope.showrecord = function (idx) {
+        if (cid == null) {
+            return true;
+        } else {
+            if ($scope.idx == null) {
+                return false
+            } else {
+                return $scope.idx == idx
+            }
+        }
+    }
     $scope.now = moment().format("YYYY-MM-DD")
-    $scope.pr = RestService.getclient('pr').get({ id: id }, function (pr) {
+    $scope.pr = RestService.getclient('pr').get({ id: prid }, function (pr) {
         $scope.contracts = RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + pr.Id, $orderby: "Id" }, function (contracts) {
-           
+            if (cid != null) {
+                var i = 0;
+                contracts.forEach(function (c){
+                    if (c.Id == cid) {
+                       // $scope.contract = c
+                        $scope.idx = i
+                    }
+                    i++
+                })
+                $scope.ctotalprice = $scope.totalprice($scope.idx).toFixed(2)
+                $scope.cdelta = $scope.delta($scope.idx).toFixed(2)
+                $scope.cusedamount = $scope.usedamount($scope.idx).toFixed(2)
+                $scope.contract = RestService.getclient('contract').get({ id: cid }, function (item) {
+                    $scope.rr = RestService.getclient('rr').get({ id: item.PlacementRecord.RelocationRecordId }, function (rr) {
+                        var date = new Date(rr.DeliveryDate)
+                        $scope.dd = {}
+                        $scope.dd.year = date.getFullYear()
+                        $scope.dd.month = date.getMonth()
+                        $scope.dd.day = date.getDate()
+                    })
+                    while (item.PlacementRecord.Residents.length < 6) {
+                        item.PlacementRecord.Residents.push({})
+                    }
+                    while (item.AppartmentOwners.length < 6) {
+                        item.AppartmentOwners.push({})
+                    }
+                    $scope.pr = item.PlacementRecord;
+                    $scope.contracts = RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + $scope.pr.Id, $orderby: "Id" }, function (contracts) {
+                        contracts.forEach(function (contract) {
+
+                        })
+                    })
+                })
+            }
         })
         $scope.rr = RestService.getclient('rr').get({id:pr.RelocationRecordId},function(rr){
         
         })
     })
-    
+  
     $scope.totalprice = function (idx) {
         var contract = $scope.contracts[idx]
         if (contract == null) return "N/A"

@@ -57,7 +57,7 @@
                                     <td height="28" class="STYLE4"></td>
                                 </tr>
                                 <tr ng-repeat-start="c in contracts">
-                                    <td height="28" class="STYLE4">
+                                    <td ng-show="showrecord($index)" height="28" class="STYLE4">
                                         <table width="100%" border="1" cellspacing="0" bordercolor="#000000">
                                             <tr>
                                                 <td class="STYLE4"><span class="STYLE7">门牌号 ({{c.Appartment.BuildingNumber}})</span></td>
@@ -128,8 +128,8 @@
                                         </table>
                                     </td>
                                 </tr>
-                                <tr><td height="20"></td></tr>
-                                <tr>
+                                <tr ng-show="showrecord($index)"><td height="20"></td></tr>
+                                <tr ng-show="showrecord($index)">
                                     <td height="28" class="STYLE4">
                                         <table width="100%" border="0" cellspacing="3" cellpadding="0">
                                             <tr>
@@ -165,9 +165,9 @@
                                                 <td class="STYLE4">电视开户费</td>
                                                 <td class="STYLE4"><input type="text" class="noline_textarea" size="10" ng-model="c.TVFee" /></td>
                                                 <td class="STYLE4">户主姓名</td>
-                                                <td class="STYLE4"><input  type="text" class="noline_textarea" size="18" value="{{owners($index)}}" /></td>
+                                                <td class="STYLE4"><input type="text" class="noline_textarea" size="18" value="{{owners($index)}}" /></td>
                                                 <td class="STYLE4">身份证</td>
-                                                <td class="STYLE4"><input  type="text" class="noline_textarea" size="18" value="{{idcard($index)}}" /></td>
+                                                <td class="STYLE4"><input type="text" class="noline_textarea" size="18" value="{{idcard($index)}}" /></td>
                                             </tr>
                                             <tr>
                                                 <td class="STYLE4" width="120">合计支付金额</td>

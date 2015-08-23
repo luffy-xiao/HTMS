@@ -60,11 +60,15 @@ var appmodule = angular.module('ms.site', ['ngCookies','ngRoute', 'ms.site.contr
                 }).when('/placementrecords', {
                     templateUrl: '/pages/contract/placement_list.html',
                     controller: 'PlacementRecordCtrl'
-                }).when('/contracts/:id/print', {
+                }).when('/placementrecords/:prid/contracts/:cid/printconfirmation', {
                       templateUrl: '/pages/print/contractconfirm.html',
-                      controller: 'PrintACtrl'
+                      controller: 'PrintBCtrl'
                 }).
-                  when('/placementrecords/:id/print', {
+                  when('/placementrecords/:prid/printrecords', {
+                      templateUrl: '/pages/print/contractrecord.html',
+                      controller: 'PrintBCtrl'
+                  })
+                  .when('/placementrecords/:prid/contracts/:cid/printrecord', {
                       templateUrl: '/pages/print/contractrecord.html',
                       controller: 'PrintBCtrl'
                   }).
