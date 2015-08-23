@@ -292,7 +292,12 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         filters.push("CommunityId eq " + $scope.searchparams.CommunityId)
 
         if ($scope.searchparams.BuildingNumber != null && $scope.searchparams.BuildingNumber.trim() != '') {
-            filters.push("BuildingNumber eq " + $scope.searchparams.BuildingNumber)
+            if (!isNaN($scope.searchparams.BuildingNumber)) {
+                filters.push("BuildingNumber eq " + $scope.searchparams.BuildingNumber)
+            } else {
+                alert('幢号只能为数字，请输入正确的幢号。');
+                return;
+            }
         }
         if ($scope.searchparams.SizeRange != null && $scope.searchparams.SizeRange !="") {
             if ($scope.searchparams.SizeRange == 1) {
@@ -868,6 +873,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             if ($scope.searchparams.BuildingNumber != null && $scope.searchparams.BuildingNumber.trim() != "") {
                 if (!isNaN($scope.searchparams.BuildingNumber)) {
                     filters.push("BuildingNumber eq " + $scope.searchparams.BuildingNumber);
+                } else {
+                    alert('幢号只能为数字，请输入正确的幢号。');
+                    return;
                 }
             }
             if ($scope.searchparams.SizeRange != null && $scope.searchparams.SizeRange != "") {

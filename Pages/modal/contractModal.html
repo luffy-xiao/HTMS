@@ -56,6 +56,10 @@
                 
             </div>
             <div class="form-group  has-feedback">
+                <label class="col-sm-offset-4 col-sm-2 control-label">合计（平方米）</label>
+                <label class="col-sm-2">{{newitem.Size1 + newitem.Size2 + newitem.Size3 + newitem.Size4}}</label>
+            </div>
+            <div class="form-group  has-feedback">
                 <label class="col-sm-2 control-label">总价</label>
                 <div class="col-sm-8">
                     <label class="form-control label-default">{{totalprice().toFixed(2)}}</label>

@@ -91,16 +91,17 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
                         size += c.Size1 + c.Size2 + c.Size3 + c.Size4;
                     })
                     
-                    var available = pr.Size - size
+                    // Handle floating digits.
+                    var available = parseFloat((pr.Size - size).toFixed(2));
                     if (item.Id == null) {
-                        $scope.newitem.AppartmentOwners = []
+                        $scope.newitem.AppartmentOwners = [];
                         
                         if (available < 0) available = 0
                         $scope.newitem.Size1 = available >= app.Size ? app.Size : available
-                        $scope.newitem.Size2 = app.Size - $scope.newitem.Size1 > 5 ? 5 : app.Size - $scope.newitem.Size1
-                        $scope.newitem.Size3 = app.Size - $scope.newitem.Size1 - $scope.newitem.Size2 > 5 ? 5 : app.Size - $scope.newitem.Size1 - $scope.newitem.Size2
-                        $scope.newitem.Size4 = app.Size - $scope.newitem.Size1 - $scope.newitem.Size2 - $scope.newitem.Size3
-
+                        $scope.newitem.Size2 = app.Size - $scope.newitem.Size1 > 5 ? 5 : parseFloat((app.Size - $scope.newitem.Size1).toFixed(2));
+                        $scope.newitem.Size3 = app.Size - $scope.newitem.Size1 - $scope.newitem.Size2 > 5 ? 5 : parseFloat((app.Size - $scope.newitem.Size1 - $scope.newitem.Size2).toFixed(2));
+                        $scope.newitem.Size4 = parseFloat((app.Size - $scope.newitem.Size1 - $scope.newitem.Size2 - $scope.newitem.Size3).toFixed(2));
+                        
                     } else {
                         $scope.newitem = RestService.getclient('contract').get({ id: item.Id })
                     }
