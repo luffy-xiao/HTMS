@@ -155,6 +155,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     })
 
     $scope.notnew = true;
+    $scope.readonly = $routeParams.readonly
     var readonly = $routeParams.readonly
    
     if (readonly == "true") {
@@ -173,6 +174,12 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         }, function (err) {
             alert(err)
         })
+
+    }
+    $scope.edit = function () {
+        //update the record
+
+        $location.path('/resident/detail/' + $scope.rr.Id + "/readonly=false")
 
     }
     $scope.loadgroups = function () {
@@ -1116,7 +1123,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     var id = $routeParams.id
     $scope.now = moment().format("YYYY-MM-DD")
     $scope.pr = RestService.getclient('pr').get({ id: id }, function (pr) {
-        $scope.contracts = RestService.getclient('contract').query({$filter: "PlacementRecordId eq "+ pr.Id }, function (contracts) {
+        $scope.contracts = RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + pr.Id, $orderby: "Id" }, function (contracts) {
            
         })
         $scope.rr = RestService.getclient('rr').get({id:pr.RelocationRecordId},function(rr){
@@ -1132,19 +1139,25 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             contract.Appartment.Price3 * contract.Size3 +
             contract.Appartment.Price4 * contract.Size4
     }
-    $scope.delta = function (idx) {
-        var contract = $scope.contracts[idx]
-        var i = idx
-        var totalprice = 0
-        while (i >= 0) {
-            totalprice += $scope.totalprice(i)
-            i--
+    $scope.usedamount = function (idx) {
+        if (idx == 0) {
+            return $scope.pr.TotalCompensation - $scope.totalprice(0) > 0 ? $scope.totalprice(0) : $scope.pr.TotalCompensation
+        } else {
+            var totalused = 0
+            var i = idx
+            while (i > 0) {
+                totalused += $scope.usedamount(i-1)
+                i--
+            }
+            return $scope.pr.TotalCompensation - totalused - $scope.totalprice(idx) > 0 ?$scope.totalprice(idx): $scope.pr.TotalCompensation - totalused
         }
-        return totalprice - $scope.pr.TotalCompensation >0 ? totalprice - $scope.pr.TotalCompensation:0
+    }
+    $scope.delta = function (idx) {
+        return $scope.totalprice(idx) - $scope.usedamount(idx)
     }
     $scope.totalfee = function (idx) {
         var contract = $scope.contracts[idx]
-        return  contract.GasFee + contract.OtherFee + contract.TransitionFee + contract.TVFee + contract.InterestFee + contract.RepairUnitPrice * contract.Appartment.Size + $scope.delta(idx)
+        return  contract.GasFee + contract.OtherFee + contract.TransitionFee + contract.TVFee - contract.InterestFee + contract.RepairUnitPrice * contract.Appartment.Size + $scope.delta(idx)
     }
     $scope.owners = function (idx) {
         var contract = $scope.contracts[idx]
@@ -1153,6 +1166,11 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             names += o.Name +" "
         })
         return names
+    }
+    $scope.idcard = function (idx) {
+        var contract = $scope.contracts[idx]
+        var names = ""
+        return contract.AppartmentOwners[0] !=null ? contract.AppartmentOwners[0].IdentityCard:""
     }
 }])
 

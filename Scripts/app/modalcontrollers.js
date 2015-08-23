@@ -83,7 +83,7 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
     if (type == 'contract') {
         $scope.app = RestService.getclient('appartment').get({ id: $scope.newitem.AppartmentId }, function (app) {
             $scope.pr = RestService.getclient('pr').get({ id: $scope.newitem.PlacementRecordId }, function (pr) {
-                RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + pr.Id }, function (contracts) {
+                RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + pr.Id , $orderby:"Id" }, function (contracts) {
                     var total = 0
                     var size = 0;
                     contracts.forEach(function (c) {
@@ -98,10 +98,13 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
                         
                         if (available < 0) available = 0
                         $scope.newitem.Size1 = available >= app.Size ? app.Size : available
-                        $scope.newitem.Size2 = app.Size - $scope.newitem.Size1 > 5 ? 5 : parseFloat((app.Size - $scope.newitem.Size1).toFixed(2));
-                        $scope.newitem.Size3 = app.Size - $scope.newitem.Size1 - $scope.newitem.Size2 > 5 ? 5 : parseFloat((app.Size - $scope.newitem.Size1 - $scope.newitem.Size2).toFixed(2));
-                        $scope.newitem.Size4 = parseFloat((app.Size - $scope.newitem.Size1 - $scope.newitem.Size2 - $scope.newitem.Size3).toFixed(2));
-                        
+                        $scope.newitem.Size2 = app.Size - $scope.newitem.Size1 > 5 ? 5 : app.Size - $scope.newitem.Size1
+                        $scope.newitem.Size3 = app.Size - $scope.newitem.Size1 - $scope.newitem.Size2 > 5 ? 5 : app.Size - $scope.newitem.Size1 - $scope.newitem.Size2
+                        $scope.newitem.Size4 = app.Size - $scope.newitem.Size1 - $scope.newitem.Size2 - $scope.newitem.Size3
+                        $scope.newitem.Size1 = parseFloat($scope.newitem.Size1.toFixed(2))
+                        $scope.newitem.Size2 = parseFloat($scope.newitem.Size2.toFixed(2))
+                        $scope.newitem.Size3 = parseFloat($scope.newitem.Size3.toFixed(2))
+                        $scope.newitem.Size4 = parseFloat($scope.newitem.Size4.toFixed(2))
                     } else {
                         $scope.newitem = RestService.getclient('contract').get({ id: item.Id })
                     }
@@ -118,7 +121,8 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
             })
         })
         $scope.disable = function () {
-            return $scope.msForm.$invalid || ($scope.newitem.Size1 + $scope.newitem.Size2 + $scope.newitem.Size3 + $scope.newitem.Size4 != $scope.app.Size)
+            return $scope.msForm.$invalid || !($scope.newitem.Size1 + $scope.newitem.Size2 + $scope.newitem.Size3 + $scope.newitem.Size4 < $scope.app.Size + 0.000001
+                && $scope.newitem.Size1 + $scope.newitem.Size2 + $scope.newitem.Size3 + $scope.newitem.Size4 > $scope.app.Size - 0.000001)
         }
         $scope.totalprice = function () {
             return $scope.app == null || $scope.newitem == null ? 0 : $scope.app.Price1 * $scope.newitem.Size1 + $scope.app.Price2 * $scope.newitem.Size2 + $scope.app.Price3 * $scope.newitem.Size3 + $scope.app.Price4 * $scope.newitem.Size4;

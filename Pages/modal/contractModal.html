@@ -142,7 +142,7 @@
             <div class="form-group  has-feedback">
                 <label class="col-sm-2 control-label">合计支付金额(元)</label>
                 <div class="col-sm-2">
-                    <label class="form-control label-default" >{{(totalprice() + newitem.GasFee+  newitem.OtherFee + newitem.TransitionFee + newitem.TVFee + newitem.InterestFee + newitem.RepairUnitPrice * app.Size).toFixed(2)}}</label>
+                    <label class="form-control label-default" >{{(totalprice() + newitem.GasFee+  newitem.OtherFee + newitem.TransitionFee + newitem.TVFee - newitem.InterestFee + newitem.RepairUnitPrice * app.Size).toFixed(2)}}</label>
                 </div>
             </div>
             
