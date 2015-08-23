@@ -957,7 +957,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             contract.Appartment.Price4 * contract.Size4
     }
     $scope.contracts = function () {
-        $scope.contractlist = RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + $scope.contract.PlacementRecordId }, function () {
+        $scope.contractlist = RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + $scope.contract.PlacementRecordId, $orderby: "Id" }, function () {
             $scope.showcontracts = true;
             $scope.items = $scope.contractlist
             $scope.modify = function (idx) {
