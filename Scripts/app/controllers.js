@@ -872,20 +872,20 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             }
             if ($scope.searchparams.SizeRange != null && $scope.searchparams.SizeRange != "") {
                 if ($scope.searchparams.SizeRange == 1) {
-                    filters.push("Size lt 60")
+                    filters.push("Size lt 60");
                 }
                 else if ($scope.searchparams.SizeRange == 2) {
-                    filters.push("(Size ge 60 and Size le 90)")
+                    filters.push("(Size ge 60 and Size le 90)");
                 }
                 else if ($scope.searchparams.SizeRange == 3) {
-                    filters.push("Size gt 90")
+                    filters.push("Size gt 90");
                 }
 
             }
         }
         appFilterstring = "true";
         filters.forEach(function (f) {
-            appFilterstring += (" and " + f)
+            appFilterstring += (" and " + f);
         });
 
         $scope.paging.currentPage = 1;
@@ -893,50 +893,46 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     };
 
     $scope.removeselect = function (idx) {
-        $scope.selectedapps.splice(idx, 1)
-        calculateapps()
+        $scope.selectedapps.splice(idx, 1);
+        if ($scope.selectedapps.length) {
+            calculateapps();
+        }
     }
     var calculateapps = function () {
-        var pr = $filter('filter')($scope.prs, { Id: $scope.contract.PlacementRecordId }, true)[0]
-        var available = pr.LeftSize
-        var apps = $scope.selectedapps
-        var lowest = -1
-        var allsize = 0
-        var totalbaseprice = 0
-        var lastapp
-        var lastcontract
+        var pr = $filter('filter')($scope.prs, { Id: $scope.contract.PlacementRecordId }, true)[0];
+        var available = pr.LeftSize;
+        var apps = $scope.selectedapps;
+        var lowest = -1, allsize = 0, totalbaseprice = 0;
+        var lastapp, lastcontract;
         apps.forEach(function (app) {
             //when app is the last to calculate
-            allsize += app.Size
-            totalbaseprice += app.Size * app.Price1
-        })
+            allsize += app.Size;
+            totalbaseprice += app.Size * app.Price1;
+        });
         if (available >= allsize) {
-            lastapp = apps[0]
+            lastapp = apps[0];
         } else {
             apps.forEach(function (app) {
-                var delta = allsize - available
-                var contract = {}
-                contract.AppartmentId= app.Id
-                contract.Appartment = app
-                contract.Size1 = app.Size-delta
-                contract.Size2 = delta > 5 ? 5 : delta ;
-                contract.Size3 = delta > 10 ? 5 : delta -contract.Size2;
-                contract.Size4 = delta  - contract.Size2 - contract.Size3;
-                var total = totalbaseprice - app.Size * app.Price1 + totalprice(contract)
+                var delta = allsize - available;
+                var contract = {};
+                contract.AppartmentId = app.Id;
+                contract.Appartment = app;
+                contract.Size1 = app.Size - delta;
+                contract.Size2 = delta > 5 ? 5 : delta;
+                contract.Size3 = delta > 10 ? 5 : delta - contract.Size2;
+                contract.Size4 = delta - contract.Size2 - contract.Size3;
+                var total = totalbaseprice - app.Size * app.Price1 + totalprice(contract);
                 if (lowest == -1 || total < lowest) {
-                    lowest = total
-                    lastapp = app
-                    lastcontract = app
+                    lowest = total;
+                    lastapp = app;
+                    lastcontract = app;
                 }
-            })
+            });
         }
-        $scope.lastapp = lastapp
-        apps.splice(apps.indexOf(lastapp),1);
-        apps.push(lastapp)
-        
-
-    }   
-
+        $scope.lastapp = lastapp;
+        apps.splice(apps.indexOf(lastapp), 1);
+        apps.push(lastapp);
+    }
     
     function totalprice(contract) {
         if (contract == null || contract.Appartment == null) return "N/A"
