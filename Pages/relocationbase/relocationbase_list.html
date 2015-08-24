@@ -11,7 +11,7 @@
         <tr ng-repeat="base in items">
             <td>{{base.RBId}}</td>
             <td>{{base.Name}}</td>
-            <td>{{base.CreatedTime.substring(0,10)}}</td>
+            <td>{{base.CreatedTime | date:"yyyy-MM-dd"}}</td>
 
             <td>
                 <input type="button" class="btn btn-default btn-xs" value="修改" ng-click="modify($index)" />
