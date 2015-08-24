@@ -83,6 +83,12 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.items = RestService.getclient('rb').query();
     InitCtrl($scope, $modal, 'rb', RestService, {})
 }]).controller('ResidentSearchCtrl', ['$scope', '$modal', 'RestService', '$location', function ($scope, $modal, RestService, $location) {
+    $scope.rbs = RestService.getclient('rb').query();
+    $scope.vlist = RestService.getclient('village').query();
+
+    //datapickers
+    InitDataPicker($scope);
+
     // Pagination.
     $scope.currentPage = 1;
     $scope.maxSize = 10; // How many page links shown.
@@ -90,44 +96,101 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     // Cache filterstring used in query.
     var filterstring;
+    // Flag whether search by resident (rs) or relocationrecord (rr).
+    var searchBy = 'rs';
 
     $scope.pageChanged = function () {
         $scope.rrlist = [];
         var skip = ($scope.currentPage - 1) * $scope.itemsPerPage;
 
-        RestService.getclient('resident').query({
-            $filter: filterstring, $inlinecount: 'allpages',
-            $skip: skip, $top: $scope.itemsPerPage
-        }, function (residents) {
-            // Set total count.
-            $scope.totalItems = residents.Count;
-            residents.Items.forEach(function (r) {
-                var rr = RestService.getclient('rr').get({ id: r.RelocationRecordId })
-                $scope.rrlist.push(rr)
+        if (searchBy == 'rs') {
+            RestService.getclient('resident').query({
+                $filter: filterstring, $inlinecount: 'allpages',
+                $skip: skip, $top: $scope.itemsPerPage
+            }, function (residents) {
+                // Set total count.
+                $scope.totalItems = residents.Count;
+                residents.Items.forEach(function (r) {
+                    var rr = RestService.getclient('rr').get({ id: r.RelocationRecordId })
+                    $scope.rrlist.push(rr)
 
-            })
-            $scope.showresult = true;
-        });
+                })
+                $scope.showresult = true;
+            });
+        } else {
+            RestService.getclient('rr').query({
+                $filter: filterstring, $inlinecount: 'allpages',
+                $skip: skip, $top: $scope.itemsPerPage
+            }, function (result) {
+                // Set total count.
+                $scope.totalItems = result.Count;
+                $scope.rrlist = result.Items;
+                $scope.showresult = true;
+            });
+        }
+    };
+
+    var getFilters = function () {
+        var filters = {rs: [], rr: []};
+
+        // Filters by resident.
+        if ($scope.searchparams.Name != null && $scope.searchparams.Name.trim() != '') {
+            filters.rs.push("substringof('" + $scope.searchparams.Name + "',Name)")
+        }
+        if ($scope.searchparams.IdentityCard != null && $scope.searchparams.IdentityCard.trim() != '') {
+            filters.rs.push("substringof('" + $scope.searchparams.IdentityCard + "',IdentityCard)")
+        }
+
+        // Filters by relocationrecord.
+        if ($scope.searchparams.RelocationBaseId != null && $scope.searchparams.RelocationBaseId != '') {
+            filters.rr.push('RelocationBaseId eq ' + $scope.searchparams.RelocationBaseId);
+        }
+        if ($scope.searchparams.RRId != null && $scope.searchparams.RRId.trim() != '') {
+            filters.rr.push("RRId eq '" + $scope.searchparams.RRId + "'");
+        }
+        if ($scope.searchparams.Village != null && $scope.searchparams.Village.trim() != '') {
+            filters.rr.push("Village eq '" + $scope.searchparams.Village + "'");
+        }
+        if ($scope.searchparams.Group != null && $scope.searchparams.Group.trim() != '') {
+            filters.rr.push("Group eq '" + $scope.searchparams.Group + "'");
+        }
+        if ($scope.searchparams.DoorNumber != null && $scope.searchparams.DoorNumber.trim() != '') {
+            filters.rr.push("DoorNumber eq '" + $scope.searchparams.DoorNumber + "'");
+        }
+        if ($scope.searchparams.PaymentDateStart != null && $scope.searchparams.PaymentDateStart != '') {
+            filters.rr.push('PaymentDate ge ' + "datetime'" + $scope.searchparams.PaymentDateStart + "'");
+        }
+        if ($scope.searchparams.PaymentDateEnd != null && $scope.searchparams.PaymentDateEnd.trim() != '') {
+            filters.rr.push('PaymentDate le ' + "datetime'" + $scope.searchparams.PaymentDateEnd + "'");
+        }
+        if ($scope.searchparams.DeliveryDateStart != null && $scope.searchparams.DeliveryDateStart.trim() != '') {
+            filters.rr.push('DeliveryDate ge ' + "datetime'" + $scope.searchparams.DeliveryDateStart + "'");
+        }
+        if ($scope.searchparams.DeliveryDateEnd != null && $scope.searchparams.DeliveryDateEnd.trim() != '') {
+            filters.rr.push('DeliveryDate le ' + "datetime'" + $scope.searchparams.DeliveryDateEnd + "'");
+        }
+        
+        return filters;
     };
 
     $scope.searchbyR = function () {
-        var filters = [];
-        if ($scope.searchparams.Name != null || $scope.searchparams.IdentityCard != null) {
-            if ($scope.searchparams.Name != null) {
-                filters.push("substringof('" + $scope.searchparams.Name + "',Name)")
-            }
-            if ($scope.searchparams.IdentityCard != null) {
-                filters.push("substringof('" + $scope.searchparams.IdentityCard + "',IdentityCard)")
-            }
+        var filters = getFilters();
+        
+        if (filters.rs.length || filters.rr.length) {
+            searchBy = filters.rr.length ? 'rr' : 'rs';
+
             // Reset filterstring occording to current filters.
-            filterstring = "Status eq 1";
-            filters.forEach(function (f) {
-                filterstring += (" and " + f)
+            filterstring = searchBy == 'rs' ? "Status eq 1" : 'true';
+
+            filters[searchBy].forEach(function (f) {
+                filterstring += (" and " + f);
             });
 
             // Search from beginning when click search button.
             $scope.currentPage = 1;
             $scope.pageChanged();
+        } else {
+            alert('请填写至少一项查询条件。');
         }
     };
 
@@ -476,8 +539,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
                             rearray[r.IdentityCard.toUpperCase()].push(r)
                         })
-                        RestService.getclient('rr').query(function (rrs) {
-                            var rrarray = []
+                        RestService.getclient('rr').query(function (result) {
+                            var rrarray = [], rrs = result.Items;
                             rrs.forEach(function(rr){
                                 rrarray[rr.Id] = rr
                             })

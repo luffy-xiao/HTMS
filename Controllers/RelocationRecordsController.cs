@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using System.Web.Http.OData;
+using Webapplication6.Custom;
 using WebApplication6.Models;
 
 namespace WebApplication6.Controllers
@@ -19,12 +20,11 @@ namespace WebApplication6.Controllers
     {
         private WebApplication6Context db = new WebApplication6Context();
 
-        [EnableQuery]
+        [PagingQueryable]
         // GET: api/RelocationRecords
         public IQueryable<RelocationRecord> GetRelocationRecords()
         {
             return db.RelocationRecords.Include(b=>b.Residents);
-;
         }
 
         // GET: api/RelocationRecords/5
