@@ -264,9 +264,13 @@
     <Compile Include="Migrations\201506140220025_X2.Designer.cs">
       <DependentUpon>201506140220025_X2.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201508241003411_X3.cs" />
-    <Compile Include="Migrations\201508241003411_X3.Designer.cs">
-      <DependentUpon>201508241003411_X3.cs</DependentUpon>
+    <Compile Include="Migrations\201508241217203_X4.cs" />
+    <Compile Include="Migrations\201508241217203_X4.Designer.cs">
+      <DependentUpon>201508241217203_X4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201508241234295_X5.cs" />
+    <Compile Include="Migrations\201508241234295_X5.Designer.cs">
+      <DependentUpon>201508241234295_X5.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -483,8 +487,11 @@
     <EmbeddedResource Include="Migrations\201506140220025_X2.resx">
       <DependentUpon>201506140220025_X2.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201508241003411_X3.resx">
-      <DependentUpon>201508241003411_X3.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201508241217203_X4.resx">
+      <DependentUpon>201508241217203_X4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201508241234295_X5.resx">
+      <DependentUpon>201508241234295_X5.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

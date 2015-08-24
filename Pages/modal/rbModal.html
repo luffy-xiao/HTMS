@@ -12,18 +12,37 @@
                     </div>
                 </div>
                 <div class="form-group  has-feedback">
+                    <label class="col-sm-2 control-label">编号</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" ng-model="newitem.RBId">
+                    </div>
+                </div>
+                <div class="form-group  has-feedback">
                     <label class="col-sm-2 control-label">拆迁人</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="newitem.Relocator" required="">
+                        <input type="text" class="form-control" ng-model="newitem.Relocator" >
                     </div>
                 </div>
                 <div class="form-group  has-feedback">
                     <label class="col-sm-2 control-label">拆迁实施单位</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="newitem.RelocationCompany" required="">
+                        <input type="text" class="form-control" ng-model="newitem.RelocationCompany" >
                     </div>
                 </div>
-              
+                <div class="form-group  has-feedback">
+                    <label class="col-sm-2 control-label">开始时间</label>
+                    <div class="col-sm-5">
+                        <p class="input-group datepicker">
+                            <input type="text" class="form-control" datepicker-popup datepicker-options="dateOptions" ng-model="newitem.CreatedTime" is-open="datepickers.dt1" show-weeks="false"
+                                   close-text="关闭" current-text="今天" clear-text="清除" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="open($event,'dt1')"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </p>
+
+                    </div>
+
+                </div>
              </form>
         </div>
         <div class="modal-footer">
