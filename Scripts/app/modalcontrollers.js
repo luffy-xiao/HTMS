@@ -62,24 +62,41 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
         $scope.rts = RestService.getclient('rt').query();     
     }
 
+   
+    $scope.newitem = angular.copy(item);
     if (type == 'pr') {
         if (item.Id != null) {//modify item, show the residents in the record
             $scope.rr = {}
             $scope.rr.Residents = item.Residents
             $scope.rr.Residents.forEach(function (r) {
-                r.selected=true
+                r.selected = true
             })
         } else {// new record, show the residents can be selected
             $scope.rr = RestService.getclient('rr').get({ id: item.RelocationRecordId }, function (rr) {
                 rr.Residents = $filter('filter')(rr.Residents, function (value) {
+                    value.selected = true
                     return value.PlacementRecordId == null
                 })
+                rr.PlacementRecords = RestService.getclient('pr').query({ $filter: "RelocationRecordId eq '" + rr.Id + "'" }, function (prs) {
+                    var allocatedsize = 0;
+                    var allocatedcompensation = 0;
+                    var allocatedapprovedsize = 0;
+
+                    prs.forEach(function (pr) {
+                        allocatedsize += pr.Size
+                        allocatedcompensation += pr.TotalCompensation
+                        allocatedapprovedsize += pr.ApprovedSize
+                    })
+                    $scope.newitem.Size = rr.EffectiveSize - allocatedsize;
+                    $scope.newitem.TotalCompensation = rr.TotalCompensation - allocatedcompensation;
+                    $scope.newitem.ApprovedSize = rr.ApprovedSize - allocatedapprovedsize
+                })
             })
+
         }
-        
+
     }
-   
-    $scope.newitem = angular.copy(item);
+
     if (type == 'rb') {
         if ($scope.newitem.Id == null) {
             $scope.newitem.CreatedTime = moment().format("YYYY-MM-DD")
