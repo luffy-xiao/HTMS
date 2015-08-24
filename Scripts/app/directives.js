@@ -43,7 +43,7 @@ appDirectives.directive('integer', function () {
         require: 'ngModel',
         link: function (scope, elm, attrs, ctrl) {
             ctrl.$validators.integercheck = function (modelValue, viewValue) {        
-                if (INTEGER_REGEXP.test(viewValue)) {
+                if (viewValue==null || viewValue==""||INTEGER_REGEXP.test(viewValue)) {
                     // it is valid
                     return true;
                 }
@@ -59,7 +59,7 @@ appDirectives.directive('currency', function () {
         require: 'ngModel',
         link: function (scope, elm, attrs, ctrl) {
             ctrl.$validators.currencycheck = function (modelValue, viewValue) {
-                if (MONEY_REGEXP.test(viewValue)) {
+                if (viewValue==null || viewValue==""|| MONEY_REGEXP.test(viewValue)) {
                     // it is valid
                     
                     return true;

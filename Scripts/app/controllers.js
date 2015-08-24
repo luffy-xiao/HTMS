@@ -120,7 +120,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 filters.push("substringof('" + $scope.searchparams.IdentityCard + "',IdentityCard)")
             }
             // Reset filterstring occording to current filters.
-            filterstring = "true";
+            filterstring = "Status eq 1";
             filters.forEach(function (f) {
                 filterstring += (" and " + f)
             });
@@ -233,6 +233,11 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             })
         })
         
+    }
+    $scope.delete = function (idx) {
+        RestService.getclient('rr').remove({id:$scope.items[idx].RelocationRecordId },function(){
+            $scope.items[idx].Status = -1;
+        })
     }
 
     $scope.navtodetail = function (rr, readonly) {
@@ -1068,7 +1073,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     $scope.query = function () {
         var filters = []
-        filters.push("RelationshipType eq '户主'")
+        filters.push("RelationshipType eq '户主' and Status eq 1")
         if ($scope.searchparams.Name != null || $scope.searchparams.IdentityCard != null) {
 
             if ($scope.searchparams.Name != null) {

@@ -15,6 +15,7 @@ namespace WebApplication6.Models
         public string Name { get; set; }
         public string RelocationCompany { get; set; }
         public string Relocator { get; set; }
+        public DateTime CreatedTime { get; set; }
  
     }
 }

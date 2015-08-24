@@ -106,6 +106,10 @@ namespace WebApplication6.Controllers
                             return StatusCode(HttpStatusCode.Conflict);
                         }*/
                         r.Status = db.Residents.Count(re => re.IdentityCard.Equals(r.IdentityCard)) > 0 ? 0 : 1;
+                        if (r.Status == 0)
+                        {
+                            relocationRecord.Status = 0;
+                        }
                     }
                     else
                     {

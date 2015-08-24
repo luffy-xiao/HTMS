@@ -54,34 +54,38 @@ namespace WebApplication6.Controllers
             {
                 return BadRequest();
             }
-            var resident_in_db = await db.Residents.FindAsync(id);
-            if (resident_in_db.Status == 0 && resident.Status == 1)
+            using (var transaction = db.Database.BeginTransaction())
             {
-                resident.Status = 1;
-            }
-            else if(!resident.IdentityCard.Equals(resident_in_db.IdentityCard))
-            {
-                resident.Status = db.Residents.Count(re => re.IdentityCard.Equals(resident.IdentityCard) && !re.Id.Equals(resident.Id)) > 0 ? 0 : 1;
-            }
-
-
-            db.Entry(resident_in_db).State = EntityState.Detached;
-            db.Entry(resident).State = EntityState.Modified;
-
-            try
-            {
+                var resident_in_db = await db.Residents.FindAsync(id);
+                if (resident_in_db.Status == 0 && resident.Status == 1)
+                {
+                    resident.Status = 1;
+                }
+                // if identity card is changed, do not change the status, since this is an already passed record.
+                else if (!resident.IdentityCard.Equals(resident_in_db.IdentityCard))
+                {
+                    //resident.Status = db.Residents.Count(re => re.IdentityCard.Equals(resident.IdentityCard) && !re.Id.Equals(resident.Id)) > 0 ? 0 : 1;
+                }
+                db.Entry(resident_in_db).State = EntityState.Detached;
+                db.Entry(resident).State = EntityState.Modified;
                 await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ResidentExists(id))
+                var rr = db.RelocationRecords.Find(resident.RelocationRecordId);
+                var sign = false;
+                foreach (Resident r in rr.Residents)
                 {
-                    return NotFound();
+                    if(r.Status == 0){
+                        sign = true;
+                    }
                 }
-                else
+                if (sign == false)
                 {
-                    throw;
+                    rr.Status = 1;
                 }
+                db.Entry(rr).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                transaction.Commit();
+               
+               
             }
 
             return StatusCode(HttpStatusCode.NoContent);

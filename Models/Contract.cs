@@ -23,7 +23,8 @@ namespace WebApplication6.Models
         public decimal Size2 { get; set; }
         public decimal Size3 { get; set; }
         public decimal Size4 { get; set; }
-        
+        public decimal? PaymentAmount { get; set; }
+        public decimal? DeltaAmount { get; set; }
        
 
         public  DateTime ContractDate { get;set; }

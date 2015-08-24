@@ -18,6 +18,7 @@ namespace WebApplication6.Models
         public string Village { get; set; }
         public string Group { get; set; }
         public string DoorNumber { get; set; }
+        public string RRId { get; set; }
         public int? Status { get; set; } //0 is valid, 1 is invalid
          
         public DateTime? DateCreated { get; set; }
@@ -115,5 +116,10 @@ namespace WebApplication6.Models
 
         public Decimal Size { get; set; }
         public Decimal TotalCompensation { get; set; }
+        public Decimal ApprovedSize { get; set; }
+
+        public Decimal? UsedAmount { get; set; }
+        public Decimal? UsedSize { get; set; }
+        public Decimal? AppartmentCount { get; set; }
     }
 }
