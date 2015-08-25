@@ -30,6 +30,7 @@ namespace WebApplication6.Models
         public  DateTime ContractDate { get;set; }
 
         public int TransitionDays { get; set; }
+        public decimal TransitionSize { get; set; }
         public DateTime Deadline { get; set; }
         public decimal InterestRate { get; set; }
         public decimal GasFee { get; set; }

@@ -65,7 +65,7 @@
                                                 <td class="STYLE4"><span class="STYLE7">室号</span></td>
                                                 <td class="STYLE4">{{c.Appartment.DoorNumber}}</td>
                                                 <td class="STYLE4">购房金额</td>
-                                                <td class="STYLE4"><input type="text" class="noline_textarea" size="18" value="{{usedamount($index).toFixed(2)}}" /></td>
+                                                <td class="STYLE4"><input type="text" class="noline_textarea" size="18" value="{{c.PaymentAmount.toFixed(2)}}" /></td>
                                                 <td class="STYLE4">购房日期</td>
                                                 <td class="STYLE4"><input type="text" class="noline_textarea" size="10" value="{{c.ContractDate.substring(0,10)}}" /></td>
                                             </tr>
@@ -143,7 +143,7 @@
                                                     <input type="text" class="noline_textarea" size="8" value={{c.Deadline.substring(0,10)}} />  利率：<input name="lilv<%=i%>" type="text" class="noline_textarea" id="lilv<%=i%>" size="4" ng-model="c.InterestRate" />
                                                 </td>
                                                 <td width="120" class="STYLE4">购房差额款</td>
-                                                <td width="120" class="STYLE4"><input type="text" class="noline_textarea" size="18" value="{{delta($index).toFixed(2)}}" /></td>
+                                                <td width="120" class="STYLE4"><input type="text" class="noline_textarea" size="18" value="{{c.DeltaAmount.toFixed(2)}}" /></td>
                                                 <td width="120" class="STYLE4">开票金额</td>
                                                 <td width="120" class="STYLE4"><div id="kpje<%=i%>">{{totalprice($index).toFixed(2)}}</div></td>
                                             </tr>

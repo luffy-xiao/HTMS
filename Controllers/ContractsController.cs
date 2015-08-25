@@ -117,6 +117,21 @@ namespace WebApplication6.Controllers
                 }
                 app.Status = "已售";
                 PlacementRecord pr = await db.PlacementRecords.FindAsync(contract.PlacementRecordId);
+                if (pr.UsedAmount == null)
+                {
+                    pr.UsedAmount = 0;
+                }
+                if (pr.UsedSize == null)
+                {
+                    pr.UsedSize = 0;
+                }
+                if (pr.AppartmentCount == null)
+                {
+                    pr.AppartmentCount = 0;
+                }
+                pr.UsedAmount += contract.PaymentAmount;
+                pr.UsedSize += contract.Size1 + contract.Size2 + contract.Size3 + contract.Size4;
+                pr.AppartmentCount++;
                 //pr.PlacedSize += app.Size;
                 db.Entry<Appartment>(app).State = EntityState.Modified;
                 db.Entry<PlacementRecord>(pr).State = EntityState.Modified;
@@ -143,6 +158,9 @@ namespace WebApplication6.Controllers
                 Appartment app = await db.Appartments.FindAsync(contract.AppartmentId);
                 PlacementRecord pr = await db.PlacementRecords.FindAsync(contract.PlacementRecordId);
                 //pr.PlacedSize -= app.Size;
+                pr.UsedAmount -= contract.PaymentAmount;
+                pr.UsedSize -= contract.Size1 + contract.Size2 + contract.Size3 + contract.Size4;
+                pr.AppartmentCount--;
                 app.Status = "可售";
                 db.Changes.Add(Helper.Logger.DeleteRecord<Contract>(contract, RequestContext.Principal.Identity.Name));
                 db.Contracts.Remove(contract);

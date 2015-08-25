@@ -788,15 +788,15 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
    // $scope.rbs = RestService.getclient('rb').query()
     $scope.contract = {}
-    $scope.$on('added', function (item) {
+    $scope.$on('added', function ($event,item) {
         var app = $filter('filter')($scope.selectedapps, { Id: item.AppartmentId })[0]
         $scope.selectedapps.splice($scope.selectedapps.indexOf(app),1)
         reloadpr()
     })
-    $scope.$on('deleted', function (item) {
+    $scope.$on('deleted', function ($event, item) {
         reloadpr()
     })
-    $scope.$on('updated', function (item) {
+    $scope.$on('updated', function ($event, item) {
         reloadpr()
     })
     function reloadpr() {
@@ -1313,7 +1313,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     }
     $scope.totalfee = function (idx) {
         var contract = $scope.contracts[idx]
-        return  contract.GasFee + contract.OtherFee + contract.TransitionFee + contract.TVFee - contract.InterestFee + contract.RepairUnitPrice * contract.Appartment.Size + $scope.delta(idx)
+        return  contract.GasFee + contract.OtherFee - contract.TransitionFee + contract.TVFee - contract.InterestFee + contract.RepairUnitPrice * contract.Appartment.Size + $scope.delta(idx)
     }
     $scope.owners = function (idx) {
         var contract = $scope.contracts[idx]

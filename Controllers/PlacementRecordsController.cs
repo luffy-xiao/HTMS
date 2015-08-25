@@ -95,6 +95,13 @@ namespace WebApplication6.Controllers
 
             using (var transaction = db.Database.BeginTransaction())
             {
+                if (placementRecord.UsedAmount == null)
+                {
+                    placementRecord.UsedAmount = 0;
+                }
+                if(placementRecord.UsedSize == null){
+                    placementRecord.UsedSize = 0;
+                }
                 var Residents = placementRecord.Residents;
                 placementRecord.Residents = null;
                 db.PlacementRecords.Add(placementRecord);
