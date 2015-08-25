@@ -778,8 +778,14 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     InitCtrl($scope, $modal, 'pt', RestService, {})
   
 
-}]).controller('ContractCtrl', ['$scope', '$modal', 'RestService', '$filter', function ($scope, $modal, RestService, $filter) {
-    $scope.searchparams = {}
+}]).controller('ContractCtrl', ['$scope', '$modal', 'RestService', '$filter', '$cookies', function ($scope, $modal, RestService, $filter, $cookies) {
+    $scope.searchparams = {};
+
+    // Load search key last time from cookie.
+    if ($cookies.pr_search != null) {
+        $scope.searchparams.Name = $cookies.pr_search;
+    }
+
    // $scope.rbs = RestService.getclient('rb').query()
     $scope.contract = {}
     $scope.$on('added', function (item) {
@@ -803,7 +809,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     // Pagination.
     $scope.currentPage = 1;
     $scope.maxSize = 10; // How many page links shown.
-    $scope.itemsPerPage = 20;
+    $scope.itemsPerPage = 10;
 
     // Cache filterstring used in query.
     var filterstring;
@@ -865,6 +871,12 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.query = function () {
         var filters = []
         filters.push("RelationshipType eq '户主'")
+
+        // Save search key in cookie.
+        if ($scope.searchparams.Name != null && $scope.searchparams.Name.trim() != '') {
+            $cookies.pr_search = $scope.searchparams.Name;
+        }
+
         if ($scope.searchparams.Name != null || $scope.searchparams.IdentityCard != null) {
 
             if ($scope.searchparams.Name != null) {
@@ -1063,8 +1075,14 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         window.open("/print.html#/placementrecords/" + $scope.contract.PlacementRecordId + "/contracts/" + $scope.contractlist[idx].Id + "/printrecord")
     }
 
-}]).controller('PlacementRecordCtrl', ['$scope', '$modal', 'RestService', '$filter', '$q', function ($scope, $modal, RestService, $filter, $q) {
+}]).controller('PlacementRecordCtrl', ['$scope', '$modal', 'RestService', '$filter', '$cookies', function ($scope, $modal, RestService, $filter, $cookies) {
     $scope.searchparams = {};
+
+    // Load search key last time from cookie.
+    if ($cookies.pr_search != null) {
+        $scope.searchparams.Name = $cookies.pr_search;
+    }
+
     $scope.rbs = RestService.getclient('rb').query();
     $scope.contract = {};
     $scope.$on("added", function (item) {
@@ -1090,7 +1108,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     // Pagination.
     $scope.currentPage = 1;
     $scope.maxSize = 10; // How many page links shown.
-    $scope.itemsPerPage = 20;
+    $scope.itemsPerPage = 10;
 
     // Cache filterstring used in query.
     var filterstring;
@@ -1144,7 +1162,12 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     }
 
     $scope.query = function () {
-        var filters = []
+        // Save search key in cookie.
+        if ($scope.searchparams.Name != null && $scope.searchparams.Name.trim() != '') {
+            $cookies.pr_search = $scope.searchparams.Name;
+        }
+
+        var filters = [];
         filters.push("RelationshipType eq '户主' and Status eq 1")
         if ($scope.searchparams.Name != null || $scope.searchparams.IdentityCard != null) {
 

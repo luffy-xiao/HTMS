@@ -25,9 +25,9 @@
                         <label class="label-success" ng-show="item.Status==1"> 已通过</label>
                         <label class="label-success" ng-show="item.Status==-1"> 已删除</label>
                         <button ng-show="item.Status==0" type="button" class="btn btn-primary btn-sm" ng-click="pass($index)">通过</button>
-                        <button ng-show="item.Status==0" type="button" class="btn btn-primary btn-sm" ng-click="navtodetail(item.RelocationRecord,false)">修改</button>
+                        <button ng-show="item.Status==0" type="button" class="btn btn-warning btn-sm" ng-click="navtodetail(item.RelocationRecord,false)">修改</button>
                         
-                        <button ng-show="item.Status==0" type="button" class="btn btn-primary btn-sm" ng-click="delete($index)">删除</button>
+                        <button ng-show="item.Status==0" type="button" class="btn btn-danger btn-sm" ng-click="delete($index)">删除</button>
 
                     </td>
                 </tr>
