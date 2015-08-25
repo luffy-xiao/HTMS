@@ -256,6 +256,11 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             $scope.rr.GroupId = null;
         })
     }
+    $scope.fillid = function ($event) {
+        if($scope.rr.IdentityCard.length== 17){
+            $scope.rr.IdentityCard = $scope.rr.IdentityCard + validateidenttiycard($scope.rr.IdentityCard)
+        }
+    }
    
     InitDataPicker($scope)
     

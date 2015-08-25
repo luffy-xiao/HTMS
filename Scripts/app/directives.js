@@ -33,6 +33,7 @@ appDirectives.directive('idcard', function () {
                 if (validateidenttiycard(viewValue) != viewValue[17])
                     return false
                 // it is invalid
+               
                 return true;
             };
         }

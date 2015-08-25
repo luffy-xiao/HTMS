@@ -47,7 +47,7 @@
                 <table class="table table-striped table-hover table-bordered" ng-show="showcontracts">
                     <tr>
                         <th>小区</th>
-                        <th>幢号</th>
+                       
                         <th>单元号</th>
                         <th>室号</th>
                         <th>建筑面积</th>
@@ -56,7 +56,7 @@
                     <tr ng-repeat="c in contractlist">
                         <td>{{c.Appartment.Community.Name}}</td>
                         <td>{{c.Appartment.BuildingNumber}}</td>
-                        <td>{{c.Appartment.UnitNumber}}</td>
+                      
                         <td>{{c.Appartment.DoorNumber}}</td>
                         <td>{{c.Appartment.Size}}</td>
                         <td>
@@ -82,7 +82,7 @@
                         </select>
                     </span>
                 </div>
-                <label class="col-sm-1 control-label">幢号</label>
+                <label class="col-sm-1 control-label">单元号</label>
                 <div class="col-sm-2">
                     <input type="text" class="form-control" ng-model="searchparams.BuildingNumber">
                 </div>
@@ -108,7 +108,7 @@
                 <table class="table table-striped table-hover table-bordered">
                     <tr>
                         <th>小区</th>
-                        <th>栋号</th>
+                      
                         <th>单元</th>
                         <th>门牌号</th>
                         <th>房型</th>
@@ -125,7 +125,7 @@
                     <tr ng-repeat="selectedapp in selectedapps">
                         <td>{{selectedapp.Community.Name}}</td>
                         <td>{{selectedapp.BuildingNumber}}</td>
-                        <td>{{selectedapp.UnitNumber}}</td>
+                       
                         <td>{{selectedapp.DoorNumber}}</td>
                         <td>{{selectedapp.Type}}</td>
                         <td>{{selectedapp.Size}}</td>
