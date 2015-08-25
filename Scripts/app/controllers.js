@@ -82,7 +82,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 }]).controller('RBListCtrl', ['$scope', '$modal', 'RestService', function ($scope, $modal, RestService) {
     $scope.items = RestService.getclient('rb').query();
     InitCtrl($scope, $modal, 'rb', RestService, {})
-}]).controller('ResidentSearchCtrl', ['$scope', '$modal', 'RestService', '$location', function ($scope, $modal, RestService, $location) {
+}]).controller('ResidentSearchCtrl', ['$scope', '$modal', 'RestService', '$location', '$filter', function ($scope, $modal, RestService, $location, $filter) {
     $scope.rbs = RestService.getclient('rb').query();
     $scope.vlist = RestService.getclient('village').query();
 
@@ -111,10 +111,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 // Set total count.
                 $scope.totalItems = residents.Count;
                 residents.Items.forEach(function (r) {
-                    var rr = RestService.getclient('rr').get({ id: r.RelocationRecordId })
-                    $scope.rrlist.push(rr)
-
-                })
+                    var rr = RestService.getclient('rr').get({ id: r.RelocationRecordId });
+                    $scope.rrlist.push(rr);
+                });
                 $scope.showresult = true;
             });
         } else {
@@ -125,6 +124,11 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 // Set total count.
                 $scope.totalItems = result.Count;
                 $scope.rrlist = result.Items;
+
+                // Fill relocationbase info.
+                $scope.rrlist.forEach(function (rr) {
+                    rr.RelocationBase = $filter('filter')($scope.rbs, function (e) { return e.Id == rr.RelocationBaseId; }, true)[0];
+                });
                 $scope.showresult = true;
             });
         }
@@ -157,17 +161,17 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         if ($scope.searchparams.DoorNumber != null && $scope.searchparams.DoorNumber.trim() != '') {
             filters.rr.push("DoorNumber eq '" + $scope.searchparams.DoorNumber + "'");
         }
-        if ($scope.searchparams.PaymentDateStart != null && $scope.searchparams.PaymentDateStart != '') {
-            filters.rr.push('PaymentDate ge ' + "datetime'" + $scope.searchparams.PaymentDateStart + "'");
+        if ($scope.searchparams.PaymentDateStart != null) {
+            filters.rr.push('PaymentDate ge ' + "datetime'" + $scope.searchparams.PaymentDateStart.toISOString() + "'");
         }
-        if ($scope.searchparams.PaymentDateEnd != null && $scope.searchparams.PaymentDateEnd.trim() != '') {
-            filters.rr.push('PaymentDate le ' + "datetime'" + $scope.searchparams.PaymentDateEnd + "'");
+        if ($scope.searchparams.PaymentDateEnd != null) {
+            filters.rr.push('PaymentDate le ' + "datetime'" + $scope.searchparams.PaymentDateEnd.toISOString() + "'");
         }
-        if ($scope.searchparams.DeliveryDateStart != null && $scope.searchparams.DeliveryDateStart.trim() != '') {
-            filters.rr.push('DeliveryDate ge ' + "datetime'" + $scope.searchparams.DeliveryDateStart + "'");
+        if ($scope.searchparams.DeliveryDateStart != null) {
+            filters.rr.push('DeliveryDate ge ' + "datetime'" + $scope.searchparams.DeliveryDateStart.toISOString() + "'");
         }
-        if ($scope.searchparams.DeliveryDateEnd != null && $scope.searchparams.DeliveryDateEnd.trim() != '') {
-            filters.rr.push('DeliveryDate le ' + "datetime'" + $scope.searchparams.DeliveryDateEnd + "'");
+        if ($scope.searchparams.DeliveryDateEnd != null) {
+            filters.rr.push('DeliveryDate le ' + "datetime'" + $scope.searchparams.DeliveryDateEnd.toISOString() + "'");
         }
         
         return filters;
@@ -195,12 +199,12 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     };
 
     $scope.navtodetail = function (rr,readonly) {
-        $location.path('/resident/detail/'+rr.Id +"/readonly=" + readonly)
+        $location.path('/resident/detail/' + rr.Id + "/readonly=" + readonly);
     }
 
     $scope.del = function (idx) {
-        $scope.items = $scope.rrlist
-        deleteitem($modal, RestService, 'rr', $scope, idx,true)
+        $scope.items = $scope.rrlist;
+        deleteitem($modal, RestService, 'rr', $scope, idx, true);
     }
 }]).controller('ResidentDetailCtrl', ['$scope', '$modal', '$filter', 'RestService', '$routeParams','$location', function ($scope, $modal, $filter, RestService, $routeParams,$location) {
     $scope.rbs = RestService.getclient('rb').query();
