@@ -56,6 +56,8 @@ namespace WebApplication6.Models
         public string Name { get; set; }
 
         public int ContractId { get; set; }
+        public bool? ShowAsOwner { get; set; }
+        public bool? ShowOnCert { get; set; }
     }
 
     public class AppartmentOwnerComparator : IEqualityComparer<AppartmentOwner>
