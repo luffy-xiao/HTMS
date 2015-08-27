@@ -87,12 +87,11 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
                         allocatedcompensation += pr.TotalCompensation
                         allocatedapprovedsize += pr.ApprovedSize
                     })
-                    $scope.newitem.Size = rr.EffectiveSize - allocatedsize;
+                    $scope.newitem.Size = rr.RelocationSize - allocatedsize;
                     $scope.newitem.TotalCompensation = rr.TotalCompensation - allocatedcompensation;
                     $scope.newitem.ApprovedSize = rr.ApprovedSize - allocatedapprovedsize
                 })
             })
-
         }
 
     }
@@ -106,66 +105,63 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
     if (type == 'contract') {
         $scope.app = RestService.getclient('appartment').get({ id: $scope.newitem.AppartmentId }, function (app) {
             $scope.pr = RestService.getclient('pr').get({ id: $scope.newitem.PlacementRecordId }, function (pr) {
-                RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + pr.Id , $orderby:"Id" }, function (contracts) {
-                    RestService.getclient('rr').get({ Id: pr.RelocationRecordId }, function (rr) {
-                        var total = 0
-                        var size = 0;
-                        contracts.forEach(function (c) {
-                            //total += c.Size1 * c.Appartment.Price1 + c.Size2 * c.Appartment.Price2 + c.Size3 * c.Appartment.Price3 + c.Size4 * c.Appartment.Price4;
-                            size += c.Size1 + c.Size2 + c.Size3 + c.Size4;
-                        })
+                RestService.getclient('rr').get({ Id: pr.RelocationRecordId }, function (rr) {
+                    var total = 0
+                    var size = 0;
                     
-                        // Handle floating digits.
-                        var available = parseFloat((pr.Size - size).toFixed(2));
+                    // Handle floating digits.
+                    var available = parseFloat((pr.Size - pr.UsedSize).toFixed(2));
                        
-                        if (item.Id == null) {
-                            $scope.newitem.AppartmentOwners = [];
+                    if (item.Id == null) {
+                        $scope.newitem.AppartmentOwners = pr.Residents;
+                        $scope.newitem.AppartmentOwners.forEach(function (ao) {
+                            delete ao['Id']
+                        })
                         
-                            if (available < 0) available = 0
-                            $scope.newitem.Size1 = available >= app.Size ? app.Size : available
-                            $scope.newitem.Size2 = app.Size - $scope.newitem.Size1 > 5 ? 5 : app.Size - $scope.newitem.Size1
-                            $scope.newitem.Size3 = app.Size - $scope.newitem.Size1 - $scope.newitem.Size2 > 5 ? 5 : app.Size - $scope.newitem.Size1 - $scope.newitem.Size2
-                            $scope.newitem.Size4 = app.Size - $scope.newitem.Size1 - $scope.newitem.Size2 - $scope.newitem.Size3
-                            $scope.newitem.Size1 = parseFloat($scope.newitem.Size1.toFixed(2))
-                            $scope.newitem.Size2 = parseFloat($scope.newitem.Size2.toFixed(2))
-                            $scope.newitem.Size3 = parseFloat($scope.newitem.Size3.toFixed(2))
-                            $scope.newitem.Size4 = parseFloat($scope.newitem.Size4.toFixed(2))
-                            $scope.newitem.PaymentAmount = pr.TotalCompensation - pr.UsedAmount - $scope.totalprice()>0? $scope.totalprice():(pr.TotalCompensation - pr.UsedAmount)
-                            $scope.newitem.DeltaAmount = $scope.totalprice() - $scope.newitem.PaymentAmount
-                            $scope.newitem.ContractDate = moment().format("YYYY-MM-DD")
-                            $scope.newitem.Deadline = moment().format("YYYY-MM-DD")
-                            $scope.newitem.TransitionSize = pr.ApprovedSize - pr.UsedSize - $scope.newitem.Size1 > 0 ? $scope.newitem.Size1 : pr.ApprovedSize - pr.UsedSize
-                            if($scope.newitem.TransitionSize < 0) $scope.newitem.TransitionSize = 0
+                        if (available < 0) available = 0
+                        $scope.newitem.Size1 = available >= app.Size ? app.Size : available
+                        $scope.newitem.Size2 = app.Size - $scope.newitem.Size1 > 5 ? 5 : app.Size - $scope.newitem.Size1
+                        $scope.newitem.Size3 = app.Size - $scope.newitem.Size1 - $scope.newitem.Size2 > 5 ? 5 : app.Size - $scope.newitem.Size1 - $scope.newitem.Size2
+                        $scope.newitem.Size4 = app.Size - $scope.newitem.Size1 - $scope.newitem.Size2 - $scope.newitem.Size3
+                        $scope.newitem.Size1 = parseFloat($scope.newitem.Size1.toFixed(2))
+                        $scope.newitem.Size2 = parseFloat($scope.newitem.Size2.toFixed(2))
+                        $scope.newitem.Size3 = parseFloat($scope.newitem.Size3.toFixed(2))
+                        $scope.newitem.Size4 = parseFloat($scope.newitem.Size4.toFixed(2))
+                        $scope.newitem.PaymentAmount = pr.TotalCompensation - pr.UsedAmount - $scope.totalprice()>0? $scope.totalprice():(pr.TotalCompensation - pr.UsedAmount)
+                        $scope.newitem.DeltaAmount = $scope.totalprice() - $scope.newitem.PaymentAmount
+                        $scope.newitem.ContractDate = moment().format("YYYY-MM-DD")
+                        $scope.newitem.Deadline = moment().format("YYYY-MM-DD")
+                        $scope.newitem.TransitionSize = pr.ApprovedSize - pr.UsedSize - $scope.newitem.Size1 > 0 ? $scope.newitem.Size1 : pr.ApprovedSize - pr.UsedSize
+                        if ($scope.newitem.TransitionSize < 0) $scope.newitem.TransitionSize = 0
+                      
 
-                        } else {
-                            $scope.newitem = RestService.getclient('contract').get({ id: item.Id })
-                            
-                        }
-                        $scope.InterestFee = function () {
-                            var d1 = moment(rr.DeliveryDate)
-                            var d2 = moment($scope.newitem.Deadline)
-                            $scope.newitem.TotalInterestSize = pr.ApprovedSize - pr.UsedSize
-                            $scope.newitem.InterestDays = d2.diff(d1, "days") - 90 > 0 ? d2.diff(d1, "days") - 90 : 0
-                            $scope.newitem.InterestFee = $scope.newitem.InterestDays * $scope.newitem.InterestRate / 100 / 365 * $scope.newitem.PaymentAmount
-                            return $scope.newitem.InterestFee
-                        }
-                        $scope.TransitionFee = function () {
-                            
-                            $scope.newitem.TransitionFee = $scope.newitem.TransitionDays / 30 * 16 * $scope.newitem.TransitionSize
-                            return $scope.newitem.TransitionFee
-                        }
-                    })
-           
-                    $scope.add = function () {
-                        $scope.newitem.AppartmentOwners.push(angular.copy($scope.temp))
-                        $scope.temp = {}
+                    } else {
+                       
+                         
                     }
-                    $scope.del = function (idx) {
-                        $scope.newitem.AppartmentOwners.splice(idx, 1)
+                    $scope.InterestFee = function () {
+                        var d1 = moment(rr.DeliveryDate)
+                        var d2 = moment($scope.newitem.Deadline)
+                        $scope.newitem.TotalInterestSize = pr.ApprovedSize - pr.UsedSize
+                        $scope.newitem.InterestDays = d2.diff(d1, "days") - 90 > 0 ? d2.diff(d1, "days") - 90 : 0
+                        $scope.newitem.InterestFee = $scope.newitem.InterestDays * $scope.newitem.InterestRate / 100 / 365 * $scope.newitem.PaymentAmount
+                        return $scope.newitem.InterestFee
                     }
-                   
+                    $scope.TransitionFee = function () {
+                            
+                        $scope.newitem.TransitionFee = $scope.newitem.TransitionDays / 30 * 16 * $scope.newitem.TransitionSize
+                        return $scope.newitem.TransitionFee
+                    }
                 })
-                
+           
+                $scope.add = function () {
+                    $scope.newitem.AppartmentOwners.push(angular.copy($scope.temp))
+                    $scope.temp = {}
+                }
+                $scope.del = function (idx) {
+                    $scope.newitem.AppartmentOwners.splice(idx, 1)
+                }
+                   
             })
         })
         $scope.disable = function () {
@@ -187,6 +183,9 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
             $scope.newitem.Residents.forEach(function (r) {
                 $scope.newitem.Name += r.Name + " "
             })
+        }
+        if (type == 'contract') {
+            //$scope.newitem.AppartmentOwners = $scope.pr.Residents
         }
       
         if (item.Id == null) {

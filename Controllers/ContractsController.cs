@@ -75,6 +75,14 @@ namespace WebApplication6.Controllers
                 }
                 db.Entry<Contract>(origin).State = EntityState.Detached;
                 await db.SaveChangesAsync();
+                foreach (var ao in contract.AppartmentOwners)
+                {
+                    var aoindb = db.AppartmentOwners.Find(ao.Id);
+                    aoindb.ShowAsOwner = ao.ShowAsOwner;
+                    aoindb.ShowOnCert = ao.ShowOnCert;
+                    db.Entry<AppartmentOwner>(aoindb).State = EntityState.Modified;
+                }
+               
                 contract.AppartmentOwners = null;
                 db.Entry<Contract>(contract).State = EntityState.Modified;
                

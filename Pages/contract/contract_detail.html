@@ -28,6 +28,8 @@
                         <th>安置人员</th>
                         <th>安置面积</th>
                         <th>已安置置面积</th>
+                        <th>总购房金额</th>
+                        <th>已用购房金额</th>
                         <th>操作</th>
                     </tr>
                     <tr ng-repeat="pr in prs">
@@ -37,6 +39,8 @@
                         <td>{{pr.Name}}</td>
                         <td>{{pr.Size}}</td>
                         <td>{{pr.UsedSize}}</td>
+                        <td>{{pr.TotalCompensation}}</td>
+                        <td>{{pr.UsedAmount}}</td>
                         <td><button type="button" class="btn btn-primary" ng-click="printB($index)">打印购房记录</button></td>
                     </tr>
                 </table>

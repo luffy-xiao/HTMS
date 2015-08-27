@@ -41,7 +41,7 @@
                                             </tr>
                                             <tr>
                                                 <td class="STYLE4">开单日期</td>
-                                                <td class="STYLE4"><input name="kdrq" type="text" class="noline_textarea" id="kdrq" size="10" value="{{rr.DateCreated.substring(0,10)}}" /></td>
+                                                <td class="STYLE4">{{rr.DeliveryDate | date:"yyyy-MM-dd"}}</td>
                                                 <td class="STYLE4">安置金额</td>
                                                 <td class="STYLE4"><div id="BCZJ">{{pr.TotalCompensation}}</div></td>
                                                 <td class="STYLE4">打印日期</td>
@@ -67,7 +67,7 @@
                                                 <td class="STYLE4">购房金额</td>
                                                 <td class="STYLE4"><input type="text" class="noline_textarea" size="18" value="{{c.PaymentAmount.toFixed(2)}}" /></td>
                                                 <td class="STYLE4">购房日期</td>
-                                                <td class="STYLE4"><input type="text" class="noline_textarea" size="10" value="{{c.ContractDate.substring(0,10)}}" /></td>
+                                                <td class="STYLE4"><input type="text" class="noline_textarea" size="10" value='{{c.ContractDate |date:"yyyy-MM-dd"}}' /></td>
                                             </tr>
                                             <tr>
                                                 <td width="120" class="STYLE4">实测面积</td>

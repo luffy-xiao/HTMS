@@ -19,29 +19,29 @@ namespace WebApplication6.Models
         public PlacementRecord PlacementRecord { get; set; }
 
         public ICollection<AppartmentOwner> AppartmentOwners { get; set; }
-        public decimal Size1 { get; set; }
-        public decimal Size2 { get; set; }
-        public decimal Size3 { get; set; }
-        public decimal Size4 { get; set; }
+        public decimal? Size1 { get; set; }
+        public decimal? Size2 { get; set; }
+        public decimal? Size3 { get; set; }
+        public decimal? Size4 { get; set; }
         public decimal? PaymentAmount { get; set; }
         public decimal? DeltaAmount { get; set; }
        
 
-        public  DateTime ContractDate { get;set; }
+        public  DateTime? ContractDate { get;set; }
 
         public int TransitionDays { get; set; }
-        public decimal TransitionSize { get; set; }
-        public DateTime Deadline { get; set; }
-        public decimal InterestRate { get; set; }
-        public decimal GasFee { get; set; }
-        public decimal RepairUnitPrice { get; set; }
+        public decimal? TransitionSize { get; set; }
+        public DateTime? Deadline { get; set; }
+        public decimal? InterestRate { get; set; }
+        public decimal? GasFee { get; set; }
+        public decimal? RepairUnitPrice { get; set; }
 
-        public decimal TransitionFee { get; set; }
-        public decimal InterestFee { get; set; }
+        public decimal? TransitionFee { get; set; }
+        public decimal? InterestFee { get; set; }
 
-        public decimal TVFee { get; set; }
+        public decimal? TVFee { get; set; }
 
-        public decimal OtherFee { get; set; }
+        public decimal? OtherFee { get; set; }
         
     }
 
@@ -56,6 +56,8 @@ namespace WebApplication6.Models
         public string Name { get; set; }
 
         public int ContractId { get; set; }
+        public bool? ShowAsOwner { get; set; }
+        public bool? ShowOnCert { get; set; }
     }
 
     public class AppartmentOwnerComparator : IEqualityComparer<AppartmentOwner>

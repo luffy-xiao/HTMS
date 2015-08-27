@@ -15,7 +15,7 @@ using WebApplication6.Models;
 
 namespace WebApplication6.Controllers
 {
-    [Authorize]
+
     public class RelocationRecordsController : ApiController
     {
         private WebApplication6Context db = new WebApplication6Context();
