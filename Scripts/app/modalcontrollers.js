@@ -87,12 +87,11 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
                         allocatedcompensation += pr.TotalCompensation
                         allocatedapprovedsize += pr.ApprovedSize
                     })
-                    $scope.newitem.Size = rr.EffectiveSize - allocatedsize;
+                    $scope.newitem.Size = rr.RelocationSize - allocatedsize;
                     $scope.newitem.TotalCompensation = rr.TotalCompensation - allocatedcompensation;
                     $scope.newitem.ApprovedSize = rr.ApprovedSize - allocatedapprovedsize
                 })
             })
-
         }
 
     }

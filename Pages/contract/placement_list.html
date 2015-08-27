@@ -31,16 +31,19 @@
                     <th>所在组</th>
                     <th>门牌号</th>
                     <th>安置面积</th>
-                    <th>安置金额</th>
+                    <th>有证面积</th>
+                    <th>补偿款总金额</th>
+                    <th>应付总房款</th>
                 </tr>
                 <tr>
                     <td>{{rr.RelocationBase.Name}}</td>
                     <td>{{rr.Village}}</td>
                     <td>{{rr.Group}}</td>
                     <td>{{rr.DoorNumber}}</td>
-                    <td>{{rr.MeasuredSize}}</td>
+                    <td>{{rr.RelocationSize}}</td>
+                    <td>{{rr.ApprovedSize}}</td>
                     <td>{{rr.TotalCompensation}}</td>
-                        
+                    <td>{{rr.TotalPayable}}</td>
                 </tr>
             </table>
     </div>
@@ -78,6 +81,7 @@
                 <th>人员</th>
                 <th>可安置面积</th>
                 <th>已安置面积</th>
+                <th>有证面积</th>
                 <th>安置补偿款</th>
                 <th>已使用安置补偿款</th>
                 <th><input ng-show="user.Roles[0].Id==3 || user.Roles[0].Id==1" type="button" class="btn btn-primary btn-sm" value="生成安置记录" ng-click="add()" ng-disabled="rr ==null ||  (rr.Residents | filter: {PlacementRecordId:null}).length ==0" /></th>
@@ -86,6 +90,7 @@
                 <td>{{pr.Name}}</td>
                 <td>{{pr.Size}}</td>
                 <td>{{pr.UsedSize.toFixed(2)}}</td>
+                <td>{{pr.ApprovedSize}}</td>
                 <td>{{pr.TotalCompensation}}</td>
                 <td>{{pr.UsedAmount.toFixed(2)}}</td>
                 <td>

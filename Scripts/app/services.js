@@ -116,6 +116,7 @@ appServices.factory('Constants', ['$resource','$filter',
       clients['pt'] = $resource('/api/PriceTemplates/:id', { id: '@id' }, { 'update': { method: 'PUT' } })
       clients['pr'] = $resource('/api/PlacementRecords/:id', { id: '@id' }, { 'update': { method: 'PUT' } })
       clients['contract'] = $resource('/api/Contracts/:id', { id: '@id' }, { 'update': { method: 'PUT' } })
+      clients['ao'] = $resource('/api/AppartmentOwners/:id', { id: '@id' }, { 'update': { method: 'PUT' } })
       return {
           getclient: function(resoucename){
               return clients[resoucename]

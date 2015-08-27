@@ -493,7 +493,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                                     return;
                                 }
                                 r.RelationshipType = item.RelationshipType
-                                var rr = $filter('filter')(list_temp, { RelocationBase_t: item.RelocationBase_t, RRId_t: item.RRId_t, OwnerName_t: item.OwnerName_t }, true)[0]
+                                var rr = $filter('filter')(list_temp, { RelocationBase_t: item.RelocationBase_t, RRId: item.RRId, OwnerName_t: item.OwnerName_t }, true)[0]
                                 if (rr == null) {
                                     $scope.err.push({ reason: "没有找到RR", data: angular.toJson(item) })
                                   
@@ -585,15 +585,16 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                                  }
                               
                                  var rs = rearray[item.IdentityCard_t.toUpperCase()]
+                                //找到Pr记录中对应身份证号码的Resident
                                 var match = null;
                                 if (rs == null || rs.length == 0) {
                                     $scope.err.push({ reason: "没有对应拆迁记录", data: angular.toJson(item) })
                                   
                                     return
-                                } else if (rs.length == 1) {
+                                } else if (rs.length == 1) { //只找到一个Residents
                                     match = rs[0]
                                 }
-                                else if (rs.length > 1) {
+                                else if (rs.length > 1) {//找到多个Resident,则根据拆迁基地来找到唯一记录
                                     var found = 0;
                                  
                                     
@@ -606,7 +607,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                                             } else if (rrarray[r.RelocationRecordId].TotalCompensation!= null && 
                                                 rrarray[r.RelocationRecordId].TotalCompensation > rrarray[match.RelocationRecordId].TotalCompensation) {
                                                 match = r
-                                            }
+                                            }//寻找到补偿金额较大的记录，因为有可能超过10个人以后进行分户
                                         }
                                         else if ($scope.rbmap[item.RB_t] == null) {
                                             $scope.err.push({ reason: "没有楼下楼上拆迁基地对应信息", data: angular.toJson(item) })
@@ -637,7 +638,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     RestService.getclient('appartment').query(function (rs) {
                         var applist = rs.Items;
                         var apparray = [];
-                        applist.forEach(function (app) {
+                        applist.forEach(function (app) {//生成一个APP的列表，用来根据条件快速查询
                             if (apparray[app.Community.Name] == null) {
                                 apparray[app.Community.Name] = []
                             }
@@ -652,7 +653,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                         })
                        
                         RestService.getclient('resident').query(function(relist) {
-                            var IDprarray = []
+                            var IDprarray = []//构造PR列表，可根据身份证号快速查询
                             var contracts = []
                             relist.Items.forEach(function (re) {
                                 if (re.IdentityCard == null) {
@@ -665,7 +666,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                                         IDprarray[re.IdentityCard.toUpperCase()] = re.PlacementRecordId
                                     }
                                 } else if (IDprarray[re.IdentityCard.toUpperCase()] != null && re.PlacementRecordId != null) {
-                                    $scope.err.push({ reason: "重复安置记录", data: angular.toJson(re) })
+                                    $scope.err.push({ reason: "重复安置记录", data: angular.toJson(re) })//一个人具有两个安置记录，仅保留第一个安置记录
                                
                                 }
                             })
@@ -685,12 +686,25 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                                 }
                                 contract.AppartmentId = apparray[contract.Community_DB][contract.BuildingNumber][contract.DoorNumber].Id
                                 contract.PlacementRecordId = IDprarray[contract.IdentityCard_DB.toUpperCase()]
-                                if (contract.AppartmentId != null && contract.PlacementRecordId != null) {
-                                    contracts.push(contract)
-                                }
                                 if (contract.PlacementRecordId == null || contract.PlacementRecordId == "") {
-                                   
+
                                     $scope.err.push({ reason: "没有安置记录", data: angular.toJson(contract) })
+
+                                    return
+                                }
+                                else if (contract.AppartmentId != null && contract.PlacementRecordId != null) {
+                                    
+                                    if ((contract.AppartmentOwnerName != null && contract.AppartmentOwnerName!='')
+                                        || (contract.AppartmentOwnerId!=null &&contract.AppartmentOwnerId!='')){
+                                        contract.AppartmentOwners = []
+                                        var ao = {}
+                                        ao.Name = contract.AppartmentOwnerName
+                                        ao.IdentityCard = contract.AppartmentOwnerId
+                                        ao.ShowAsOwner = true
+                                        ao.ShowOnCert = false
+                                        contract.AppartmentOwners.push(ao)
+                                    }
+                                    contracts.push(contract)
                                 }
                             })
                             $scope.gridOptions.data = contracts
@@ -700,7 +714,44 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                        
                     })     
                 }
-                
+                if ($scope.model.Name == 'ao') {
+                    RestService.getclient('appartment').query(function (rs) {
+                        var applist = rs.Items;
+                        var apparray = [];
+                        applist.forEach(function (app) {//生成一个APP的列表，用来根据条件快速查询
+                            if (apparray[app.Community.Name] == null) {
+                                apparray[app.Community.Name] = []
+                            }
+                            if (apparray[app.Community.Name][app.BuildingNumber] == null) {
+                                apparray[app.Community.Name][app.BuildingNumber] = []
+                            }
+                            if (apparray[app.Community.Name][app.BuildingNumber][app.DoorNumber] == null) {
+                                apparray[app.Community.Name][app.BuildingNumber][app.DoorNumber] = app.Id
+                            } else {
+                                $scope.err.push('dup app ' + app.Community.Name + app.BuildingNumber + app.DoorNumber)
+                            }
+                        })
+                       
+                        RestService.getclient('contract').query(function (clist) {
+                            var aos = []
+                            var appcarray = []
+                            clist.forEach(function(c){
+                                appcarray[c.AppartmentId] = c.Id
+                            })
+                            $scope.gridOptions.data.forEach(function (ao) {
+                                ao.ContractId = appcarray[apparray[ao.Community_DB][ao.BuildingNumber][ao.DoorNumber]]
+                                ao.Name = ao.CertOwnerName_t
+                                ao.IdentityCard = ao.CertOwnerId_t
+                                ao.ShowOnCert = true
+                                ao.ShowAsOwner = false
+                                aos.push(ao)
+                            })
+                            $scope.gridOptions.data = aos
+                            $scope.max = $scope.gridOptions.data.length;
+                           
+                        })
+                    })
+                }
                 $scope.max = $scope.gridOptions.data.length;
             })
            
@@ -744,7 +795,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             })
             i++
             
-        }, 20);
+        }, 30);
 
     }
     $scope.gridOptions = {
@@ -1230,7 +1281,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             $scope.contract.Appartment.Price3 * $scope.contract.Size3 + 
             $scope.contract.Appartment.Price4 * $scope.contract.Size4
     }
-}])*/.controller('PrintBCtrl', ['$scope', '$modal', 'RestService', '$routeParams', function ($scope, $modal, RestService, $routeParams) {
+}])*/.controller('PrintBCtrl', ['$scope', '$modal', 'RestService', '$routeParams','$filter', function ($scope, $modal, RestService, $routeParams, $filter) {
     var prid = $routeParams.prid
     var cid = $routeParams.cid
     $scope.showrecord = function (idx) {
@@ -1270,6 +1321,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     while (item.PlacementRecord.Residents.length < 6) {
                         item.PlacementRecord.Residents.push({})
                     }
+                    item.AppartmentOwners = $filter('filter')(item.AppartmentOwners,{ShowOnCert:true},true)
                     while (item.AppartmentOwners.length < 6) {
                         item.AppartmentOwners.push({})
                     }
@@ -1313,20 +1365,27 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     }
     $scope.totalfee = function (idx) {
         var contract = $scope.contracts[idx]
-        return  contract.GasFee + contract.OtherFee - contract.TransitionFee + contract.TVFee - contract.InterestFee + contract.RepairUnitPrice * contract.Appartment.Size + $scope.delta(idx)
+        return  contract.GasFee + contract.OtherFee - contract.TransitionFee + contract.TVFee - contract.InterestFee + contract.RepairUnitPrice * contract.Appartment.Size + contract.DeltaAmount
     }
     $scope.owners = function (idx) {
         var contract = $scope.contracts[idx]
-        var names=""
-        contract.AppartmentOwners.forEach(function (o) {
-            names += o.Name +" "
-        })
-        return names
+        var owner = $filter('filter')(contract.AppartmentOwners, { ShowAsOwner: true }, true)[0]
+        if (owner != null) {
+            return $filter('filter')(contract.AppartmentOwners, { ShowAsOwner: true }, true)[0].Name
+        }
+        return ""
+        
     }
     $scope.idcard = function (idx) {
         var contract = $scope.contracts[idx]
-        var names = ""
-        return contract.AppartmentOwners[0] !=null ? contract.AppartmentOwners[0].IdentityCard:""
+        if (contract.AppartmentOwners != null) {
+            var owner =$filter('filter')(contract.AppartmentOwners, { ShowAsOwner: true }, true)[0]
+            if(owner!= null){
+                return $filter('filter')(contract.AppartmentOwners, { ShowAsOwner: true }, true)[0].IdentityCard
+            }
+            
+        }
+        return ""
     }
 }])
 
