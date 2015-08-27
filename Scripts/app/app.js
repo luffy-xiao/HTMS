@@ -22,6 +22,10 @@ var appmodule = angular.module('ms.site', ['ngCookies','ngRoute', 'ms.site.contr
                     templateUrl: '/pages/resident/resident_issue.html',
                     controller: 'ResidentIssueCtrl'
                 }).
+                when('/resident/export', {
+                    templateUrl: '/pages/resident/resident_export.html',
+                    controller: 'ExportCtrl'
+                }).
                 when('/resident/detail/:id/readonly=:readonly', {
                     templateUrl: '/pages/resident/resident_detail.html',
                     controller: 'ResidentDetailCtrl'
