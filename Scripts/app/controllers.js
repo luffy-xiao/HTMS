@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-var appControllers = angular.module('ms.site.controllers', ['ms.site.controllers.modal','ui.grid','ui.bootstrap']);
+var appControllers = angular.module('ms.site.controllers', ['ms.site.controllers.modal', 'ui.grid', 'ui.bootstrap', 'ui.grid.exporter']);
 
 
 appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestService','$location', function ($scope, $modal, RestService,$location) {
@@ -26,7 +26,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             $location.path('/resident/detail/' + data.Id + "/readonly=" + true)
         }, function (err) {
             if(err.status == 409)
-            alert("记录重复，可能由于该户主已经存在")
+                alert("记录重复，可能由于该户主已经存在")
         });
      
     }
@@ -414,6 +414,169 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         InitCtrl($scope, $modal, 'appartment', RestService, { CommunityId: $scope.searchparams.CommunityId });
     }
 
+}])
+.controller('ExportCtrl', ['$scope', 'RestService', '$filter', 'uiGridConstants', function ($scope, RestService, $filter, uiGridConstants) {
+    $scope.model = { Name: 'rr' };
+    $scope.searchparams = {};
+    $scope.showAllResidents = 0;
+
+    $scope.rbs = RestService.getclient('rb').query();
+
+    // TODO not queryable
+    RestService.getclient('model').query({ $filter: "Name eq'" + $scope.model.Name + "'" }, function (m) {
+        $scope.model.DisplayName = m.DisplayName;
+    });
+    
+    $scope.gridOptions = {
+        enableFiltering: false,
+        enableColumnMenus: false,
+        enableSorting: false,
+        exporterLinkLabel: 'get your csv here',
+        onRegisterApi: function (gridApi) {
+            $scope.gridApi = gridApi;
+        }
+    };
+
+    // Load columns metadata.
+    $scope.colList = [];
+
+    var residentsFlatten = { Resident_Name: 'Name', Resident_IdentityCard: 'IdentityCard' };
+    var dateFields = ['DateCreated', 'PaymentDate', 'DeliveryDate', 'NewVillageDate'];
+
+    RestService.getclient('header').query({ $filter: "ModelName eq 'resident'" }, function (result) {
+        $scope.residentsHeader = result;
+
+        RestService.getclient('header').query({
+            $filter: "ModelName eq '" + $scope.model.Name + "'"
+        }, function (meta) {
+            meta.forEach(function (m) {
+                // Skip Id.
+                if (m.Field.toLowerCase() == "id") return;
+
+                $scope.colList.push({
+                    name: m.Field,
+                    displayName: m.Name,
+                    width: 100,
+                    visible: true
+                });
+
+                // Handler special column.
+                /*if (m.Field == 'RelocationBase') {
+                    col.name = 'RelocationBase.Name';
+                } else if (/Date/.test(m.Field)) {
+                    col.cellFilter = 'date:"yyyy-MM-dd"';
+                }*/
+            });
+
+            // Add residents flatten fields.
+            for (var rf in residentsFlatten) {
+                var rh = $filter('filter')($scope.residentsHeader, { Field: residentsFlatten[rf] }, true)[0];
+
+                $scope.colList.push({
+                    name: rf,
+                    displayName: rh.Name,
+                    width: 100,
+                    visible: true
+                });
+            };
+        });
+    });
+
+    var getFilters = function () {
+        var filters = [];
+
+        // Filters by relocationrecord.
+        if ($scope.searchparams.RelocationBaseId != null && $scope.searchparams.RelocationBaseId != '') {
+            filters.push('RelocationBaseId eq ' + $scope.searchparams.RelocationBaseId);
+        }
+        if ($scope.searchparams.RRId != null && $scope.searchparams.RRId.trim() != '') {
+            filters.push("RRId eq '" + $scope.searchparams.RRId + "'");
+        }
+
+        return filters;
+    };
+
+    var mappedData = [];
+
+    $scope.search = function () {
+        var filters = getFilters();
+        var filterstring = 'true';
+
+        filters.forEach(function (f) {
+            filterstring += (" and " + f);
+        });
+
+        RestService.getclient('rr').query({$filter: filterstring}, function (result) {
+            $scope.gridOptions.columnDefs = $scope.colList;
+
+            result.Items.forEach(function (item) {
+                var mapped = angular.copy(item);
+
+                // Handle relocation base.
+                var rbase = $filter('filter')($scope.rbs, function (e) { return e.Id == item.RelocationBaseId; }, true)[0];
+                if (rbase != null) {
+                    mapped.RelocationBase = rbase.Name;
+                }
+
+                // Convert date to from UTC to locale.
+                dateFields.forEach(function (d) {
+                    mapped[d] = $filter('date')(mapped[d], 'yyyy-MM-dd');
+                });
+
+                // Whether show all residents.
+                if ($scope.showAllResidents && mapped.Residents.length > 1) {
+                    mapped.Residents.forEach(function (r) {
+                        var mapped2 = angular.copy(mapped);
+                        for (var rf in residentsFlatten) {
+                            mapped2[rf] = r[residentsFlatten[rf]];
+                        }
+
+                        delete mapped2.Residents;
+                        mappedData.push(mapped2);
+                    });
+                } else {
+                    for (var rf in residentsFlatten) {
+                        mapped[rf] = mapped.Residents[0][residentsFlatten[rf]];
+                    }
+
+                    delete mapped.Residents;
+                    mappedData.push(mapped);
+                }
+            });
+
+            $scope.gridOptions.data = mappedData;
+        });
+    };
+
+    // Notify grid change when columns visibility changed.
+    $scope.columnsChanged = function () {
+        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
+    };
+
+    /*$scope.exportSettings = {
+        rowType: 'visible',
+        columnType: 'visible',
+        format: 'csv'
+    };
+
+    $scope.export = function () {
+        // Construct file name.
+        $scope.gridOptions.exporterCsvFilename = $scope.model.DisplayName ? $scope.model.DisplayName + new Date().toUTCString + ".csv" : 'export.csv';
+
+        var myElement = angular.element(document.querySelectorAll(".custom-csv-link-location"));
+        $scope.gridApi.exporter.csvExport($scope.exportSettings.rowType, $scope.exportSettings.columnType, myElement);
+    };*/
+    $scope.export = function () {
+        var now = $filter('date')(new Date(), 'yyyyMMddHHmmss');
+        var selected = [];
+        $scope.colList.forEach(function (col) {
+            if (col.visible) {
+                selected.push('`' + col.name + '` AS `' + col.displayName + '`');
+            }
+        });
+
+        alasql('SELECT ' + selected.join() + ' INTO XLSX("动迁记录导出_' + now + '.xlsx") FROM ?', [mappedData]);
+    };
 }])
 .controller('BulkCreateCtrl', ['$scope', '$modal', 'RestService', '$interval', '$rootScope', '$filter', function ($scope, $modal, RestService, $interval, $rootScope, $filter) {
     var headers = [];
