@@ -415,7 +415,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     }
 
 }])
-.controller('ExportCtrl', ['$scope', 'RestService', '$filter', 'uiGridConstants', function ($scope, RestService, $filter, uiGridConstants) {
+.controller('ExportCtrl', ['$scope', 'RestService', '$filter', function ($scope, RestService, $filter) {
     $scope.model = { Name: 'rr' };
     $scope.searchparams = {};
     $scope.showAllResidents = 0;
@@ -426,23 +426,16 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     RestService.getclient('model').query({ $filter: "Name eq'" + $scope.model.Name + "'" }, function (m) {
         $scope.model.DisplayName = m.DisplayName;
     });
-    
-    $scope.gridOptions = {
-        enableFiltering: false,
-        enableColumnMenus: false,
-        enableSorting: false,
-        exporterLinkLabel: 'get your csv here',
-        onRegisterApi: function (gridApi) {
-            $scope.gridApi = gridApi;
-        }
-    };
 
-    // Load columns metadata.
+    // Table data.
     $scope.colList = [];
+    $scope.dataSource = [];
 
+    // Columns need special handling.
     var residentsFlatten = { Resident_Name: 'Name', Resident_IdentityCard: 'IdentityCard' };
     var dateFields = ['DateCreated', 'PaymentDate', 'DeliveryDate', 'NewVillageDate'];
 
+    // Load column metadata.
     RestService.getclient('header').query({ $filter: "ModelName eq 'resident'" }, function (result) {
         $scope.residentsHeader = result;
 
@@ -456,16 +449,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 $scope.colList.push({
                     name: m.Field,
                     displayName: m.Name,
-                    width: 100,
                     visible: true
                 });
-
-                // Handler special column.
-                /*if (m.Field == 'RelocationBase') {
-                    col.name = 'RelocationBase.Name';
-                } else if (/Date/.test(m.Field)) {
-                    col.cellFilter = 'date:"yyyy-MM-dd"';
-                }*/
             });
 
             // Add residents flatten fields.
@@ -475,13 +460,13 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 $scope.colList.push({
                     name: rf,
                     displayName: rh.Name,
-                    width: 100,
                     visible: true
                 });
             };
         });
     });
 
+    // Search filters.
     var getFilters = function () {
         var filters = [];
 
@@ -496,8 +481,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         return filters;
     };
 
-    var mappedData = [];
-
     $scope.search = function () {
         var filters = getFilters();
         var filterstring = 'true';
@@ -507,8 +490,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         });
 
         RestService.getclient('rr').query({$filter: filterstring}, function (result) {
-            $scope.gridOptions.columnDefs = $scope.colList;
-
             result.Items.forEach(function (item) {
                 var mapped = angular.copy(item);
 
@@ -532,7 +513,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                         }
 
                         delete mapped2.Residents;
-                        mappedData.push(mapped2);
+                        $scope.dataSource.push(mapped2);
                     });
                 } else {
                     for (var rf in residentsFlatten) {
@@ -540,32 +521,13 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     }
 
                     delete mapped.Residents;
-                    mappedData.push(mapped);
+                    $scope.dataSource.push(mapped);
                 }
             });
-
-            $scope.gridOptions.data = mappedData;
         });
     };
 
-    // Notify grid change when columns visibility changed.
-    $scope.columnsChanged = function () {
-        $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.COLUMN);
-    };
-
-    /*$scope.exportSettings = {
-        rowType: 'visible',
-        columnType: 'visible',
-        format: 'csv'
-    };
-
-    $scope.export = function () {
-        // Construct file name.
-        $scope.gridOptions.exporterCsvFilename = $scope.model.DisplayName ? $scope.model.DisplayName + new Date().toUTCString + ".csv" : 'export.csv';
-
-        var myElement = angular.element(document.querySelectorAll(".custom-csv-link-location"));
-        $scope.gridApi.exporter.csvExport($scope.exportSettings.rowType, $scope.exportSettings.columnType, myElement);
-    };*/
+    // Export table as excel.
     $scope.export = function () {
         var now = $filter('date')(new Date(), 'yyyyMMddHHmmss');
         var selected = [];
@@ -575,7 +537,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             }
         });
 
-        alasql('SELECT ' + selected.join() + ' INTO XLSX("动迁记录导出_' + now + '.xlsx") FROM ?', [mappedData]);
+        alasql('SELECT ' + selected.join() + ' INTO XLSX("动迁记录导出_' + now + '.xlsx") FROM ?', [$scope.dataSource]);
     };
 }])
 .controller('BulkCreateCtrl', ['$scope', '$modal', 'RestService', '$interval', '$rootScope', '$filter', function ($scope, $modal, RestService, $interval, $rootScope, $filter) {
