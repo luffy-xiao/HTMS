@@ -76,8 +76,8 @@
             <td>{{item.Price4}}</td>
             <td>{{item.Status}}</td>
             <td>
-                <input type="button" class="btn btn-default btn-xs" value="修改" ng-click="modify($index)"/>
-                <input type="button" class="btn btn-warning btn-xs" value="删除" ng-click="del($index)" />
+                <input ng-show="user.Roles[0].Id==1" type="button" class="btn btn-default btn-xs" value="修改" ng-click="modify($index)" />
+                <input ng-show="user.Roles[0].Id==1" type="button" class="btn btn-warning btn-xs" value="删除" ng-click="del($index)" />
             </td>
         </tr>
     </table>
