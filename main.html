@@ -17,6 +17,7 @@
     
     <!-- Custom styles for this template -->
     <link href="/Content/dashboard.css" rel="stylesheet">
+    <link href="/Content/Print.css" rel="stylesheet">
 
     <!--shared javascripts-->
     <script src="Scripts/shared/jquery-1.10.2.min.js"></script>
@@ -57,13 +58,13 @@
 </head>
 
 <body>
-    <nav ng-show="user" ng-include="'/pages/shared/navtop.html'" class="navbar navbar-inverse navbar-fixed-top" ng-controller="NavCtrl"></nav>
+    <nav ng-show="user" ng-include="'/pages/shared/navtop.html'" class="navbar navbar-inverse navbar-fixed-top noprint" ng-controller="NavCtrl"></nav>
 
 
 
     <div class="container-fluid">
         <div class="row">
-            <div ng-show="user" ng-include="'/pages/shared/menu.html'" class="col-sm-3 col-md-2 sidebar" ng-controller="MenuCtrl"></div>
+            <div ng-show="user" ng-include="'/pages/shared/menu.html'" class="col-sm-3 col-md-2 sidebar noprint" ng-controller="MenuCtrl"></div>
 
             <div ng-show="user" ng-view></div>
       
