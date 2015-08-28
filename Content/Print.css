@@ -2,10 +2,16 @@
 @media screen {
  .noprint {display:block !important;}
  .noshow {display:none !important;}
+
 }
 
 /* Print Only */
 @media print {
  .noprint {display:none !important;}
  .noshow {display:block !important;}
+  .col-sm-9, .col-sm-offset-3, .col-md-40,.col-md-offset-2, .main{
+     margin-left: 0;
+     width:100%
+ }
 }
+
