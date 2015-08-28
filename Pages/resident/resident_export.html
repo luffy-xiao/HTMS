@@ -1,53 +1,67 @@
 ﻿<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-    <label ng-repeat ="col in colList">
-        <input type="checkbox" name="{{col.name}}" ng-model="col.visible" ng-change="columnsChanged()" />{{col.displayName}}
-    </label> 
-    
-    <hr/>
-    <form name="s1" class="form-horizontal" novalidate>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">拆迁编号</label>
-            <div class="col-sm-3">
-                <input type="text" class="form-control" ng-model="searchparams.RRId" />
+    <div class="noprint">
+        <p class="bg-info">请按如下条件搜索需要导出的拆迁记录。</p>
+        <form name="s1" class="form-horizontal" novalidate>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">拆迁编号</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" ng-model="searchparams.RRId" />
+                </div>
+                <label class="col-sm-2 control-label">动迁基地名称</label>
+                <div class="col-sm-3">
+                    <span class="nullable">
+                        <select class="form-control" ng-model="searchparams.RelocationBaseId" ng-options="rb.Id as rb.Name for rb in rbs">
+                            <option value="">--请选择--</option>
+                        </select>
+                    </span>
+                </div>
             </div>
-            <label class="col-sm-2 control-label">动迁基地名称</label>
-            <div class="col-sm-3">
-                <span class="nullable">
-                    <select class="form-control" ng-model="searchparams.RelocationBaseId" ng-options="rb.Id as rb.Name for rb in rbs">
-                        <option value="">--请选择--</option>
-                    </select>
-                </span>
+
+            <div class="form-group has-feedback">
+                <div class="col-sm-offset-2 col-sm-4">
+                    <label><input type="radio" name="showAllResidents" value="0" ng-model="showAllResidents" />仅显示户主</label>
+                    <label><input type="radio" name="showAllResidents" value="1" ng-model="showAllResidents" />显示所有家庭成员</label>
+                </div>
             </div>
+
+            <div class="form-group has-feedback">
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-primary" ng-click="search()">
+                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 搜索
+                    </button>
+                </div>
+            </div>
+        </form>
+        <hr />
+
+        <p class="bg-info">请选择需要导出的信息，然后点击导出按钮将数据导出到Excel文件。</p>
+        <div>
+            <label ng-repeat="col in colList">
+                <input type="checkbox" name="{{col.name}}" ng-model="col.visible" />{{col.displayName}}
+            </label>
         </div>
 
-        <div class="form-group has-feedback">
-            <div class="col-sm-4">
-                <label><input type="radio" name="showAllResidents" value="0" ng-model="showAllResidents" />仅显示户主</label>
-                <label><input type="radio" name="showAllResidents" value="1" ng-model="showAllResidents" />显示所有家庭成员</label>
-            </div>
+        <div>
+            <button type="button" class="btn btn-primary" ng-click="export()">
+                <span class="glyphicon glyphicon-export" aria-hidden="true"></span> 导出
+            </button>
         </div>
-
-        <div class="form-group has-feedback">
-            <div class="col-sm-2">
-                <button type="button" class="btn btn-primary" ng-click="search()">
-                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 搜索
-                </button>
-            </div>
-        </div>
-    </form>
-
-    <button type="button" class="btn btn-primary" ng-click="export()">
-        <span class="glyphicon glyphicon-export" aria-hidden="true"></span> 导出
-    </button>
-
-    <div class="custom-csv-link-location">
-        <label>Your CSV will show below:</label>
-        <span class="ui-grid-exporter-csv-link">&nbsp</span>
     </div>
-    <div ui-grid="gridOptions" ui-grid-exporter class="gridStyle"></div>
 
-<pre>
-{{gridOptions.columnDefs | json}}
-</pre>
+    <h3 class="noshow">拆迁记录</h3>
+    <div class="table-responsive noscroll">
+        <table class="table table-bordered table-hover table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th ng-repeat="col in colList" ng-show="col.visible">{{col.displayName}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="row in dataSource">
+                    <td ng-repeat="col in colList" ng-show="col.visible">{{row[col.name]}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
 </div>
