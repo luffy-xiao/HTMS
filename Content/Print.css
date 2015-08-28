@@ -13,5 +13,9 @@
      margin-left: 0;
      width:100%
  }
+  thead
+{
+                display:  table-header-group;
+}
 }
 
