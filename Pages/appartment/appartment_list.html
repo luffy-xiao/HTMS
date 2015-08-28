@@ -61,7 +61,7 @@
             <th>市场价格2</th>
             <th>状态</th>
 
-            <th><input type="button" class="btn btn-primary btn-sm" value="添加" ng-click="add()" /></th>
+            <th class="noprint"><input type="button" class="btn btn-primary btn-sm" value="添加" ng-click="add()" /></th>
         </tr>
         </thead>
         <tbody>
@@ -78,7 +78,7 @@
             <td>{{item.Price3}}</td>
             <td>{{item.Price4}}</td>
             <td>{{item.Status}}</td>
-            <td>
+            <td class="noprint">
                 <input ng-show="user.Roles[0].Id==1" type="button" class="btn btn-default btn-xs" value="修改" ng-click="modify($index)" />
                 <input ng-show="user.Roles[0].Id==1" type="button" class="btn btn-warning btn-xs" value="删除" ng-click="del($index)" />
             </td>
@@ -86,7 +86,7 @@
         </tbody>
     </table>
     <!-- pagination -->
-    <div ng-show="showresult && totalItems">
+    <div class = "noprint" ng-show="showresult && totalItems">
         <pagination total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage" ng-change="pageChanged()"
                     max-size="maxSize" num-pages="numPages" class="pagination-sm" boundary-links="true" rotate="false"
                     first-text="首页" previous-text="<上一页" next-text="下一页>" last-text="尾页"></pagination>
