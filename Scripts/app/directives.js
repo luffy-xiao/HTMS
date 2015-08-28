@@ -20,10 +20,12 @@ appDirectives.directive('idcard', function () {
         link: function (scope, elm, attrs, ctrl) {
             elm.on("keyup", function (event) {
                 var viewValue = elm.val()
-                if (viewValue.length == 17) {
+                
+                if (scope.lastlength!=18 &&viewValue.length == 17) {
                     elm.val(viewValue + validateidenttiycard(viewValue))
                     ctrl.$setViewValue(elm.val())
                 }
+                scope.lastlength = elm.val().length
             })
             ctrl.$validators.integercheck = function (modelValue, viewValue) {        
                 if (IDCARD_REGEXP.test(viewValue)) {
