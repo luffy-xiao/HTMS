@@ -30,6 +30,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         });
      
     }
+
     //datapickers
     InitDataPicker($scope)
 
@@ -921,7 +922,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     $scope.query = function () {
         var filters = []
-        filters.push("RelationshipType eq '户主'")
+        filters.push("RelationshipType eq '户主' and Status eq 1")
 
         // Save search key in cookie.
         if ($scope.searchparams.Name != null && $scope.searchparams.Name.trim() != '') {

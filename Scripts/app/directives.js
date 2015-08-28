@@ -18,6 +18,13 @@ appDirectives.directive('idcard', function () {
     return {
         require: 'ngModel',
         link: function (scope, elm, attrs, ctrl) {
+            elm.on("keyup", function (event) {
+                var viewValue = elm.val()
+                if (viewValue.length == 17) {
+                    elm.val(viewValue + validateidenttiycard(viewValue))
+                    ctrl.$setViewValue(elm.val())
+                }
+            })
             ctrl.$validators.integercheck = function (modelValue, viewValue) {        
                 if (IDCARD_REGEXP.test(viewValue)) {
                     // it is valid

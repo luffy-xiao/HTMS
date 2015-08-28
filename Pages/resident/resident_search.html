@@ -11,7 +11,7 @@
             </div>
             <label class="col-sm-2 control-label">身份证号</label>
             <div class="col-sm-3">
-                <input type="text" class="form-control" ng-model="searchparams.IdentityCard" >
+                <input type="text" class="form-control" ng-model="searchparams.IdentityCard" idcard>
             </div>
         </div>
         <hr/>
@@ -115,8 +115,8 @@
                     <td>{{rr.Residents[0].Phone}}</td>
                     <td>
                         <button type="button" class="btn btn-primary btn-sm" ng-click="navtodetail(rr,true)">查看</button>
-                        <button ng-show="user.Roles[0].Id==2" type="button" class="btn btn-default btn-sm" ng-click="navtodetail(rr,false)">修改</button>
-                        <button ng-show="user.Roles[0].Id==2" type="button" class="btn btn-danger btn-sm" ng-click="del($index)">删除</button>
+                        <button ng-show="user.Roles[0].Id==1" type="button" class="btn btn-default btn-sm" ng-click="navtodetail(rr,false)">修改</button>
+                        <button ng-show="user.Roles[0].Id==1" type="button" class="btn btn-danger btn-sm" ng-click="del($index)">删除</button>
                     </td>
                 </tr>
             </tbody>
