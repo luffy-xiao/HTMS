@@ -13,13 +13,9 @@
      margin-left: 0;
      width:100%
  }
-<<<<<<< HEAD
-  thead
-{
-                display:  table-header-group;
-}
-=======
+
+ thead {display:  table-header-group;}
+
  .noscroll {overflow: visible;}
->>>>>>> origin/master
 }
 
