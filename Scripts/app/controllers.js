@@ -415,7 +415,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     }
 
 }])
-.controller('ExportCtrl', ['$scope', 'RestService', '$filter', function ($scope, RestService, $filter) {
+.controller('ExportCtrl', ['$scope', 'RestService', '$filter', '$window', function ($scope, RestService, $filter, $window) {
     $scope.model = { Name: 'rr' };
     $scope.searchparams = {};
     $scope.showAllResidents = 0;
@@ -526,6 +526,10 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             });
         });
     };
+
+    $scope.print = function () {
+        $window.print();
+    }
 
     // Export table as excel.
     $scope.export = function () {
