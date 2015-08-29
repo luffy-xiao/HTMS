@@ -1,0 +1,19 @@
+﻿<tabset>
+    <tab heading="按人查询" active="true" select="searchByChanged('rs')">
+        <div class="form-group"></div>
+        <div class="form-group  has-feedback">
+            <label class="col-sm-2 control-label">姓名</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" ng-model="searchparams.Name">
+            </div>
+            <label class="col-sm-2 control-label">身份证号</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" ng-model="searchparams.IdentityCard" idcard>
+            </div>
+        </div>
+    </tab>
+    <tab heading="范围查询" select="searchByChanged('rr')">
+        <div class="form-group"></div>
+        <div ng-include="'/pages/resident/resident_query_scope.html'"></div>
+    </tab>
+</tabset>

@@ -78,17 +78,14 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
 }]).controller('UserListCtrl', ['$scope', '$modal', 'RestService', function ($scope, $modal, RestService) {
     $scope.items = RestService.getclient('user').query();
-    InitCtrl($scope, $modal, 'user', RestService, {Roles:[]})
+    InitCtrl($scope, $modal, 'user', RestService, { Roles: [] });
 
 }]).controller('RBListCtrl', ['$scope', '$modal', 'RestService', function ($scope, $modal, RestService) {
     $scope.items = RestService.getclient('rb').query();
-    InitCtrl($scope, $modal, 'rb', RestService, {})
+    InitCtrl($scope, $modal, 'rb', RestService, {});
 }]).controller('ResidentSearchCtrl', ['$scope', '$modal', 'RestService', '$location', '$filter', function ($scope, $modal, RestService, $location, $filter) {
-    $scope.rbs = RestService.getclient('rb').query();
-    $scope.vlist = RestService.getclient('village').query();
-
-    //datapickers
-    InitDataPicker($scope);
+    // Init resident query.
+    initResidentSearch($scope, RestService);
 
     // Pagination.
     $scope.currentPage = 1;
@@ -97,14 +94,12 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     // Cache filterstring used in query.
     var filterstring;
-    // Flag whether search by resident (rs) or relocationrecord (rr).
-    var searchBy = 'rs';
-
+    
     $scope.pageChanged = function () {
         $scope.rrlist = [];
         var skip = ($scope.currentPage - 1) * $scope.itemsPerPage;
 
-        if (searchBy == 'rs') {
+        if ($scope.searchBy == 'rs') {
             RestService.getclient('resident').query({
                 $filter: filterstring, $inlinecount: 'allpages',
                 $skip: skip, $top: $scope.itemsPerPage
@@ -135,62 +130,10 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         }
     };
 
-    var getFilters = function () {
-        var filters = {rs: [], rr: []};
-
-        // Filters by resident.
-        if ($scope.searchparams.Name != null && $scope.searchparams.Name.trim() != '') {
-            filters.rs.push("substringof('" + $scope.searchparams.Name + "',Name)")
-        }
-        if ($scope.searchparams.IdentityCard != null && $scope.searchparams.IdentityCard.trim() != '') {
-            filters.rs.push("substringof('" + $scope.searchparams.IdentityCard + "',IdentityCard)")
-        }
-
-        // Filters by relocationrecord.
-        if ($scope.searchparams.RelocationBaseId != null && $scope.searchparams.RelocationBaseId != '') {
-            filters.rr.push('RelocationBaseId eq ' + $scope.searchparams.RelocationBaseId);
-        }
-        if ($scope.searchparams.RRId != null && $scope.searchparams.RRId.trim() != '') {
-            filters.rr.push("RRId eq '" + $scope.searchparams.RRId + "'");
-        }
-        if ($scope.searchparams.Village != null && $scope.searchparams.Village.trim() != '') {
-            filters.rr.push("Village eq '" + $scope.searchparams.Village + "'");
-        }
-        if ($scope.searchparams.Group != null && $scope.searchparams.Group.trim() != '') {
-            filters.rr.push("Group eq '" + $scope.searchparams.Group + "'");
-        }
-        if ($scope.searchparams.DoorNumber != null && $scope.searchparams.DoorNumber.trim() != '') {
-            filters.rr.push("DoorNumber eq '" + $scope.searchparams.DoorNumber + "'");
-        }
-        if ($scope.searchparams.PaymentDateStart != null) {
-            filters.rr.push('PaymentDate ge ' + "datetime'" + $scope.searchparams.PaymentDateStart.toISOString() + "'");
-        }
-        if ($scope.searchparams.PaymentDateEnd != null) {
-            filters.rr.push('PaymentDate le ' + "datetime'" + $scope.searchparams.PaymentDateEnd.toISOString() + "'");
-        }
-        if ($scope.searchparams.DeliveryDateStart != null) {
-            filters.rr.push('DeliveryDate ge ' + "datetime'" + $scope.searchparams.DeliveryDateStart.toISOString() + "'");
-        }
-        if ($scope.searchparams.DeliveryDateEnd != null) {
-            filters.rr.push('DeliveryDate le ' + "datetime'" + $scope.searchparams.DeliveryDateEnd.toISOString() + "'");
-        }
+    $scope.search = function () {
+        filterstring = getResidentFilters($scope.searchparams, $scope.searchBy);
         
-        return filters;
-    };
-
-    $scope.searchbyR = function () {
-        var filters = getFilters();
-        
-        if (filters.rs.length || filters.rr.length) {
-            searchBy = filters.rr.length ? 'rr' : 'rs';
-
-            // Reset filterstring occording to current filters.
-            filterstring = searchBy == 'rs' ? "Status eq 1" : 'true';
-
-            filters[searchBy].forEach(function (f) {
-                filterstring += (" and " + f);
-            });
-
+        if (filterstring.length) {
             // Search from beginning when click search button.
             $scope.currentPage = 1;
             $scope.pageChanged();
@@ -199,14 +142,14 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         }
     };
 
-    $scope.navtodetail = function (rr,readonly) {
+    $scope.navtodetail = function (rr, readonly) {
         $location.path('/resident/detail/' + rr.Id + "/readonly=" + readonly);
-    }
+    };
 
     $scope.del = function (idx) {
         $scope.items = $scope.rrlist;
         deleteitem($modal, RestService, 'rr', $scope, idx, true);
-    }
+    };
 }]).controller('ResidentDetailCtrl', ['$scope', '$modal', '$filter', 'RestService', '$routeParams','$location', function ($scope, $modal, $filter, RestService, $routeParams,$location) {
     $scope.rbs = RestService.getclient('rb').query();
     $scope.rr = RestService.getclient('rr').get({ id: $routeParams.id }, function (rr) {
@@ -416,11 +359,11 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
 }])
 .controller('ExportCtrl', ['$scope', 'RestService', '$filter', '$window', function ($scope, RestService, $filter, $window) {
-    $scope.model = { Name: 'rr' };
-    $scope.searchparams = {};
-    $scope.showAllResidents = 0;
+    // Searching.
+    initResidentSearch($scope, RestService);
 
-    $scope.rbs = RestService.getclient('rb').query();
+    $scope.model = { Name: 'rr' };
+    $scope.showAllResidents = 0;
 
     // TODO not queryable
     RestService.getclient('model').query({ $filter: "Name eq'" + $scope.model.Name + "'" }, function (m) {
@@ -466,63 +409,48 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         });
     });
 
-    // Search filters.
-    var getFilters = function () {
-        var filters = [];
+    var prepareData = function (rr) {
+        var mapped = angular.copy(rr);
 
-        // Filters by relocationrecord.
-        if ($scope.searchparams.RelocationBaseId != null && $scope.searchparams.RelocationBaseId != '') {
-            filters.push('RelocationBaseId eq ' + $scope.searchparams.RelocationBaseId);
-        }
-        if ($scope.searchparams.RRId != null && $scope.searchparams.RRId.trim() != '') {
-            filters.push("RRId eq '" + $scope.searchparams.RRId + "'");
+        // Handle relocation base.
+        var rbase = $filter('filter')($scope.rbs, function (e) { return e.Id == rr.RelocationBaseId; }, true)[0];
+        if (rbase != null) {
+            mapped.RelocationBase = rbase.Name;
         }
 
-        return filters;
+        // Convert date to from UTC to locale.
+        dateFields.forEach(function (d) {
+            mapped[d] = $filter('date')(mapped[d], 'yyyy-MM-dd');
+        });
+
+        // Whether show all residents.
+        if ($scope.showAllResidents && mapped.Residents.length > 1) {
+            mapped.Residents.forEach(function (r) {
+                var mapped2 = angular.copy(mapped);
+                for (var rf in residentsFlatten) {
+                    mapped2[rf] = r[residentsFlatten[rf]];
+                }
+
+                delete mapped2.Residents;
+                $scope.dataSource.push(mapped2);
+            });
+        } else {
+            for (var rf in residentsFlatten) {
+                mapped[rf] = mapped.Residents[0][residentsFlatten[rf]];
+            }
+
+            delete mapped.Residents;
+            $scope.dataSource.push(mapped);
+        }
     };
 
     $scope.search = function () {
-        var filters = getFilters();
-        var filterstring = 'true';
+        $scope.dataSource = [];
+        var filterstring = getResidentFilters($scope.searchparams, 'rr');
 
-        filters.forEach(function (f) {
-            filterstring += (" and " + f);
-        });
-
-        RestService.getclient('rr').query({$filter: filterstring}, function (result) {
+        RestService.getclient('rr').query({ $filter: filterstring }, function (result) {
             result.Items.forEach(function (item) {
-                var mapped = angular.copy(item);
-
-                // Handle relocation base.
-                var rbase = $filter('filter')($scope.rbs, function (e) { return e.Id == item.RelocationBaseId; }, true)[0];
-                if (rbase != null) {
-                    mapped.RelocationBase = rbase.Name;
-                }
-
-                // Convert date to from UTC to locale.
-                dateFields.forEach(function (d) {
-                    mapped[d] = $filter('date')(mapped[d], 'yyyy-MM-dd');
-                });
-
-                // Whether show all residents.
-                if ($scope.showAllResidents && mapped.Residents.length > 1) {
-                    mapped.Residents.forEach(function (r) {
-                        var mapped2 = angular.copy(mapped);
-                        for (var rf in residentsFlatten) {
-                            mapped2[rf] = r[residentsFlatten[rf]];
-                        }
-
-                        delete mapped2.Residents;
-                        $scope.dataSource.push(mapped2);
-                    });
-                } else {
-                    for (var rf in residentsFlatten) {
-                        mapped[rf] = mapped.Residents[0][residentsFlatten[rf]];
-                    }
-
-                    delete mapped.Residents;
-                    $scope.dataSource.push(mapped);
-                }
+                prepareData(item);
             });
         });
     };
@@ -1520,9 +1448,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 }])
 
 
-
-
-
 function additem($modal, type, $scope, item,commit) {
     var items = $scope.items
     var template = "/pages/modal/" + type + "Modal.html"
@@ -1664,4 +1589,75 @@ function validateidenttiycard(id) {
     var arr = id.split(''), sum = 0, vc = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
     for (var i = 0; i < 17; i++) sum += vc[i] * parseInt(arr[i]);
     return ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'][sum % 11];
+}
+
+function initResidentSearch($scope, RestService) {
+    // Load rb and village.
+    $scope.rbs = RestService.getclient('rb').query();
+    $scope.vlist = RestService.getclient('village').query();
+
+    // Datepickers.
+    InitDataPicker($scope);
+
+    // Searching.
+    $scope.searchparams = {};
+    // Flag whether search by resident (rs) or relocationrecord (rr).
+    $scope.searchBy = 'rs';
+    $scope.searchByChanged = function (by) {
+        $scope.searchBy = by;
+    };
+}
+
+function getResidentFilters(params, searchBy) {
+    var filters = { rs: [], rr: [] };
+
+    // Filters by resident.
+    if (params.Name != null && params.Name.trim() != '') {
+        filters.rs.push("substringof('" + params.Name + "',Name)")
+    }
+    if (params.IdentityCard != null && params.IdentityCard.trim() != '') {
+        filters.rs.push("substringof('" + params.IdentityCard + "',IdentityCard)")
+    }
+
+    // Filters by relocationrecord.
+    if (params.RelocationBaseId != null && params.RelocationBaseId != '') {
+        filters.rr.push('RelocationBaseId eq ' + params.RelocationBaseId);
+    }
+    if (params.RRId != null && params.RRId.trim() != '') {
+        filters.rr.push("RRId eq '" + params.RRId + "'");
+    }
+    if (params.Village != null && params.Village.trim() != '') {
+        filters.rr.push("Village eq '" + params.Village + "'");
+    }
+    if (params.Group != null && params.Group.trim() != '') {
+        filters.rr.push("Group eq '" + params.Group + "'");
+    }
+    if (params.DoorNumber != null && params.DoorNumber.trim() != '') {
+        filters.rr.push("DoorNumber eq '" + params.DoorNumber + "'");
+    }
+    if (params.PaymentDateStart != null) {
+        filters.rr.push('PaymentDate ge ' + "datetime'" + params.PaymentDateStart.toISOString() + "'");
+    }
+    if (params.PaymentDateEnd != null) {
+        filters.rr.push('PaymentDate le ' + "datetime'" + params.PaymentDateEnd.toISOString() + "'");
+    }
+    if (params.DeliveryDateStart != null) {
+        filters.rr.push('DeliveryDate ge ' + "datetime'" + params.DeliveryDateStart.toISOString() + "'");
+    }
+    if (params.DeliveryDateEnd != null) {
+        filters.rr.push('DeliveryDate le ' + "datetime'" + params.DeliveryDateEnd.toISOString() + "'");
+    }
+
+    var filterstring = '';
+
+    if (filters.rs.length || filters.rr.length) {
+        // Reset filterstring occording to current filters.
+        filterstring = searchBy == 'rs' ? "Status eq 1" : 'true';
+
+        filters[searchBy].forEach(function (f) {
+            filterstring += (" and " + f);
+        });
+    }
+
+    return filterstring;
 }

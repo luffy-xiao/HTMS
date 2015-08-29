@@ -1,97 +1,11 @@
 ﻿<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-
-    <div>
-        <p class="bg-info">请按以下条件查询动迁户信息：当您填写至少其中一项时，搜索按钮才被激活，然后点击搜索按钮查询。</p>
-    </div>
+    <p class="bg-info">请按动迁户信息查询或者按照范围查询。</p>
     <form name="s1" class="form-horizontal" novalidate>
-        <div class="form-group  has-feedback">
-            <label class="col-sm-2 control-label">姓名</label>
-            <div class="col-sm-3">
-                <input type="text" class="form-control" ng-model="searchparams.Name" >
-            </div>
-            <label class="col-sm-2 control-label">身份证号</label>
-            <div class="col-sm-3">
-                <input type="text" class="form-control" ng-model="searchparams.IdentityCard" idcard>
-            </div>
-        </div>
-        <hr/>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">拆迁编号</label>
-            <div class="col-sm-3">
-                <input type="text" class="form-control" ng-model="searchparams.RRId" />
-            </div>
-            <label class="col-sm-2 control-label">动迁基地名称</label>
-            <div class="col-sm-3">
-                <span class="nullable">
-                    <select class="form-control" ng-model="searchparams.RelocationBaseId" ng-options="rb.Id as rb.Name for rb in rbs">
-                        <option value="">--请选择--</option>
-                    </select>
-                </span>
-            </div>
-        </div>
-        <div class="form-group has-feedback">
-            <label class="col-sm-2 control-label">所在村</label>
-            <div class="col-sm-2">
-                <span class="nullable">
-                    <select class="form-control" ng-model="searchparams.Village" ng-options="v.Name as v.Name + ' ' for v in vlist">
-                        <option value="">--请选择--</option>
-                    </select>
-                </span>
-            </div>
-            <label class="col-sm-1 control-label">组</label>
-            <div class="col-sm-2">
-                <input type="text" class="form-control" ng-model="searchparams.Group">
-            </div>
-            <label class="col-sm-1 control-label">门牌号</label>
-            <div class="col-sm-2">
-                <input type="text" class="form-control" ng-model="searchparams.DoorNumber">
-            </div>
-        </div>
-        <div class="form-group has-feedback">
-            <label class="col-sm-2 control-label">付款日期（范围）</label>
-            <div class="col-sm-3">
-                <p class="input-group datepicker">
-                    <input type="text" class="form-control" datepicker-popup datepickerlocaldate datepicker-options="dateOptions" ng-model="searchparams.PaymentDateStart" is-open="datepickers.dt" show-weeks="false"
-                           close-text="关闭" current-text="今天" clear-text="清除" />
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="open($event,'dt')"><i class="glyphicon glyphicon-calendar"></i></button>
-                    </span>
-                </p>
-            </div>
-            <div class="col-sm-3">
-                <p class="input-group datepicker">
-                    <input type="text" class="form-control" datepicker-popup datepickerlocaldate datepicker-options="dateOptions" ng-model="searchparams.PaymentDateEnd" is-open="datepickers.dt2" show-weeks="false"
-                           close-text="关闭" current-text="今天" clear-text="清除" />
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="open($event,'dt2')"><i class="glyphicon glyphicon-calendar"></i></button>
-                    </span>
-                </p>
-            </div>
-        </div>
-        <div class="form-group has-feedback">
-            <label class="col-sm-2 control-label">交房日期（范围）</label>
-            <div class="col-sm-3">
-                <p class="input-group datepicker">
-                    <input type="text" class="form-control" datepicker-popup datepicker-options="dateOptions" ng-model="searchparams.DeliveryDateStart" is-open="datepickers.dt3" show-weeks="false"
-                           close-text="关闭" current-text="今天" clear-text="清除" />
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="open($event,'dt3')"><i class="glyphicon glyphicon-calendar"></i></button>
-                    </span>
-                </p>
-            </div>
-            <div class="col-sm-3">
-                <p class="input-group datepicker">
-                    <input type="text" class="form-control" datepicker-popup datepicker-options="dateOptions" ng-model="searchparams.DeliveryDateEnd" is-open="datepickers.dt4" show-weeks="false"
-                           close-text="关闭" current-text="今天" clear-text="清除" />
-                    <span class="input-group-btn">
-                        <button type="button" class="btn btn-default" ng-click="open($event,'dt4')"><i class="glyphicon glyphicon-calendar"></i></button>
-                    </span>
-                </p>
-            </div>
-        </div>
+        <div ng-include="'/pages/resident/resident_query.html'"></div>
+
         <div class="form-group has-feedback">
             <div class="col-sm-2">
-                <button type="button" class="btn btn-primary" ng-click="searchbyR()">
+                <button type="button" class="btn btn-primary" ng-click="search()">
                     <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 搜索
                 </button>
             </div>
