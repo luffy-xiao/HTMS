@@ -358,17 +358,12 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     }
 
 }])
-.controller('ExportCtrl', ['$scope', 'RestService', '$filter', '$window', function ($scope, RestService, $filter, $window) {
+.controller('ExportCtrl', ['$scope', 'RestService', '$filter', function ($scope, RestService, $filter) {
     // Searching.
     initResidentSearch($scope, RestService);
 
     $scope.model = { Name: 'rr' };
     $scope.showAllResidents = 0;
-
-    // TODO not queryable
-    RestService.getclient('model').query({ $filter: "Name eq'" + $scope.model.Name + "'" }, function (m) {
-        $scope.model.DisplayName = m.DisplayName;
-    });
 
     // Table data.
     $scope.colList = [];
@@ -385,17 +380,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         RestService.getclient('header').query({
             $filter: "ModelName eq '" + $scope.model.Name + "'"
         }, function (meta) {
-            meta.forEach(function (m) {
-                // Skip Id.
-                if (m.Field.toLowerCase() == "id") return;
-
-                $scope.colList.push({
-                    name: m.Field,
-                    displayName: m.Name,
-                    visible: true
-                });
-            });
-
             // Add residents flatten fields.
             for (var rf in residentsFlatten) {
                 var rh = $filter('filter')($scope.residentsHeader, { Field: residentsFlatten[rf] }, true)[0];
@@ -406,6 +390,17 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     visible: true
                 });
             };
+
+            meta.forEach(function (m) {
+                // Skip Id.
+                if (m.Field.toLowerCase() == "id") return;
+
+                $scope.colList.push({
+                    name: m.Field,
+                    displayName: m.Name,
+                    visible: true
+                });
+            });
         });
     });
 
@@ -424,7 +419,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         });
 
         // Whether show all residents.
-        if ($scope.showAllResidents && mapped.Residents.length > 1) {
+        if ($scope.showAllResidents == '1' && mapped.Residents.length > 1) {
             mapped.Residents.forEach(function (r) {
                 var mapped2 = angular.copy(mapped);
                 for (var rf in residentsFlatten) {
@@ -444,6 +439,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         }
     };
 
+    // Load table data.
     $scope.search = function () {
         $scope.dataSource = [];
         var filterstring = getResidentFilters($scope.searchparams, 'rr');
@@ -453,23 +449,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 prepareData(item);
             });
         });
-    };
-
-    $scope.print = function () {
-        $window.print();
-    }
-
-    // Export table as excel.
-    $scope.export = function () {
-        var now = $filter('date')(new Date(), 'yyyyMMddHHmmss');
-        var selected = [];
-        $scope.colList.forEach(function (col) {
-            if (col.visible) {
-                selected.push('`' + col.name + '` AS `' + col.displayName + '`');
-            }
-        });
-
-        alasql('SELECT ' + selected.join() + ' INTO XLSX("动迁记录导出_' + now + '.xlsx") FROM ?', [$scope.dataSource]);
     };
 }])
 .controller('BulkCreateCtrl', ['$scope', '$modal', 'RestService', '$interval', '$rootScope', '$filter', function ($scope, $modal, RestService, $interval, $rootScope, $filter) {

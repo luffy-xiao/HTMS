@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 /* Directives */
 var appDirectives = angular.module('ms.site.directives',[]);
@@ -100,5 +100,35 @@ appDirectives.directive('compare', function () {
                 });
 
         }
+    };
+})
+appDirectives.directive('exportTable', function () {
+    return {
+        restrict: 'A',
+        templateUrl: '/pages/shared/export_table.html',
+        scope: {
+            tableName: '@',
+            cols: '=',
+            rows: '='
+        },
+        controller: ['$scope', '$filter', '$window', function ($scope, $filter, $window) {
+            // Print html table.
+            $scope.print = function () {
+                $window.print();
+            };
+
+            // Export table as excel.
+            $scope.export = function () {
+                var now = $filter('date')(new Date(), 'yyyyMMddHHmmss');
+                var selected = [];
+                $scope.cols.forEach(function (col) {
+                    if (col.visible) {
+                        selected.push('`' + col.name + '` AS `' + col.displayName + '`');
+                    }
+                });
+
+                alasql('SELECT ' + selected.join() + ' INTO XLSX("动迁记录导出_' + now + '.xlsx") FROM ?', [$scope.rows]);
+            };
+        }]
     };
 })

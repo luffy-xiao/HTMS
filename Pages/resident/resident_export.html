@@ -26,31 +26,8 @@
                 <input type="checkbox" name="{{col.name}}" ng-model="col.visible" />{{col.displayName}}
             </label>
         </div>
-
-        <div>
-            <button type="button" class="btn btn-primary" ng-click="export()">
-                <span class="glyphicon glyphicon-export" aria-hidden="true"></span> 导出
-            </button>
-            <button type="button" class="btn btn-success" ng-click="print()">
-                <span class="glyphicon glyphicon-print" aria-hidden="true"></span> 打印
-            </button>
-        </div>
-</div>
-
-    <h3 class="noshow">拆迁记录</h3>
-    <div class="table-responsive noscroll">
-        <table class="table table-bordered table-hover table-condensed table-striped">
-            <thead>
-                <tr>
-                    <th ng-repeat="col in colList" ng-show="col.visible">{{col.displayName}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="row in dataSource">
-                    <td ng-repeat="col in colList" ng-show="col.visible">{{row[col.name]}}</td>
-                </tr>
-            </tbody>
-        </table>
     </div>
+
+    <div export-table table-name="拆迁记录" cols="colList" rows="dataSource"></div>
 
 </div>

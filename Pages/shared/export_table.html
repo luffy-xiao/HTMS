@@ -1,0 +1,24 @@
+﻿<div class="noprint">
+    <button type="button" class="btn btn-primary" ng-click="export()" ng-disabled="rows.length == 0">
+        <span class="glyphicon glyphicon-export" aria-hidden="true"></span> 导出
+    </button>
+    <button type="button" class="btn btn-success" ng-click="print()" ng-disabled="rows.length == 0">
+        <span class="glyphicon glyphicon-print" aria-hidden="true"></span> 打印
+    </button>
+</div>
+
+<h3 class="noshow">{{tableName}}</h3>
+<div class="table-responsive noscroll">
+    <table class="table table-bordered table-hover table-condensed table-striped">
+        <thead>
+            <tr>
+                <th ng-repeat="col in cols" ng-show="col.visible">{{col.displayName}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="row in rows">
+                <td ng-repeat="col in cols" ng-show="col.visible">{{row[col.name]}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
