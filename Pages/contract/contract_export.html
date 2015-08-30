@@ -1,0 +1,62 @@
+﻿<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="noprint">
+        <p class="bg-info">请查询安置信息。</p>
+        <form name="s1" class="form-horizontal" novalidate>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">动迁基地名称</label>
+                <div class="col-sm-4">
+                    <span class="nullable">
+                        <select class="form-control" ng-model="searchparams.RelocationBaseId" ng-options="rb.Id as rb.Name for rb in rbs">
+                            <option value="">--请选择--</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group ">
+                <label class="col-sm-2 control-label">选择小区</label>
+                <div class="col-sm-4">
+                    <span class="nullable">
+                        <select class="form-control" ng-model="searchparams.CommunityId" ng-options="c.Id as c.Name for c in clist" required="" ng-change="loadbuildings()">
+                            <option value="">--请选择--</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group ">
+                <label class="col-sm-2 control-label">单元</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" ng-model="searchparams.BuildingNumber">
+                </div>
+            </div>
+            <div class="form-group ">
+                <label class="col-sm-2 control-label">房源状态</label>
+                <div class="col-sm-4">
+                    <select class="form-control" ng-model="searchparams.Status">
+                        <option value="">--请选择--</option>
+                        <option value="0">可售</option>
+                        <option value="1">已售</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-primary" ng-click="search()">
+                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 搜索
+                    </button>
+                </div>
+            </div>
+        </form>
+        <hr />
+
+
+        <div>
+            <label ng-repeat="col in cols">
+                <input type="checkbox" name="{{col.name}}" ng-model="col.visible" />{{col.displayName}}
+            </label>
+        </div>
+
+    </div>
+
+    <div export-table table-name="tableName" cols="cols" rows="contracts"></div>
+
+</div>

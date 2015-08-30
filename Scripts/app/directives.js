@@ -127,7 +127,7 @@ appDirectives.directive('exportTable', function () {
                     }
                 });
 
-                alasql('SELECT ' + selected.join() + ' INTO XLSX("动迁记录导出_' + now + '.xlsx") FROM ?', [$scope.rows]);
+                alasql('SELECT ' + selected.join() + ' INTO XLSX("' + $scope.tableName + '_' + now + '.xlsx") FROM ?', [$scope.rows]);
             };
         }]
     };

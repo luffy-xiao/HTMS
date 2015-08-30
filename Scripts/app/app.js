@@ -24,7 +24,7 @@ var appmodule = angular.module('ms.site', ['ngCookies','ngRoute', 'ms.site.contr
                 }).
                 when('/resident/export', {
                     templateUrl: '/pages/resident/resident_export.html',
-                    controller: 'ExportCtrl'
+                    controller: 'ResidentExportCtrl'
                 }).
                 when('/resident/detail/:id/readonly=:readonly', {
                     templateUrl: '/pages/resident/resident_detail.html',
@@ -61,10 +61,17 @@ var appmodule = angular.module('ms.site', ['ngCookies','ngRoute', 'ms.site.contr
                 }).when('/contract/create', {
                     templateUrl: '/pages/contract/contract_detail.html',
                     controller: 'ContractCtrl'
+                }).when('/contract/export', {
+                    templateUrl: '/pages/contract/contract_export.html',
+                    controller: 'ContractExportCtrl'
                 }).when('/placementrecords', {
                     templateUrl: '/pages/contract/placement_list.html',
                     controller: 'PlacementRecordCtrl'
-                }).when('/placementrecords/:prid/contracts/:cid/printconfirmation', {
+                }).when('/placementrecords/export', {
+                    templateUrl: '/pages/contract/placement_export.html',
+                    controller: 'PlacementExportCtrl'
+                })
+                  .when('/placementrecords/:prid/contracts/:cid/printconfirmation', {
                       templateUrl: '/pages/print/contractconfirm.html',
                       controller: 'PrintBCtrl'
                 }).

@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-var appControllers = angular.module('ms.site.controllers', ['ms.site.controllers.modal', 'ui.grid', 'ui.bootstrap', 'ui.grid.exporter']);
+var appControllers = angular.module('ms.site.controllers', ['ms.site.controllers.modal', 'ui.grid', 'ui.bootstrap']);
 
 
 appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestService','$location', function ($scope, $modal, RestService,$location) {
@@ -358,7 +358,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     }
 
 }])
-.controller('ExportCtrl', ['$scope', 'RestService', '$filter', function ($scope, RestService, $filter) {
+.controller('ResidentExportCtrl', ['$scope', 'RestService', '$filter', function ($scope, RestService, $filter) {
     // Searching.
     initResidentSearch($scope, RestService);
 
@@ -1292,7 +1292,178 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         window.open("/print.html#/placementrecords/" + $scope.contract.PlacementRecordId + "/contracts/" + $scope.contractlist[idx].Id + "/printrecord")
     }
 
-}]).controller('PlacementRecordCtrl', ['$scope', '$modal', 'RestService', '$filter', '$cookies', function ($scope, $modal, RestService, $filter, $cookies) {
+}])
+.controller('ContractExportCtrl', ['$scope', 'RestService', '$filter', function ($scope, RestService, $filter) {
+    $scope.rbs = RestService.getclient('rb').query();
+    $scope.clist = RestService.getclient('community').query();
+
+    $scope.searchparams = {};
+    $scope.contracts = [];
+
+    // Table data.
+    $scope.tableName = '购房信息';
+
+    // TODO headers for pr need to update.
+    $scope.cols = [
+        { name: 'CommunityName', displayName: '小区', visible: true },
+        { name: 'BuildingNumber', displayName: '单元号', visible: true },
+        { name: 'DoorNumber', displayName: '室号', visible: true },
+        { name: 'Size', displayName: '面积', visible: true },
+        { name: 'TotalPrice', displayName: '总价格', visible: true },
+        { name: 'Status', displayName: '状态', visible: true },
+        { name: 'Owners', displayName: '房主', visible: true },
+        { name: 'PaymentAmount', displayName: '购房金额', visible: true },
+        { name: 'DeltaAmount', displayName: '购房差额款', visible: true }
+    ];
+
+    var prepareData = function (contract, owners) {
+        contract.CommunityName = contract.Appartment.Community.Name;
+        contract.BuildingNumber = contract.Appartment.BuildingNumber;
+        contract.DoorNumber = contract.Appartment.DoorNumber;
+        contract.Size = contract.Appartment.Size;
+        contract.TotalPrice = contract.Appartment.TotalPrice;
+        contract.Status = contract.Appartment.Status;
+
+        contract.Owners = owners;
+    };
+
+    // Load rr at first.
+    $scope.search = function () {
+        $scope.contracts = [];
+
+        var rbFilter = '', appFilters = [], appFiltersObj = {};
+        if ($scope.searchparams.RelocationBaseId != '' && $scope.searchparams.RelocationBaseId != null) {
+            rbFilter = $scope.searchparams.RelocationBaseId;
+        }
+
+        if ($scope.searchparams.CommunityId != '' && $scope.searchparams.CommunityId != null) {
+            appFilters.push("CommunityId eq " + $scope.searchparams.CommunityId);
+            appFiltersObj.CommunityId = parseInt($scope.searchparams.CommunityId);
+        }
+
+        if ($scope.searchparams.BuildingNumber != null && $scope.searchparams.BuildingNumber.trim() != '') {
+            if (!isNaN($scope.searchparams.BuildingNumber)) {
+                appFilters.push("BuildingNumber eq " + $scope.searchparams.BuildingNumber);
+                appFiltersObj.BuildingNumber = parseInt($scope.searchparams.BuildingNumber);
+            }
+        }
+
+        // TODO contract inside app should be 1? Is this extra?
+        if ($scope.searchparams.Status != null && $scope.searchparams.Status != '') {
+            if ($scope.searchparams.Status == 0) {
+                appFilters.push("Status eq '可售'");
+                appFiltersObj.Status = '可售';
+            }
+            else if ($scope.searchparams.Status == 1) {
+                appFilters.push("Status eq '已售'");
+                appFiltersObj.Status = '已售';
+            }
+        }
+
+        if (rbFilter == '' && appFilters.length == 0) {
+            alert('请输入至少一项查询条件。');
+            return;
+        }
+
+        // Query rb -> rr -> pr.
+        if (rbFilter != '') {
+            // Query rr. TODO RelocationRecord status eq ?
+            RestService.getclient('rr').query({ $filter: 'RelocationBaseId eq ' + rbFilter }, function (result) {
+                result.Items.forEach(function (rr) {
+                    // Query pr.
+                    RestService.getclient('pr').query({ $filter: "RelocationRecordId eq '" + rr.Id + "'" }, function (prs) {
+                        prs.forEach(function (pr) {
+                            var owners = pr.Name;
+
+                            // Query contract.
+                            RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + pr.Id, $orderby: "Id" }, function (contracts) {
+                                contracts.forEach(function (con) {
+                                    // Filter by appartment.
+                                    var matched = true;
+                                    for (var f in appFiltersObj) {
+                                        if (con.Appartment[f] != appFiltersObj[f]) {
+                                            matched = false;
+                                            break;
+                                        }
+                                    }
+
+                                    if (matched) {
+                                        prepareData(con, owners);
+                                        $scope.contracts.push(con);
+                                    }
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        }
+        else if (appFilters.length) {
+            var filterstring = "true";
+            appFilters.forEach(function (f) {
+                filterstring += (" and " + f)
+            });
+
+            RestService.getclient('appartment').query({ $filter: filterstring }, function (result) {
+                result.Items.forEach(function (app) {
+                    RestService.getclient('contract').query({ $filter: "AppartmentId eq " + app.Id }, function (contracts) {
+                        contracts.forEach(function (con) {
+                            RestService.getclient('pr').get({ id: con.PlacementRecordId }, function (pr) {
+                                prepareData(con, pr.Name);
+                                $scope.contracts.push(con);
+                            });
+                        });
+                    });
+                });
+            });
+        }
+    };
+
+}])
+.controller('PlacementExportCtrl', ['$scope', 'RestService', '$filter', function ($scope, RestService, $filter) {
+    $scope.rbs = RestService.getclient('rb').query();
+    $scope.searchparams = {};
+    $scope.prList = [];
+
+    // Table data.
+    $scope.tableName = '安置信息';
+
+    // TODO headers for pr need to update.
+    $scope.cols = [
+        { name: 'RelocationBase', displayName: '动迁基地', visible: true },
+        { name: 'Size', displayName: '可安置面积', visible: true },
+        { name: 'UsedSize', displayName: '已安置面积', visible: true },
+        { name: 'ApprovedSize', displayName: '有证面积', visible: true },
+        { name: 'TotalCompensation', displayName: '安置补偿款', visible: true },
+        { name: 'UsedAmount', displayName: '已使用安置补偿款', visible: true },
+        { name: 'AppartmentCount', displayName: '房源个数', visible: true }
+    ];
+
+    // Load rr at first.
+    $scope.search = function () {
+        if ($scope.searchparams.RelocationBaseId == '' || $scope.searchparams.RelocationBaseId == null) {
+            alert('请选择动迁基地。');
+            return;
+        }
+
+        var relocationBase = $filter('filter')($scope.rbs, function (e) { return e.Id == $scope.searchparams.RelocationBaseId; }, true)[0];
+
+        // TODO RelocationRecord status eq ?
+        RestService.getclient('rr').query({ $filter: 'RelocationBaseId eq ' + $scope.searchparams.RelocationBaseId }, function (result) {
+            // Query placementrecords.
+            result.Items.forEach(function (rr) {
+                RestService.getclient('pr').query({ $filter: "RelocationRecordId eq '" + rr.Id + "'" }, function (prs) {
+                    prs.forEach(function (pr) {
+                        pr.RelocationBase = relocationBase.Name;
+                        $scope.prList.push(pr);
+                    });
+                });
+            });
+        });
+    };
+
+}])
+.controller('PlacementRecordCtrl', ['$scope', '$modal', 'RestService', '$filter', '$cookies', function ($scope, $modal, RestService, $filter, $cookies) {
     $scope.searchparams = {};
 
     // Load search key last time from cookie.

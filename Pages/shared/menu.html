@@ -11,7 +11,7 @@
                 <li ><a href="#/resident/search">查询动迁户信息</a></li>
                 <li ng-show="user.Roles[0].Id!=3"><a href="#/resident/issue">问题动迁户信息</a></li>
 
-                <li ng-show="user.Roles[0].Id!=3"><a href="#/resident/export">动迁记录导出</a></li>
+                <li ng-show="user.Roles[0].Id!=3"><a href="#/resident/export">动迁记录汇总</a></li>
             </ul>
         </li>
         <li ng-show="user.Roles[0].Id!=2">
@@ -32,6 +32,8 @@
             </a>
             <ul id="disSetting" class="nav nav-list secondmenu collapse in">
                 <li><a href="#/placementrecords">安置信息管理</a></li>
+
+                <li><a href="#/placementrecords/export">安置记录汇总</a></li>
             </ul>
         </li>
         <li ng-show="user.Roles[0].Id!=2">
@@ -41,6 +43,8 @@
             </a>
             <ul id="disSetting" class="nav nav-list secondmenu collapse in">
                 <li><a href="#/contract/create">安置选房和查询</a></li>
+
+                <li><a href="#/contract/export">购房信息汇总</a></li>
             </ul>
         </li>
 
