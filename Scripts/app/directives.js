@@ -107,7 +107,7 @@ appDirectives.directive('exportTable', function () {
         restrict: 'A',
         templateUrl: '/pages/shared/export_table.html',
         scope: {
-            tableName: '@',
+            tableName: '=',
             cols: '=',
             rows: '='
         },

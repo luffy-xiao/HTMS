@@ -366,12 +366,62 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.showAllResidents = 0;
 
     // Table data.
+    $scope.tableName = '';
     $scope.colList = [];
+    $scope.cols = [];
     $scope.dataSource = [];
 
     // Columns need special handling.
-    var residentsFlatten = { Resident_Name: 'Name', Resident_IdentityCard: 'IdentityCard' };
+    var residentMaster = { mResidentName: 'Name', mResidentPhone: 'Phone', mResidentIdentityCard: 'IdentityCard' };
     var dateFields = ['DateCreated', 'PaymentDate', 'DeliveryDate', 'NewVillageDate'];
+
+    // Export templates.
+    // 动迁补偿款发放明细表 TODO 扣水电费, 还水电费
+    var t1 = ['RRId', 'mResidentName', 'CashPayable', 'CashPaid', 'TotalPayable', 'TotalPaid', 'TotalCompensation', 'EWFPaid', 'DepositEWF'];
+
+    // 动拆迁情况 TODO: gender in meta, 标准
+    var t2 = ['RelocationBase', 'RRId', 'mResidentName', 'mResidentPhone', 'Name', 'IdentityCard', 'RelationshipType', 'Village', 'Group', 'DeliveryDate', 'ResidentsCount', 'RelocationType'];
+
+    // xxx基地动迁面积及补偿金额汇总表
+    var t3 = ['RRId', 'mResidentName', 'MeasuredSize', 'EffectiveSize', 'TotalCompensation'];
+
+    // xxx基地评估总面积汇总表
+    var t4 = ['RRId', 'mResidentName', 'MeasuredSize'];
+
+    // 动迁户人口及房屋有效面积认定汇总表
+    var t5 = ['RRId', 'mResidentName', 'ResidentsCount', 'MeasuredSize', 'EffectiveSize', 'NoConstructionSize', 'UncertifiedSize'];
+
+    // 过渡费发放汇总表
+    var t6 = ['RRId', 'mResidentName', 'EffectiveSize', 'DeliveryDate', 'TransitionFee'];
+
+    // xxx基地拆迁户付款汇总表 TODO 银行存单
+    var t7 = ['RRId', 'mResidentName', 'mResidentIdentityCard', 'EWFPaid', 'TotalPayable'];
+
+    // xxx基地兑换安置房金额转入新村办清册
+    var t8 = ['RRId', 'Name', 'TotalCompensation'];
+
+    // xxx基地动迁户水电费情况 TODO 还水电费
+    var t9 = ['RRId', 'mResidentName', 'EWAmount', 'DepositEWF', 'EWFPaid'];
+
+    // xxx基地安置面积汇总表
+    var t10 = ['RRId', 'mResidentName', 'RelocationSize'];
+
+    // xxx基地大病补助汇总表
+    var t11 = ['RRId', 'mResidentName', 'SickCompensation'];
+
+    $scope.exportTmpls = [
+        { id: '1', name: '动迁补偿款发放明细表', lst: t1 },
+        { id: '2', name: '动拆迁情况', lst: t2 },
+        { id: '3', name: '动迁面积及补偿金额汇总表', lst: t3 },
+        { id: '4', name: '评估总面积汇总表', lst: t4 },
+        { id: '5', name: '动迁户人口及房屋有效面积认定汇总表', lst: t5 },
+        { id: '6', name: '过渡费发放汇总表', lst: t6 },
+        { id: '7', name: '拆迁户付款汇总表', lst: t7 },
+        { id: '8', name: '兑换安置房金额转入新村办清册', lst: t8 },
+        { id: '9', name: '动迁户水电费情况', lst: t9 },
+        { id: '10', name: '安置面积汇总表', lst: t10 },
+        { id: '11', name: '大病补助汇总表', lst: t11 }
+    ];
 
     // Load column metadata.
     RestService.getclient('header').query({ $filter: "ModelName eq 'resident'" }, function (result) {
@@ -380,17 +430,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         RestService.getclient('header').query({
             $filter: "ModelName eq '" + $scope.model.Name + "'"
         }, function (meta) {
-            // Add residents flatten fields.
-            for (var rf in residentsFlatten) {
-                var rh = $filter('filter')($scope.residentsHeader, { Field: residentsFlatten[rf] }, true)[0];
-
-                $scope.colList.push({
-                    name: rf,
-                    displayName: rh.Name,
-                    visible: true
-                });
-            };
-
             meta.forEach(function (m) {
                 // Skip Id.
                 if (m.Field.toLowerCase() == "id") return;
@@ -401,17 +440,49 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     visible: true
                 });
             });
+
+            // Add resident master fields.
+            for (var rf in residentMaster) {
+                var rh = $filter('filter')($scope.residentsHeader, { Field: residentMaster[rf] }, true)[0];
+
+                $scope.colList.push({
+                    name: rf,
+                    displayName: '户主' + rh.Name,
+                    visible: true
+                });
+            };
+
+            // Add resident fields.
+            $scope.residentsHeader.forEach(function (r) {
+                // Skip Id.
+                if (r.Field.toLowerCase() == "id" || r.Field.toLowerCase().indexOf('recordid') >= 0) return;
+
+                $scope.colList.push({
+                    name: r.Field,
+                    displayName: r.Name,
+                    visible: true
+                });
+            });
+
+            // Add person count field.
+            $scope.colList.push({
+                name: 'ResidentsCount',
+                displayName: '家庭人数',
+                visible: true
+            });
         });
     });
+
+    var getRelocationBase = function (baseId) {
+        var rbase = $filter('filter')($scope.rbs, function (e) { return e.Id == baseId; }, true)[0];
+        return rbase != null ? rbase.Name : null;
+    };
 
     var prepareData = function (rr) {
         var mapped = angular.copy(rr);
 
         // Handle relocation base.
-        var rbase = $filter('filter')($scope.rbs, function (e) { return e.Id == rr.RelocationBaseId; }, true)[0];
-        if (rbase != null) {
-            mapped.RelocationBase = rbase.Name;
-        }
+        mapped.RelocationBase = getRelocationBase(rr.RelocationBaseId);
 
         // Convert date to from UTC to locale.
         dateFields.forEach(function (d) {
@@ -422,25 +493,65 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         if ($scope.showAllResidents == '1' && mapped.Residents.length > 1) {
             mapped.Residents.forEach(function (r) {
                 var mapped2 = angular.copy(mapped);
-                for (var rf in residentsFlatten) {
-                    mapped2[rf] = r[residentsFlatten[rf]];
+
+                // Add resident record.
+                $scope.residentsHeader.forEach(function (rh) {
+                    mapped2[rh.Field] = r[rh.Field];
+                });
+
+                // Add resident master.
+                for (var rf in residentMaster) {
+                    mapped2[rf] = mapped.Residents[0][residentMaster[rf]];
                 }
+
+                mapped2.ResidentsCount = mapped.Residents.length;
 
                 delete mapped2.Residents;
                 $scope.dataSource.push(mapped2);
             });
         } else {
-            for (var rf in residentsFlatten) {
-                mapped[rf] = mapped.Residents[0][residentsFlatten[rf]];
+            // Add resident record.
+            $scope.residentsHeader.forEach(function (rh) {
+                mapped[rh.Field] = mapped.Residents[0][rh.Field];
+            });
+
+            // Add resident master.
+            for (var rf in residentMaster) {
+                mapped[rf] = mapped.Residents[0][residentMaster[rf]];
             }
+
+            mapped.ResidentsCount = mapped.Residents.length;
 
             delete mapped.Residents;
             $scope.dataSource.push(mapped);
         }
     };
 
+    var buildTableName = function () {
+        // Build table name.
+        var tableName = '';
+        if ($scope.searchparams.RelocationBaseId != null && $scope.searchparams.RelocationBaseId != '') {
+            tableName += getRelocationBase($scope.searchparams.RelocationBaseId) + '基地';
+        }
+
+        if ($scope.selectedTmpl == '' || $scope.selectedTmpl == null) {
+            tableName += '动迁记录';
+        } else {
+            tableName += $scope.selectedTmpl.name;
+        }
+
+        $scope.tableName = tableName;
+    };
+
     // Load table data.
     $scope.search = function () {
+        // Build table name.
+        buildTableName();
+
+        if ($scope.cols.length == 0) {
+            $scope.cols = $scope.colList;
+        }
+
         $scope.dataSource = [];
         var filterstring = getResidentFilters($scope.searchparams, 'rr');
 
@@ -449,6 +560,24 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 prepareData(item);
             });
         });
+    };
+
+    // Load template data.
+    $scope.loadTmpl = function () {
+        if ($scope.selectedTmpl == '') {
+            $scope.cols = $scope.colList;
+            return;
+        }
+
+        // Build table name.
+        buildTableName();
+
+        // Build new cols.
+        var selectedCols = [];
+        $scope.selectedTmpl.lst.forEach(function (field) {
+            selectedCols.push($filter('filter')($scope.colList, {name: field}, true)[0]);
+        });
+        $scope.cols = selectedCols;
     };
 }])
 .controller('BulkCreateCtrl', ['$scope', '$modal', 'RestService', '$interval', '$rootScope', '$filter', function ($scope, $modal, RestService, $interval, $rootScope, $filter) {

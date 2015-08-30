@@ -20,14 +20,29 @@
         </form>
         <hr/>
 
-        <p class="bg-info">请选择需要导出的信息，然后点击导出按钮将数据导出到Excel文件，或者点击打印按钮打印表格。</p>
+        <p class="bg-info">请选择需要导出的表种类，当表格数据加载完成后点击导出按钮将数据导出到Excel文件，或者点击打印按钮打印表格。</p>
+        <div class="row">
+            <label class="col-sm-2 control-label">动迁记录表格</label>
+            <div class="col-sm-3">
+                <span class="nullable">
+                    <select class="form-control" ng-model="selectedTmpl"
+                            ng-options="tmpl.name for tmpl in exportTmpls track by tmpl.id"
+                            ng-change="loadTmpl()">
+                        <option value="">--请选择--</option>
+                    </select>
+                </span>
+            </div>
+        </div>
+
+        <!--
         <div>
             <label ng-repeat="col in colList">
                 <input type="checkbox" name="{{col.name}}" ng-model="col.visible" />{{col.displayName}}
             </label>
         </div>
+        -->
     </div>
 
-    <div export-table table-name="拆迁记录" cols="colList" rows="dataSource"></div>
+    <div export-table table-name="tableName" cols="cols" rows="dataSource"></div>
 
 </div>
