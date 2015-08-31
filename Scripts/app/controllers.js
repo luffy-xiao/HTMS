@@ -1293,7 +1293,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     }
 
 }])
-.controller('ContractExportCtrl', ['$scope', 'RestService', '$filter', function ($scope, RestService, $filter) {
+.controller('ContractExportCtrl', ['$scope', 'RestService', '$filter', '$q', function ($scope, RestService, $filter, $q) {
     $scope.rbs = RestService.getclient('rb').query();
     $scope.clist = RestService.getclient('community').query();
 
@@ -1367,14 +1367,14 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
         // Query rb -> rr -> pr.
         if (rbFilter != '') {
-            // Query rr. TODO RelocationRecord status eq ?
-            RestService.getclient('rr').query({ $filter: 'RelocationBaseId eq ' + rbFilter }, function (result) {
+            // Query rr. TODO RelocationRecord status eq 1
+            RestService.getclient('rr').query({ $filter: 'Status eq 1 and RelocationBaseId eq ' + rbFilter }, function (result) {
                 // Query pr by rr batch.
-                var filters = queryByBatch(result.Items, 'RelocationRecordId', true);
+                var filters = queryByBatch(result.Items, 'Id', 'RelocationRecordId', true);
                 filters.forEach(function (f) {
                     RestService.getclient('pr').query({ $filter: f }, function (prs) {
                         // Query contract by pr batch.
-                        var filters = queryByBatch(prs, 'PlacementRecordId', false);
+                        var filters = queryByBatch(prs, 'Id', 'PlacementRecordId', false);
 
                         //prs.forEach(function (pr) {
                             //var owners = pr.Name;
@@ -1409,14 +1409,27 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 filterstring += (" and " + f)
             });
 
+            // Cache pr id -> name.
+            var prCache = {};
+
             RestService.getclient('appartment').query({ $filter: filterstring }, function (result) {
-                result.Items.forEach(function (app) {
-                    RestService.getclient('contract').query({ $filter: "AppartmentId eq " + app.Id }, function (contracts) {
-                        contracts.forEach(function (con) {
-                            RestService.getclient('pr').get({ id: con.PlacementRecordId }, function (pr) {
-                                prepareData(con, pr.Name);
+                var pros = [];
+                var filters = queryByBatch(result.Items, 'Id', 'AppartmentId', false);
+
+                filters.forEach(function (f) {
+                    RestService.getclient('contract').query({ $filter: f }, function (cons) {
+                        cons.forEach(function (con) {
+                            if (!prCache.hasOwnProperty(con.PlacementRecordId)) {
+                                RestService.getclient('pr').get({ id: con.PlacementRecordId }, function (pr) {
+                                    prCache[con.PlacementRecordId] = pr.Name;
+
+                                    prepareData(con, pr.Name);
+                                    $scope.contracts.push(con);
+                                });
+                            } else {
+                                prepareData(con, prCache[con.PlacementRecordId]);
                                 $scope.contracts.push(con);
-                            });
+                            }
                         });
                     });
                 });
@@ -1951,7 +1964,7 @@ function getResidentFilters(params, searchBy) {
     return filterstring;
 }
 
-function queryByBatch(idArr, idAttr, idIsStr) {
+function queryByBatch(idArr, idAttr, idField, fieldIsStr) {
     // Query pr by batch. related to 'MaxNodeCount' in backend controller.
     var batchSize = 39;
     var batch = Math.ceil(idArr.length / batchSize);
@@ -1963,10 +1976,10 @@ function queryByBatch(idArr, idAttr, idIsStr) {
         k = Math.min(i * batchSize, idArr.length);
 
         for (j = (i - 1) * batchSize; j < k; j++) {
-            if (idIsStr) {
-                filterstring += " or " + idAttr + " eq '" + idArr[j].Id + "'";
+            if (fieldIsStr) {
+                filterstring += " or " + idField + " eq '" + idArr[j][idAttr] + "'";
             } else {
-                filterstring += " or " + idAttr + " eq " + idArr[j].Id;
+                filterstring += " or " + idField + " eq " + idArr[j][idAttr];
             }
         }
 
