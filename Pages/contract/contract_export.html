@@ -46,15 +46,6 @@
                 </div>
             </div>
         </form>
-        <hr />
-
-
-        <div>
-            <label ng-repeat="col in cols">
-                <input type="checkbox" name="{{col.name}}" ng-model="col.visible" />{{col.displayName}}
-            </label>
-        </div>
-
     </div>
 
     <div export-table table-name="tableName" cols="cols" rows="contracts"></div>
