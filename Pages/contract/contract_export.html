@@ -1,6 +1,6 @@
 ﻿<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <div class="noprint">
-        <p class="bg-info">请查询安置信息。</p>
+        <p class="bg-info">请查询购房信息。</p>
         <form name="s1" class="form-horizontal" novalidate>
             <div class="form-group">
                 <label class="col-sm-2 control-label">动迁基地名称</label>
@@ -46,15 +46,6 @@
                 </div>
             </div>
         </form>
-        <hr />
-
-
-        <div>
-            <label ng-repeat="col in cols">
-                <input type="checkbox" name="{{col.name}}" ng-model="col.visible" />{{col.displayName}}
-            </label>
-        </div>
-
     </div>
 
     <div export-table table-name="tableName" cols="cols" rows="contracts"></div>
