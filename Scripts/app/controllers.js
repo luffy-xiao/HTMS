@@ -395,7 +395,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     var t6 = ['RRId', 'mResidentName', 'EffectiveSize', 'DeliveryDate', 'TransitionFee'];
 
     // xxx基地拆迁户付款汇总表 TODO 银行存单
-    var t7 = ['RRId', 'mResidentName', 'mResidentIdentityCard', 'EWFPaid', 'TotalPayable'];
+    var t7 = ['RRId', 'mResidentName', 'mResidentIdentityCard', 'CashPaid'];
 
     // xxx基地兑换安置房金额转入新村办清册
     var t8 = ['RRId', 'Name', 'TotalCompensation'];
@@ -1369,14 +1369,17 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         if (rbFilter != '') {
             // Query rr. TODO RelocationRecord status eq ?
             RestService.getclient('rr').query({ $filter: 'RelocationBaseId eq ' + rbFilter }, function (result) {
-                result.Items.forEach(function (rr) {
-                    // Query pr.
-                    RestService.getclient('pr').query({ $filter: "RelocationRecordId eq '" + rr.Id + "'" }, function (prs) {
-                        prs.forEach(function (pr) {
-                            var owners = pr.Name;
+                // Query pr by rr batch.
+                var filters = queryByBatch(result.Items, 'RelocationRecordId', true);
+                filters.forEach(function (f) {
+                    RestService.getclient('pr').query({ $filter: f }, function (prs) {
+                        // Query contract by pr batch.
+                        var filters = queryByBatch(prs, 'PlacementRecordId', false);
 
-                            // Query contract.
-                            RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + pr.Id, $orderby: "Id" }, function (contracts) {
+                        //prs.forEach(function (pr) {
+                            //var owners = pr.Name;
+                        filters.forEach(function (f) {
+                            RestService.getclient('contract').query({ $filter: f, $orderby: "Id" }, function (contracts) {
                                 contracts.forEach(function (con) {
                                     // Filter by appartment.
                                     var matched = true;
@@ -1388,7 +1391,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                                     }
 
                                     if (matched) {
-                                        prepareData(con, owners);
+                                        // Get owners.
+                                        var pr = $filter('filter')(prs, { Id: con.PlacementRecordId }, true)[0];
+                                        prepareData(con, pr.Name);
                                         $scope.contracts.push(con);
                                     }
                                 });
@@ -1430,13 +1435,14 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     // TODO headers for pr need to update.
     $scope.cols = [
+        { name: 'Name', displayName: '人员', visible: true },
         { name: 'RelocationBase', displayName: '动迁基地', visible: true },
         { name: 'Size', displayName: '可安置面积', visible: true },
         { name: 'UsedSize', displayName: '已安置面积', visible: true },
         { name: 'ApprovedSize', displayName: '有证面积', visible: true },
         { name: 'TotalCompensation', displayName: '安置补偿款', visible: true },
         { name: 'UsedAmount', displayName: '已使用安置补偿款', visible: true },
-        { name: 'AppartmentCount', displayName: '房源个数', visible: true }
+        { name: 'AppartmentCount', displayName: '购房个数', visible: true }
     ];
 
     // Load rr at first.
@@ -1446,13 +1452,17 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             return;
         }
 
+        $scope.prList = [];
+
         var relocationBase = $filter('filter')($scope.rbs, function (e) { return e.Id == $scope.searchparams.RelocationBaseId; }, true)[0];
 
-        // TODO RelocationRecord status eq ?
-        RestService.getclient('rr').query({ $filter: 'RelocationBaseId eq ' + $scope.searchparams.RelocationBaseId }, function (result) {
-            // Query placementrecords.
-            result.Items.forEach(function (rr) {
-                RestService.getclient('pr').query({ $filter: "RelocationRecordId eq '" + rr.Id + "'" }, function (prs) {
+        // TODO RelocationRecord status eq 1
+        RestService.getclient('rr').query({ $filter: 'Status eq 1 and RelocationBaseId eq ' + $scope.searchparams.RelocationBaseId }, function (result) {
+            // Query pr by batch. related to 'MaxNodeCount' in backend controller.
+            var filters = queryByBatch(result.Items, 'RelocationRecordId', true);
+
+            filters.forEach(function (f) {
+                RestService.getclient('pr').query({ $filter: f }, function (prs) {
                     prs.forEach(function (pr) {
                         pr.RelocationBase = relocationBase.Name;
                         $scope.prList.push(pr);
@@ -1939,4 +1949,29 @@ function getResidentFilters(params, searchBy) {
     }
 
     return filterstring;
+}
+
+function queryByBatch(idArr, idAttr, idIsStr) {
+    // Query pr by batch. related to 'MaxNodeCount' in backend controller.
+    var batchSize = 39;
+    var batch = Math.ceil(idArr.length / batchSize);
+    var filters = [];
+
+    var i, j, k, filterstring;
+    for (i = 1; i <= batch; i++) {
+        filterstring = 'false';
+        k = Math.min(i * batchSize, idArr.length);
+
+        for (j = (i - 1) * batchSize; j < k; j++) {
+            if (idIsStr) {
+                filterstring += " or " + idAttr + " eq '" + idArr[j].Id + "'";
+            } else {
+                filterstring += " or " + idAttr + " eq " + idArr[j].Id;
+            }
+        }
+
+        filters.push(filterstring);
+    }
+
+    return filters;
 }

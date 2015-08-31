@@ -20,7 +20,7 @@ namespace WebApplication6.Controllers
         private WebApplication6Context db = new WebApplication6Context();
 
         // GET: api/PlacementRecords
-        [EnableQuery]
+        [EnableQuery(MaxNodeCount=200)]
         public IQueryable<PlacementRecord> GetPlacementRecords()
         {
             return db.PlacementRecords.Include(pr=>pr.Residents);
