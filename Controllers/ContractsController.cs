@@ -20,7 +20,7 @@ namespace WebApplication6.Controllers
         private WebApplication6Context db = new WebApplication6Context();
 
         // GET: api/Contracts
-        [EnableQuery]
+        [EnableQuery(MaxNodeCount=200)]
         public IQueryable<Contract> GetContracts()
         {
             return db.Contracts.Include(c=>c.Appartment.Community).Include(c=>c.AppartmentOwners);

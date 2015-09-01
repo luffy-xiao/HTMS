@@ -1293,7 +1293,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     }
 
 }])
-.controller('ContractExportCtrl', ['$scope', 'RestService', '$filter', function ($scope, RestService, $filter) {
+.controller('ContractExportCtrl', ['$scope', 'RestService', '$filter', '$q', function ($scope, RestService, $filter, $q) {
     $scope.rbs = RestService.getclient('rb').query();
     $scope.clist = RestService.getclient('community').query();
 
@@ -1367,6 +1367,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
         // Query rb -> rr -> pr.
         if (rbFilter != '') {
+<<<<<<< HEAD
             // Query rr. TODO RelocationRecord status eq ?
             RestService.getclient('rr').query({ $filter: 'RelocationBaseId eq ' + rbFilter }, function (result) {
                 result.Items.forEach(function (rr) {
@@ -1377,6 +1378,21 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
                             // Query contract.
                             RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + pr.Id, $orderby: "Id" }, function (contracts) {
+=======
+            // Query rr. TODO RelocationRecord status eq 1
+            RestService.getclient('rr').query({ $filter: 'Status eq 1 and RelocationBaseId eq ' + rbFilter }, function (result) {
+                // Query pr by rr batch.
+                var filters = queryByBatch(result.Items, 'Id', 'RelocationRecordId', true);
+                filters.forEach(function (f) {
+                    RestService.getclient('pr').query({ $filter: f }, function (prs) {
+                        // Query contract by pr batch.
+                        var filters = queryByBatch(prs, 'Id', 'PlacementRecordId', false);
+
+                        //prs.forEach(function (pr) {
+                            //var owners = pr.Name;
+                        filters.forEach(function (f) {
+                            RestService.getclient('contract').query({ $filter: f, $orderby: "Id" }, function (contracts) {
+>>>>>>> origin/master
                                 contracts.forEach(function (con) {
                                     // Filter by appartment.
                                     var matched = true;
@@ -1404,14 +1420,27 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 filterstring += (" and " + f)
             });
 
+            // Cache pr id -> name.
+            var prCache = {};
+
             RestService.getclient('appartment').query({ $filter: filterstring }, function (result) {
-                result.Items.forEach(function (app) {
-                    RestService.getclient('contract').query({ $filter: "AppartmentId eq " + app.Id }, function (contracts) {
-                        contracts.forEach(function (con) {
-                            RestService.getclient('pr').get({ id: con.PlacementRecordId }, function (pr) {
-                                prepareData(con, pr.Name);
+                var pros = [];
+                var filters = queryByBatch(result.Items, 'Id', 'AppartmentId', false);
+
+                filters.forEach(function (f) {
+                    RestService.getclient('contract').query({ $filter: f }, function (cons) {
+                        cons.forEach(function (con) {
+                            if (!prCache.hasOwnProperty(con.PlacementRecordId)) {
+                                RestService.getclient('pr').get({ id: con.PlacementRecordId }, function (pr) {
+                                    prCache[con.PlacementRecordId] = pr.Name;
+
+                                    prepareData(con, pr.Name);
+                                    $scope.contracts.push(con);
+                                });
+                            } else {
+                                prepareData(con, prCache[con.PlacementRecordId]);
                                 $scope.contracts.push(con);
-                            });
+                            }
                         });
                     });
                 });
@@ -1939,4 +1968,32 @@ function getResidentFilters(params, searchBy) {
     }
 
     return filterstring;
+<<<<<<< HEAD
+=======
+}
+
+function queryByBatch(idArr, idAttr, idField, fieldIsStr) {
+    // Query pr by batch. related to 'MaxNodeCount' in backend controller.
+    var batchSize = 39;
+    var batch = Math.ceil(idArr.length / batchSize);
+    var filters = [];
+
+    var i, j, k, filterstring;
+    for (i = 1; i <= batch; i++) {
+        filterstring = 'false';
+        k = Math.min(i * batchSize, idArr.length);
+
+        for (j = (i - 1) * batchSize; j < k; j++) {
+            if (fieldIsStr) {
+                filterstring += " or " + idField + " eq '" + idArr[j][idAttr] + "'";
+            } else {
+                filterstring += " or " + idField + " eq " + idArr[j][idAttr];
+            }
+        }
+
+        filters.push(filterstring);
+    }
+
+    return filters;
+>>>>>>> origin/master
 }
