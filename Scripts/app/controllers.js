@@ -1469,7 +1469,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         // TODO RelocationRecord status eq 1
         RestService.getclient('rr').query({ $filter: 'Status eq 1 and RelocationBaseId eq ' + $scope.searchparams.RelocationBaseId }, function (result) {
             // Query pr by batch. related to 'MaxNodeCount' in backend controller.
-            var filters = queryByBatch(result.Items, 'RelocationRecordId', true);
+            var filters = queryByBatch(result.Items, 'Id', 'RelocationRecordId', true);
 
             filters.forEach(function (f) {
                 RestService.getclient('pr').query({ $filter: f }, function (prs) {
