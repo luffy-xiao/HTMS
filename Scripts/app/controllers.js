@@ -1367,18 +1367,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
         // Query rb -> rr -> pr.
         if (rbFilter != '') {
-<<<<<<< HEAD
-            // Query rr. TODO RelocationRecord status eq ?
-            RestService.getclient('rr').query({ $filter: 'RelocationBaseId eq ' + rbFilter }, function (result) {
-                result.Items.forEach(function (rr) {
-                    // Query pr.
-                    RestService.getclient('pr').query({ $filter: "RelocationRecordId eq '" + rr.Id + "'" }, function (prs) {
-                        prs.forEach(function (pr) {
-                            var owners = pr.Name;
-
-                            // Query contract.
-                            RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + pr.Id, $orderby: "Id" }, function (contracts) {
-=======
             // Query rr. TODO RelocationRecord status eq 1
             RestService.getclient('rr').query({ $filter: 'Status eq 1 and RelocationBaseId eq ' + rbFilter }, function (result) {
                 // Query pr by rr batch.
@@ -1388,11 +1376,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                         // Query contract by pr batch.
                         var filters = queryByBatch(prs, 'Id', 'PlacementRecordId', false);
 
-                        //prs.forEach(function (pr) {
-                            //var owners = pr.Name;
                         filters.forEach(function (f) {
                             RestService.getclient('contract').query({ $filter: f, $orderby: "Id" }, function (contracts) {
->>>>>>> origin/master
                                 contracts.forEach(function (con) {
                                     // Filter by appartment.
                                     var matched = true;
@@ -1968,8 +1953,6 @@ function getResidentFilters(params, searchBy) {
     }
 
     return filterstring;
-<<<<<<< HEAD
-=======
 }
 
 function queryByBatch(idArr, idAttr, idField, fieldIsStr) {
@@ -1995,5 +1978,4 @@ function queryByBatch(idArr, idAttr, idField, fieldIsStr) {
     }
 
     return filters;
->>>>>>> origin/master
 }
