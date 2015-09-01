@@ -1407,26 +1407,41 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 filterstring += (" and " + f)
             });
 
-            // Cache pr id -> name.
-            var prCache = {};
-
             RestService.getclient('appartment').query({ $filter: filterstring }, function (result) {
                 var filters = queryByBatch(result.Items, 'Id', 'AppartmentId', false);
 
-                filters.forEach(function (f) {
-                    RestService.getclient('contract').query({ $filter: f }, function (cons) {
-                        cons.forEach(function (con) {
-                            if (!prCache.hasOwnProperty(con.PlacementRecordId)) {
-                                RestService.getclient('pr').get({ id: con.PlacementRecordId }, function (pr) {
-                                    prCache[con.PlacementRecordId] = pr.Name;
+                var pros = [];
+                var indexByPr = {};
 
-                                    prepareData(con, pr.Name);
-                                    $scope.contracts.push(con);
-                                });
+                filters.forEach(function (f) {
+                    var loadCon = RestService.getclient('contract').query({ $filter: f }, function (cons) {
+                        cons.forEach(function (con) {
+                            prepareData(con, '');
+                            $scope.contracts.push(con);
+
+                            // Index contracts by pr.
+                            if (indexByPr[con.PlacementRecordId] == null) {
+                                indexByPr[con.PlacementRecordId] = [con];
                             } else {
-                                prepareData(con, prCache[con.PlacementRecordId]);
-                                $scope.contracts.push(con);
+                                indexByPr[con.PlacementRecordId].push(con);
                             }
+                        });
+                    });
+                    // Remember the promise.
+                    pros.push(loadCon.$promise);
+                });
+
+                // All contracts have been loaded.
+                $q.all(pros).then(function (result) {
+                    var fs = queryByBatch(Object.keys(indexByPr), null, 'Id', false);
+                    fs.forEach(function (f) {
+                        RestService.getclient('pr').query({ $filter: f }, function (prs) {
+                            prs.forEach(function (pr) {
+                                // Fill pr info in contract.
+                                indexByPr[pr.Id].forEach(function (con) {
+                                    con.Owners = pr.Name;
+                                });
+                            });
                         });
                     });
                 });
@@ -1974,9 +1989,9 @@ function queryByBatch(idArr, idAttr, idField, fieldIsStr) {
 
         for (j = (i - 1) * batchSize; j < k; j++) {
             if (fieldIsStr) {
-                filterstring += " or " + idField + " eq '" + idArr[j][idAttr] + "'";
+                filterstring += " or " + idField + " eq '" + (idAttr == null ? idArr[j] : idArr[j][idAttr]) + "'";
             } else {
-                filterstring += " or " + idField + " eq " + idArr[j][idAttr];
+                filterstring += " or " + idField + " eq " + (idAttr == null ? idArr[j] : idArr[j][idAttr]);
             }
         }
 
