@@ -72,6 +72,7 @@ namespace WebApplication6.Models
         public string RelationshipType { get; set; }
 
         public int RelocationRecordId { get; set; }
+        public virtual RelocationRecord RelocationRecord { get; set; }
 
         public int? PlacementRecordId { get; set; }
         public int? Status { get; set; }

@@ -16,16 +16,16 @@ using WebApplication6.Models;
 
 namespace WebApplication6.Controllers
 {
-   [Authorize]
+    [Authorize]
     public class ResidentsController : ApiController
     {
         private WebApplication6Context db = new WebApplication6Context();
 
         // GET: api/Residents
-        [PagingQueryable]
+        [PagingQueryable(MaxNodeCount=200)]
         public IQueryable<Resident> GetResidents()
         {
-            return db.Residents.AsQueryable();
+            return db.Residents.Include(r=>r.RelocationRecord);
         }
 
         // GET: api/Residents/5

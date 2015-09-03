@@ -208,11 +208,18 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
    
     InitDataPicker($scope)
     
-}]).controller('ResidentIssueCtrl', ['$scope', '$modal', 'RestService', '$location', function ($scope, $modal, RestService, $location) {
+}]).controller('ResidentIssueCtrl', ['$scope', '$modal', 'RestService', '$location', '$filter', function ($scope, $modal, RestService, $location, $filter) {
+    // Load rb.
+    $scope.rbs = RestService.getclient('rb').query();
+
     // Pagination.
     $scope.currentPage = 1;
     $scope.maxSize = 10; // How many page links shown.
     $scope.itemsPerPage = 20;
+
+    var loadRb = function (r) {
+        r.RelocationRecord.RelocationBase = $filter('filter')($scope.rbs, function (i) { return i.Id == r.RelocationRecord.RelocationBaseId; })[0];
+    };
 
     $scope.pageChanged = function () {
         var skip = ($scope.currentPage - 1) * $scope.itemsPerPage;
@@ -225,8 +232,25 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             // Set total items.
             $scope.totalItems = rs.Count;
 
+            var dupIdcards = [];
+
             rs.Items.forEach(function (r) {
-                r.RelocationRecord = RestService.getclient('rr').get({ id: r.RelocationRecordId });
+                dupIdcards.push(r.IdentityCard);
+                loadRb(r);
+            });
+
+            // Query who is duplicated.
+            var dupFilters = queryByBatch(dupIdcards, null, 'IdentityCard', true);
+            dupFilters.forEach(function (df) {
+                RestService.getclient('resident').query({
+                    $filter: 'Status eq 1 and (' + df + ')'
+                }, function (drs) {
+                    rs.Items.forEach(function (r) {
+                        var duplicated = $filter('filter')(drs.Items, function (j) { return j.IdentityCard == r.IdentityCard; })[0];
+                        loadRb(duplicated);
+                        r.duplicated = duplicated;
+                    });
+                });
             });
         });
     };

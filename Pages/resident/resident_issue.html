@@ -9,18 +9,29 @@
             <thead>
                 <tr>
                     <th>拆迁基地</th>
+                    <th>拆迁编号</th>
                     <th>问题人员姓名</th>
                     <th>重复身份证号</th>
                     <th>关系</th>
+                    <th>被重复拆迁基地</th>
+                    <th>被重复拆迁编号</th>
+                    <th>被重复人员姓名</th>
+                    <th>被重复关系</th>
                     <th>操作</th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="item in items">
                     <td>{{item.RelocationRecord.RelocationBase.Name}}</td>
+                    <td>{{item.RelocationRecord.RRId}}</td>
                     <td>{{item.Name}}</td>
                     <td>{{item.IdentityCard}}</td>
                     <td>{{item.RelationshipType}}</td>
+                    <!--被重复的人信息-->
+                    <td>{{item.duplicated.RelocationRecord.RelocationBase.Name}}</td>
+                    <td>{{item.duplicated.RelocationRecord.RRId}}</td>
+                    <td>{{item.duplicated.Name}}</td>
+                    <td>{{item.duplicated.RelationshipType}}</td>
                     <td>
                         <label class="label-success" ng-show="item.Status==1"> 已通过</label>
                         <label class="label-success" ng-show="item.Status==-1"> 已删除</label>
