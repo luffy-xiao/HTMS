@@ -62,7 +62,6 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
         $scope.rts = RestService.getclient('rt').query();     
     }
 
-   
     $scope.newitem = angular.copy(item);
     if (type == 'pr') {
         if (item.Id != null) {//modify item, show the residents in the record
@@ -96,11 +95,6 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
 
     }
 
-    if (type == 'rb') {
-        if ($scope.newitem.Id == null) {
-            $scope.newitem.CreatedTime = moment().format("YYYY-MM-DD")
-        }
-    }
     // Contract modal.
     if (type == 'contract') {
         $scope.app = RestService.getclient('appartment').get({ id: $scope.newitem.AppartmentId }, function (app) {

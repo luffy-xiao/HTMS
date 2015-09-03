@@ -8,11 +8,11 @@ var appControllers = angular.module('ms.site.controllers', ['ms.site.controllers
 appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestService','$location', function ($scope, $modal, RestService,$location) {
 
     $scope.rbs = RestService.getclient('rb').query();
-    $scope.rr = {}
-    $scope.rr.Residents = []
-    $scope.rr.Residents[0] = {}
-    $scope.rr.Residents[0].RelationshipType = "户主"       
-    $scope.rr.DateCreated = moment().format("YYYY-MM-DD")
+    $scope.rr = {};
+    $scope.rr.Residents = [];
+    $scope.rr.Residents[0] = {};
+    $scope.rr.Residents[0].RelationshipType = "户主";
+    $scope.rr.DateCreated = moment().format("YYYY-MM-DD");
     $scope.buttonshow = true;
     $scope.vlist = RestService.getclient('village').query();
    
@@ -191,9 +191,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     }
     $scope.edit = function () {
         //update the record
-
-        $location.path('/resident/detail/' + $scope.rr.Id + "/readonly=false")
-
+        $location.path('/resident/detail/' + $scope.rr.Id + "/readonly=false");
     }
     $scope.loadgroups = function () {
    
@@ -208,7 +206,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         }
     }
    
-    InitDataPicker($scope)
+    InitDataPicker($scope);
     
 }]).controller('ResidentIssueCtrl', ['$scope', '$modal', 'RestService', '$location', '$filter', function ($scope, $modal, RestService, $location, $filter) {
     // Load rb.
@@ -956,16 +954,12 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         $scope.failure = 0
         $scope.dynamic = 0;
         $scope.adding = true;
-        
      
         var timer =   $interval(function () {
-            
             if (i >= $scope.gridOptions.data.length) {
                 return;
-                
             }
-           
-            
+
             RestService.getclient($scope.model.Name).save($scope.gridOptions.data[i], function () {
                 $scope.success++;
                 $scope.dynamic++
@@ -1788,7 +1782,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 }])
 
 
-function additem($modal, type, $scope, item,commit) {
+function additem($modal, type, $scope, item, commit) {
     var items = $scope.items
     var template = "/pages/modal/" + type + "Modal.html"
     if (typeof commit === 'undefined') { commit = true; }
@@ -1798,24 +1792,24 @@ function additem($modal, type, $scope, item,commit) {
         controller: "SaveItemModalCtrl",
         resolve: {
             type: function () {
-                return type
+                return type;
             },
             item: function () {
-                return item
+                return item;
             },
             commit: function(){
-                return commit 
+                return commit;
             }
         }
     });
     modalInstance.result.then(function (item) {
-        items.push(item)
-        $scope.$broadcast('added',item)
+        items.push(item);
+        $scope.$broadcast('added', item);
     }, function () {
 
     });
 }
-function modifyitem($modal, type, $scope, idx,commit) {
+function modifyitem($modal, type, $scope, idx, commit) {
     var items = $scope.items
     var template = "/pages/modal/" + type + "Modal.html"
     if (typeof commit === 'undefined') { commit = true; }
@@ -1825,19 +1819,19 @@ function modifyitem($modal, type, $scope, idx,commit) {
         controller: "SaveItemModalCtrl",
         resolve: {
             type: function () {
-                return type
+                return type;
             },
             item: function () {
-                return items[idx]
+                return items[idx];
             },
             commit: function () {
-                return commit 
+                return commit;
             }
         }
     });
     modalInstance.result.then(function (item) {
         items[idx] = item;
-        $scope.$broadcast('updated', item)
+        $scope.$broadcast('updated', item);
     }, function () {
 
     });
@@ -1871,15 +1865,15 @@ function deleteitem($modal, RestService, type, $scope, idx, commit) {
     });
 }
 
-function InitCtrl($scope, $modal, type, RestService, newitem,commit){
+function InitCtrl($scope, $modal, type, RestService, newitem, commit) {
     $scope.add = function () {
-        additem($modal, type, $scope, newitem,commit)
+        additem($modal, type, $scope, newitem, commit);
     }
     $scope.modify = function (idx) {
-        modifyitem($modal, type, $scope, idx,commit)
+        modifyitem($modal, type, $scope, idx, commit);
     }
     $scope.del = function (idx) {
-        deleteitem($modal, RestService, type, $scope, idx,commit)
+        deleteitem($modal, RestService, type, $scope, idx, commit);
     }
 }
 
