@@ -20,6 +20,11 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     InitCtrl($scope, $modal, 'resident',RestService,{},false)
 
     $scope.ok = function () {
+        // Check RelocationType & DocumentNumber.
+        if ($scope.rr.RelocationType != '居住') {
+            $scope.rr.DocumentNumber = null;
+        }
+
         // submit relocation record
         RestService.getclient('rr').save($scope.rr, function (data) {
            
@@ -28,15 +33,10 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             if(err.status == 409)
                 alert("记录重复，可能由于该户主已经存在")
         });
-     
     }
 
     //datapickers
-    InitDataPicker($scope)
-
-  
-
-
+    InitDataPicker($scope);
 
 }]).controller('NavCtrl', ['$scope', '$rootScope', '$modal', 'UserService', function ($scope, $rootScope, $modal, UserService) {
     function openlogindialog() {
@@ -166,20 +166,22 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     })
 
     $scope.notnew = true;
-    $scope.readonly = $routeParams.readonly
-    var readonly = $routeParams.readonly
+    $scope.readonly = $routeParams.readonly;
+    var readonly = $routeParams.readonly;
    
     if (readonly == "true") {
-        
         $("input").attr('readonly', true)
         $("select").attr('disabled', true)
     } else {
         $scope.buttonshow = true;
-      
     }
     $scope.ok = function () {
+        // Check RelocationType & DocumentNumber.
+        if ($scope.rr.RelocationType != '居住') {
+            $scope.rr.DocumentNumber = null;
+        }
+
         //update the record
-       
         RestService.getclient('rr').update({ Id: $scope.rr.Id }, $scope.rr, function () {
             $location.path('/resident/detail/' + $scope.rr.Id + "/readonly=" + true)
         }, function (err) {

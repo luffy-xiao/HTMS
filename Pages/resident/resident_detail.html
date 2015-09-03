@@ -47,14 +47,20 @@
         </div>
         <div class="form-group">
             <label class="col-sm-2 control-label">动迁户性质</label>
-            <div class="col-sm-5">
+            <div class="col-sm-2">
                 <span class="nullable">
                     <select class="form-control" ng-model="rr.RelocationType" required="">
                         <option value="">--请选择--</option>
-                        <option value="居民">居民</option>
-                        <option value="非居民">非居民</option>
+                        <option value="居住">居住</option>
+                        <option value="非居住">非居住</option>
                     </select>
                 </span>
+            </div>
+            <div ng-if="rr.RelocationType == '居住'">
+                <label class="col-sm-2 control-label">宅基户号或批件文号</label>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control" ng-model="rr.DocumentNumber" required="" ng-disabled="readonly == 'true'">
+                </div>
             </div>
         </div>
         <div class="form-group">
@@ -63,9 +69,7 @@
                 <p class="input-group datepicker">
                     <input type="text" class="form-control" datepicker-popup datepicker-options="dateOptions" ng-model="rr.DateCreated" is-open="datepickers.dt1" show-weeks="false" ng-required="true" readonly
                            close-text="关闭" current-text="今天" clear-text="清除" />
-              
                 </p>
-      
             </div>
         </div>
       
@@ -298,7 +302,7 @@
 
         </div>
         <div class="form-group  has-feedback">
-            <label class="col-sm-2 control-label">转入新村办日期</label>
+            <label class="col-sm-2 control-label">协议日期</label>
             <div class="col-sm-5">
                 <p class="input-group datepicker">
                     <input type="text" class="form-control" datepicker-popup datepicker-options="dateOptions" ng-model="rr.NewVillageDate" is-open="datepickers.dt3" show-weeks="false" 

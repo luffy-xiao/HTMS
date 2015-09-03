@@ -25,6 +25,8 @@ namespace WebApplication6.Models
         //address
 
         public string RelocationType { get; set; }
+
+        public string DocumentNumber { get; set; }
         
         public virtual ICollection<Resident> Residents { get; set; }
 
