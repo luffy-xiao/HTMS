@@ -345,20 +345,22 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         $location.path('/resident/detail/' + rr.Id + "/readonly=" + readonly)
     }
 
+}]).controller('RelationshiptypeCtrl', ['$scope', '$modal', 'RestService', function ($scope, $modal, RestService) {
+    $scope.items = RestService.getclient('rt').query();
+    InitCtrl($scope, $modal, 'rt', RestService, {});
+
 }]).controller('VillageCtrl', ['$scope', '$modal', 'RestService', function ($scope, $modal, RestService) {
-    $scope.items = RestService.getclient('village').query()
-    InitCtrl($scope, $modal, 'village', RestService, {})
+    $scope.items = RestService.getclient('village').query();
+    InitCtrl($scope, $modal, 'village', RestService, {});
 
 }]).controller('GroupCtrl', ['$scope', '$modal', 'RestService', function ($scope, $modal, RestService) {
-    $scope.vlist = RestService.getclient('village').query()
+    $scope.vlist = RestService.getclient('village').query();
     $scope.query = function () {
         $scope.items = RestService.getclient('group').query({ $filter: "VillageId eq " + $scope.SelectedVId }, function () {
             $scope.showresult = true;
-        })
-        InitCtrl($scope, $modal, 'group', RestService, { VillageId: $scope.SelectedVId })
+        });
+        InitCtrl($scope, $modal, 'group', RestService, { VillageId: $scope.SelectedVId });
     }
-   
-  
 }]).controller('CommunityCtrl', ['$scope', '$modal', 'RestService', function ($scope, $modal, RestService) {
     $scope.items = RestService.getclient('community').query()
     InitCtrl($scope, $modal, 'community', RestService, {})

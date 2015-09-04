@@ -42,6 +42,10 @@ var appmodule = angular.module('ms.site', ['ngCookies','ngRoute', 'ms.site.contr
                     templateUrl: '/pages/metadata/village_list.html',
                     controller: 'VillageCtrl'
                 }).
+                  when('/relationships', {
+                      templateUrl: '/pages/metadata/relationshiptype_list.html',
+                      controller: 'RelationshiptypeCtrl'
+                  }).
                 when('/groups', {
                     templateUrl: '/pages/metadata/group_list.html',
                     controller: 'GroupCtrl'

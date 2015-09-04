@@ -104,7 +104,7 @@ namespace WebApplication6.Controllers
 
         // DELETE: api/RelationshipTypes/5
         [ResponseType(typeof(RelationshipType))]
-        public async Task<IHttpActionResult> DeleteRelationshipTypes(string id)
+        public async Task<IHttpActionResult> DeleteRelationshipTypes(int id)
         {
             RelationshipType relationshipTypes = await db.RelationshipTypes.FindAsync(id);
             if (relationshipTypes == null)
