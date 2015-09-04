@@ -20,7 +20,7 @@ namespace WebApplication6.Controllers
     {
         private WebApplication6Context db = new WebApplication6Context();
 
-        [PagingQueryable]
+        [PagingQueryable(MaxNodeCount=200)]
         // GET: api/RelocationRecords
         public IQueryable<RelocationRecord> GetRelocationRecords()
         {

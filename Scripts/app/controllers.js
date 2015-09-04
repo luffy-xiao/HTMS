@@ -92,7 +92,55 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.maxSize = 10; // How many page links shown.
     $scope.itemsPerPage = 20;
 
-    // Cache filterstring used in query.
+    var getRelocationBase = function (baseId) {
+        var rbase = $filter('filter')($scope.rbs, function (e) { return e.Id == baseId; }, true)[0];
+        return rbase != null ? rbase.Name : null;
+    };
+
+    var residentsHeader = ['Name', 'IdentityCard', 'Phone', 'RelationshipType'];
+    var residentMaster = { mResidentName: 'Name', mResidentPhone: 'Phone', mResidentIdentityCard: 'IdentityCard' };
+
+    var prepareData = function (rr) {
+        var mapped = angular.copy(rr);
+
+        // Handle relocation base.
+        mapped.RelocationBase = getRelocationBase(rr.RelocationBaseId);
+
+        // Whether show all residents.
+        if ($scope.searchparams.showAllResidents == '1' && mapped.Residents.length > 1) {
+            mapped.Residents.forEach(function (r) {
+                var mapped2 = angular.copy(mapped);
+
+                // Add resident record.
+                residentsHeader.forEach(function (rh) {
+                    mapped2[rh] = r[rh];
+                });
+
+                // Add resident master.
+                for (var rf in residentMaster) {
+                    mapped2[rf] = mapped.Residents[0][residentMaster[rf]];
+                }
+
+                delete mapped2.Residents;
+                $scope.rrlist.push(mapped2);
+            });
+        } else {
+            // Add resident record.
+            residentsHeader.forEach(function (rh) {
+                mapped[rh] = mapped.Residents[0][rh];
+            });
+
+            // Add resident master.
+            for (var rf in residentMaster) {
+                mapped[rf] = mapped.Residents[0][residentMaster[rf]];
+            }
+
+            delete mapped.Residents;
+            $scope.rrlist.push(mapped);
+        }
+    };
+
+    // Cache filterstring used in query: rs and rr.
     var filterstring;
     
     $scope.pageChanged = function () {
@@ -100,30 +148,43 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         var skip = ($scope.currentPage - 1) * $scope.itemsPerPage;
 
         if ($scope.searchBy == 'rs') {
+            // Search by rs.
+            var rrIds = [];
             RestService.getclient('resident').query({
-                $filter: filterstring, $inlinecount: 'allpages',
-                $skip: skip, $top: $scope.itemsPerPage
-            }, function (residents) {
-                // Set total count.
-                $scope.totalItems = residents.Count;
-                residents.Items.forEach(function (r) {
-                    var rr = RestService.getclient('rr').get({ id: r.RelocationRecordId });
-                    $scope.rrlist.push(rr);
-                });
-                $scope.showresult = true;
-            });
-        } else {
-            RestService.getclient('rr').query({
-                $filter: filterstring, $inlinecount: 'allpages',
+                $filter: filterstring.rs, $inlinecount: 'allpages',
                 $skip: skip, $top: $scope.itemsPerPage
             }, function (result) {
                 // Set total count.
                 $scope.totalItems = result.Count;
-                $scope.rrlist = result.Items;
+                $scope.showresult = true;
+
+                result.Items.forEach(function (rs) {
+                    rrIds.push(rs.RelocationRecordId);
+                });
+
+                var idFilters = queryByBatch(rrIds, null, 'Id', false);
+                var fstr;
+                // Load rr.
+                idFilters.forEach(function (idf) {
+                    fstr = filterstring.rr.length ? filterstring.rr + ' and (' + idf + ')' : idf;
+                    RestService.getclient('rr').query({ $filter: fstr }, function (result) {
+                        result.Items.forEach(function (item) {
+                            prepareData(item);
+                        });
+                    });
+                });
+            });
+        } else {
+            RestService.getclient('rr').query({
+                $filter: filterstring.rr, $inlinecount: 'allpages',
+                $skip: skip, $top: $scope.itemsPerPage
+            }, function (result) {
+                // Set total count.
+                $scope.totalItems = result.Count;
 
                 // Fill relocationbase info.
-                $scope.rrlist.forEach(function (rr) {
-                    rr.RelocationBase = $filter('filter')($scope.rbs, function (e) { return e.Id == rr.RelocationBaseId; }, true)[0];
+                result.Items.forEach(function (rr) {
+                    prepareData(rr);
                 });
                 $scope.showresult = true;
             });
@@ -131,14 +192,14 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     };
 
     $scope.search = function () {
-        filterstring = getResidentFilters($scope.searchparams, $scope.searchBy);
-        
-        if (filterstring.length) {
+        filterstring = getResidentFilters($scope);
+        if (filterstring.rs.length == 0 && filterstring.rr.length == 0) {
+            alert('请输入至少一项查询条件。');
+            return;
+        } else {
             // Search from beginning when click search button.
             $scope.currentPage = 1;
             $scope.pageChanged();
-        } else {
-            alert('请填写至少一项查询条件。');
         }
     };
 
@@ -387,7 +448,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     initResidentSearch($scope, RestService);
 
     $scope.model = { Name: 'rr' };
-    $scope.showAllResidents = 0;
 
     // Table data.
     $scope.tableName = '';
@@ -514,7 +574,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         });
 
         // Whether show all residents.
-        if ($scope.showAllResidents == '1' && mapped.Residents.length > 1) {
+        if ($scope.searchparams.showAllResidents == '1' && mapped.Residents.length > 1) {
             mapped.Residents.forEach(function (r) {
                 var mapped2 = angular.copy(mapped);
 
@@ -569,6 +629,12 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     // Load table data.
     $scope.search = function () {
+        var filterstring = getResidentFilters($scope);
+        if (filterstring.rs.length == 0 && filterstring.rr.length == 0) {
+            alert('请输入至少一项查询条件。');
+            return;
+        }
+
         // Build table name.
         buildTableName();
 
@@ -577,13 +643,35 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         }
 
         $scope.dataSource = [];
-        var filterstring = getResidentFilters($scope.searchparams, 'rr');
 
-        RestService.getclient('rr').query({ $filter: filterstring }, function (result) {
-            result.Items.forEach(function (item) {
-                prepareData(item);
+        if ($scope.searchBy == 'rr') {
+            // Search by rr.
+            RestService.getclient('rr').query({ $filter: filterstring.rr }, function (result) {
+                result.Items.forEach(function (item) {
+                    prepareData(item);
+                });
             });
-        });
+        } else {
+            // Search by rs.
+            var rrIds = [];
+            RestService.getclient('resident').query({ $filter: filterstring.rs }, function (result) {
+                result.Items.forEach(function (rs) {
+                    rrIds.push(rs.RelocationRecordId);
+                });
+
+                var idFilters = queryByBatch(rrIds, null, 'Id', false);
+                var fstr;
+                // Load rr.
+                idFilters.forEach(function (idf) {
+                    fstr = filterstring.rr.length ? filterstring.rr + ' and (' + idf + ')' : idf;
+                    RestService.getclient('rr').query({ $filter: fstr }, function (result) {
+                        result.Items.forEach(function (item) {
+                            prepareData(item);
+                        });
+                    });
+                });
+            });
+        }
     };
 
     // Load template data.
@@ -1934,15 +2022,15 @@ function initResidentSearch($scope, RestService) {
     InitDataPicker($scope);
 
     // Searching.
-    $scope.searchparams = {};
-    // Flag whether search by resident (rs) or relocationrecord (rr).
+    $scope.searchparams = {showAllResidents: 0};
+
+    // Flag whether initiate search by resident (rs) or relocationrecord (rr).
     $scope.searchBy = 'rs';
-    $scope.searchByChanged = function (by) {
-        $scope.searchBy = by;
-    };
 }
 
-function getResidentFilters(params, searchBy) {
+/** Get query filter for relocationrecord, also set searchBy in scope: rs or rr **/
+function getResidentFilters($scope) {
+    var params = $scope.searchparams;
     var filters = { rs: [], rr: [] };
 
     // Filters by resident.
@@ -1959,6 +2047,9 @@ function getResidentFilters(params, searchBy) {
     }
     if (params.RRId != null && params.RRId.trim() != '') {
         filters.rr.push("RRId eq '" + params.RRId + "'");
+    }
+    if (params.RelocationType != null && params.RelocationType.trim() != '') {
+        filters.rr.push("RelocationType eq '" + params.RelocationType + "'");
     }
     if (params.Village != null && params.Village.trim() != '') {
         filters.rr.push("Village eq '" + params.Village + "'");
@@ -1982,16 +2073,20 @@ function getResidentFilters(params, searchBy) {
         filters.rr.push('DeliveryDate le ' + "datetime'" + params.DeliveryDateEnd.toISOString() + "'");
     }
 
-    var filterstring = '';
+    // Set searchBy: residents first.
+    $scope.searchBy = filters.rs.length ? 'rs' : 'rr';
 
-    if (filters.rs.length || filters.rr.length) {
-        // Reset filterstring occording to current filters.
-        filterstring = searchBy == 'rs' ? "Status eq 1" : "Status eq 1";
+    var filterstring = {rs: '', rr: ''};
 
-        filters[searchBy].forEach(function (f) {
-            filterstring += (" and " + f);
-        });
-    }
+    ['rs', 'rr'].forEach(function (kind) {
+        if (filters[kind].length) {
+            filterstring[kind] = 'Status eq 1';
+
+            filters[kind].forEach(function (f) {
+                filterstring[kind] += (" and " + f);
+            });
+        }
+    });
 
     return filterstring;
 }

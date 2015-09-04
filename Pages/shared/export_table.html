@@ -1,13 +1,18 @@
-﻿<div class="noprint">
-    <button type="button" class="btn btn-primary" ng-click="export()" ng-disabled="rows.length == 0">
-        <span class="glyphicon glyphicon-export" aria-hidden="true"></span> 导出
-    </button>
-    <button type="button" class="btn btn-success" ng-click="print()" ng-disabled="rows.length == 0">
-        <span class="glyphicon glyphicon-print" aria-hidden="true"></span> 打印
-    </button>
+﻿<div class="noprint row">
+    <div class="col-sm-4">
+        <button type="button" class="btn btn-primary" ng-click="export()" ng-disabled="rows.length == 0">
+            <span class="glyphicon glyphicon-export" aria-hidden="true"></span> 导出
+        </button>
+        <button type="button" class="btn btn-success" ng-click="print()" ng-disabled="rows.length == 0">
+            <span class="glyphicon glyphicon-print" aria-hidden="true"></span> 打印
+        </button>
+    </div>
+    <div class="col-sm-offset-6 col-sm-2">
+        <h5 class="pull-right">{{amountName}}：{{rows.length}}</h5>
+    </div>
 </div>
 
-<h3 class="noshow" style="text-align: center;">{{tableName}}</h3>
+<h3 class="noshow" style="text-align: center;">{{tableName}}&nbsp;&nbsp;&nbsp;<small>{{amountName}}：{{rows.length}}</small></h3>
 <div class="table-responsive noscroll">
     <table class="table table-bordered table-hover table-condensed table-striped">
         <thead>

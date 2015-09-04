@@ -2,14 +2,7 @@
     <div class="noprint">
         <p class="bg-info">请查询动迁信息。</p>
         <form name="s1" class="form-horizontal" novalidate>
-            <div ng-include="'/pages/resident/resident_query_scope.html'"></div>
-
-            <div class="form-group has-feedback">
-                <div class="col-sm-offset-2 col-sm-4">
-                    <label><input type="radio" name="showAllResidents" value="0" ng-model="showAllResidents" />仅显示户主</label>
-                    <label><input type="radio" name="showAllResidents" value="1" ng-model="showAllResidents" />显示所有家庭成员</label>
-                </div>
-            </div>
+            <div ng-include="'/pages/resident/resident_query.html'"></div>
             <div class="form-group has-feedback">
                 <div class="col-sm-2">
                     <button type="button" class="btn btn-primary" ng-click="search()">
@@ -43,6 +36,6 @@
         -->
     </div>
 
-    <div export-table table-name="tableName" cols="cols" rows="dataSource"></div>
+    <div export-table table-name="tableName" cols="cols" rows="dataSource" amount-name="人数"></div>
 
 </div>

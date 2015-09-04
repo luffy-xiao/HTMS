@@ -108,6 +108,7 @@ appDirectives.directive('exportTable', function () {
         templateUrl: '/pages/shared/export_table.html',
         scope: {
             tableName: '=',
+            amountName: '@',
             cols: '=',
             rows: '='
         },
