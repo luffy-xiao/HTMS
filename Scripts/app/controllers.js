@@ -1422,7 +1422,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         { name: 'Status', displayName: '状态', visible: true },
         { name: 'Owners', displayName: '房主', visible: true },
         { name: 'PaymentAmount', displayName: '购房金额', visible: true },
-        { name: 'DeltaAmount', displayName: '购房差额款', visible: true }
+        { name: 'DeltaAmount', displayName: '购房差额款', visible: true },
+        { name: 'OtherFee', displayName: '其他费用', visible: true },
+        { name: 'Comment', displayName: '备注', visible: true }
     ];
 
     var prepareData = function (contract, owners) {
@@ -1745,7 +1747,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             calculatepr(prs, RestService);
             $scope.items = prs;
             InitCtrl($scope, $modal, 'pr', RestService, { RelocationRecordId: $scope.rr.Id });
-        })
+        });
     }   
 }])
 /*.controller('PrintACtrl', ['$scope', '$modal', 'RestService', '$routeParams', function ($scope, $modal, RestService, $routeParams) {

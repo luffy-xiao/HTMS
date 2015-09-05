@@ -4,15 +4,14 @@
             <th>动迁基地编号</th>
             <th>动迁基地名称</th>
             <th>开始时间</th>
-
-     
+            <th>回购单价（元/平方）</th>
             <th><input type="button" class="btn btn-primary btn-sm" value="添加动迁基地" ng-click="add()" /></th>
         </tr>
         <tr ng-repeat="base in items">
             <td>{{base.RBId}}</td>
             <td>{{base.Name}}</td>
             <td>{{base.CreatedTime | date:"yyyy-MM-dd"}}</td>
-
+            <td>{{base.RepurchasePrice}}</td>
             <td>
                 <input type="button" class="btn btn-default btn-xs" value="修改" ng-click="modify($index)" />
                 <input type="button" class="btn btn-warning btn-xs" value="删除" ng-click="del($index)" />

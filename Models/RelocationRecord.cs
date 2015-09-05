@@ -124,5 +124,6 @@ namespace WebApplication6.Models
         public Decimal? UsedAmount { get; set; }
         public Decimal? UsedSize { get; set; }
         public Decimal? AppartmentCount { get; set; }
+        public Decimal? RepurchasePrice { get; set; }
     }
 }

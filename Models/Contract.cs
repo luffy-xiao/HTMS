@@ -42,6 +42,8 @@ namespace WebApplication6.Models
         public decimal? TVFee { get; set; }
 
         public decimal? OtherFee { get; set; }
+
+        public string Comment { get; set; }
         
     }
 

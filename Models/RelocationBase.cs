@@ -18,6 +18,7 @@ namespace WebApplication6.Models
         public string RelocationCompany { get; set; }
         public string Relocator { get; set; }
         public DateTime? CreatedTime { get; set; }
- 
+
+        public Decimal? RepurchasePrice { get; set; }
     }
 }

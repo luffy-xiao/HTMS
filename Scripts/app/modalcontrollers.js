@@ -73,8 +73,8 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
         } else {// new record, show the residents can be selected
             $scope.rr = RestService.getclient('rr').get({ id: item.RelocationRecordId }, function (rr) {
                 rr.Residents = $filter('filter')(rr.Residents, function (value) {
-                    value.selected = true
-                    return value.PlacementRecordId == null
+                    value.selected = true;
+                    return value.PlacementRecordId == null;
                 })
                 rr.PlacementRecords = RestService.getclient('pr').query({ $filter: "RelocationRecordId eq '" + rr.Id + "'" }, function (prs) {
                     var allocatedsize = 0;
@@ -82,15 +82,18 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
                     var allocatedapprovedsize = 0;
 
                     prs.forEach(function (pr) {
-                        allocatedsize += pr.Size
-                        allocatedcompensation += pr.TotalCompensation
-                        allocatedapprovedsize += pr.ApprovedSize
+                        allocatedsize += pr.Size;
+                        allocatedcompensation += pr.TotalCompensation;
+                        allocatedapprovedsize += pr.ApprovedSize;
                     })
                     $scope.newitem.Size = rr.RelocationSize - allocatedsize;
                     $scope.newitem.TotalCompensation = rr.TotalCompensation - allocatedcompensation;
-                    $scope.newitem.ApprovedSize = rr.ApprovedSize - allocatedapprovedsize
-                })
-            })
+                    $scope.newitem.ApprovedSize = rr.ApprovedSize - allocatedapprovedsize;
+
+                    // Set default RepurchasePrice as in relocationbase.
+                    $scope.newitem.RepurchasePrice = rr.RelocationBase.RepurchasePrice;
+                });
+            });
         }
 
     }
