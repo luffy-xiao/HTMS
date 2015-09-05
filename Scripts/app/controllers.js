@@ -652,6 +652,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 result.Items.forEach(function (item) {
                     prepareData(item);
                 });
+
+                $scope.showResult = true;
             });
         } else {
             // Search by rs.
@@ -660,6 +662,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 result.Items.forEach(function (rs) {
                     rrIds.push(rs.RelocationRecordId);
                 });
+
+                $scope.showResult = true;
 
                 var idFilters = queryByBatch(rrIds, null, 'Id', false);
                 var fstr;
@@ -1202,6 +1206,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         // Save search key in cookie.
         if ($scope.searchparams.Name != null && $scope.searchparams.Name.trim() != '') {
             $cookies.pr_search = $scope.searchparams.Name;
+        } else {
+            delete $cookies.pr_search;
         }
 
         if ($scope.searchparams.Name != null || $scope.searchparams.IdentityCard != null) {
@@ -1365,13 +1371,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         apps.push(lastapp);
     }
     
-    function totalprice(contract) {
-        if (contract == null || contract.Appartment == null) return "N/A"
-        else return contract.Appartment.Price1 * contract.Size1 +
-            contract.Appartment.Price2 * contract.Size2 +
-            contract.Appartment.Price3 * contract.Size3 +
-            contract.Appartment.Price4 * contract.Size4
-    }
     $scope.contracts = function () {
         $scope.contractlist = RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + $scope.contract.PlacementRecordId, $orderby: "Id" }, function () {
             $scope.showcontracts = true;
@@ -1431,7 +1430,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         contract.BuildingNumber = contract.Appartment.BuildingNumber;
         contract.DoorNumber = contract.Appartment.DoorNumber;
         contract.Size = contract.Appartment.Size;
-        contract.TotalPrice = contract.Appartment.TotalPrice;
+        // Calcuate total price.
+        contract.TotalPrice = totalprice(contract).toFixed(2);
         contract.Status = contract.Appartment.Status;
 
         contract.Owners = owners;
@@ -1503,6 +1503,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                                         var pr = $filter('filter')(prs, { Id: con.PlacementRecordId }, true)[0];
                                         prepareData(con, pr.Name);
                                         $scope.contracts.push(con);
+
+                                        $scope.showResult = true;
                                     }
                                 });
                             });
@@ -1541,6 +1543,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     pros.push(loadCon.$promise);
                 });
 
+                $scope.showResult = true;
+
                 // All contracts have been loaded.
                 $q.all(pros).then(function (result) {
                     var fs = queryByBatch(Object.keys(indexByPr), null, 'Id', false);
@@ -1572,6 +1576,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.cols = [
         { name: 'Name', displayName: '人员', visible: true },
         { name: 'RelocationBase', displayName: '动迁基地', visible: true },
+        { name: 'RRId', displayName: '动迁编号', visible: true },
         { name: 'Size', displayName: '可安置面积', visible: true },
         { name: 'UsedSize', displayName: '已安置面积', visible: true },
         { name: 'ApprovedSize', displayName: '有证面积', visible: true },
@@ -1590,18 +1595,28 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         $scope.prList = [];
 
         var relocationBase = $filter('filter')($scope.rbs, function (e) { return e.Id == $scope.searchparams.RelocationBaseId; }, true)[0];
+        var rrIdCache = {};
 
         // TODO RelocationRecord status eq 1
         RestService.getclient('rr').query({ $filter: 'Status eq 1 and RelocationBaseId eq ' + $scope.searchparams.RelocationBaseId }, function (result) {
             // Query pr by batch. related to 'MaxNodeCount' in backend controller.
             var filters = queryByBatch(result.Items, 'Id', 'RelocationRecordId', true);
 
+            // Cache RRId.
+            result.Items.forEach(function (rr) {
+                rrIdCache[rr.Id] = rr.RRId;
+            });
+
             filters.forEach(function (f) {
                 RestService.getclient('pr').query({ $filter: f }, function (prs) {
                     prs.forEach(function (pr) {
                         pr.RelocationBase = relocationBase.Name;
+                        pr.RRId = rrIdCache[pr.RelocationRecordId];
+
                         $scope.prList.push(pr);
                     });
+
+                    $scope.showResult = true;
                 });
             });
         });
@@ -1698,21 +1713,23 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         // Save search key in cookie.
         if ($scope.searchparams.Name != null && $scope.searchparams.Name.trim() != '') {
             $cookies.pr_search = $scope.searchparams.Name;
+        } else {
+            delete $cookies.pr_search;
         }
 
         var filters = [];
-        filters.push("RelationshipType eq '户主' and Status eq 1")
+        filters.push("RelationshipType eq '户主' and Status eq 1");
         if ($scope.searchparams.Name != null || $scope.searchparams.IdentityCard != null) {
 
             if ($scope.searchparams.Name != null) {
-                filters.push("substringof('" + $scope.searchparams.Name + "',Name)")
+                filters.push("substringof('" + $scope.searchparams.Name + "',Name)");
             }
             if ($scope.searchparams.IdentityCard != null) {
-                filters.push("substringof('" + $scope.searchparams.IdentityCard + "',IdentityCard)")
+                filters.push("substringof('" + $scope.searchparams.IdentityCard + "',IdentityCard)");
             }
             filterstring = "true";
             filters.forEach(function (f) {
-                filterstring += (" and " + f)
+                filterstring += (" and " + f);
             })
 
             $scope.currentPage = 1;
@@ -2007,6 +2024,14 @@ function calculatepr(prs, RestService) {
             pr.LeftSize = pr.Size - size
         })
     })
+}
+
+function totalprice(contract) {
+    if (contract == null || contract.Appartment == null) return "N/A"
+    else return contract.Appartment.Price1 * contract.Size1 +
+        contract.Appartment.Price2 * contract.Size2 +
+        contract.Appartment.Price3 * contract.Size3 +
+        contract.Appartment.Price4 * contract.Size4
 }
 
 function validateidenttiycard(id) {
