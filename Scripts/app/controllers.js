@@ -1434,7 +1434,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         { name: 'DoorNumber', displayName: '室号', visible: true },
         { name: 'Size', displayName: '面积', visible: true },
         { name: 'TotalPrice', displayName: '总价格', visible: true },
-        { name: 'Status', displayName: '状态', visible: true },
+ 
         { name: 'Owners', displayName: '房主', visible: true },
         { name: 'PaymentAmount', displayName: '购房金额', visible: true },
         { name: 'DeltaAmount', displayName: '购房差额款', visible: true },
