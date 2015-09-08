@@ -170,11 +170,12 @@
                                                 <td class="STYLE4"><input type="text" class="noline_textarea" size="18" value="{{idcard($index)}}" /></td>
                                             </tr>
                                             <tr>
+                                                <td class="STYLE4">其他费用</td>
+                                                <td class="STYLE4" align="left">{{c.OtherFee}}</td>
                                                 <td class="STYLE4" width="120">合计支付金额</td>
 
                                                 <td class="STYLE4" align="left"><input type="text" class="noline_textarea" size="18" value="{{totalfee($index).toFixed(2)}}" /></td>
-                                                <td class="STYLE4">&nbsp;</td>
-                                                <td class="STYLE4" align="left">&nbsp;</td>
+                                               
                                                 <td class="STYLE4">&nbsp;</td>
                                                 <td class="STYLE4" align="left">&nbsp;</td>
                                                 <td class="STYLE4">&nbsp;</td>
@@ -183,7 +184,10 @@
                                         </table>
                                     </td>
                                 </tr>
-
+                                <tr>
+                                    <td ng-show="c.Comment" >备注: {{c.Comment}}</td>
+                                  
+                                </tr>
                                 <tr ng-repeat-end>
                                     <td height="20" class="STYLE4"></td>
                                 </tr>

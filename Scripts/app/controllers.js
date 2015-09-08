@@ -94,7 +94,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     var getRelocationBase = function (baseId) {
         var rbase = $filter('filter')($scope.rbs, function (e) { return e.Id == baseId; }, true)[0];
-        return rbase != null ? rbase.Name : null;
+        return rbase != null ? rbase : null;
     };
 
     var residentsHeader = ['Name', 'IdentityCard', 'Phone', 'RelationshipType'];
@@ -104,7 +104,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         var mapped = angular.copy(rr);
 
         // Handle relocation base.
-        mapped.RelocationBase = getRelocationBase(rr.RelocationBaseId);
+        mapped.RelocationBase = getRelocationBase(rr.RelocationBaseId).Name;
 
         // Whether show all residents.
         if ($scope.searchparams.showAllResidents == '1' && mapped.Residents.length > 1) {
@@ -177,7 +177,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         } else {
             RestService.getclient('rr').query({
                 $filter: filterstring.rr, $inlinecount: 'allpages',
-                $skip: skip, $top: $scope.itemsPerPage
+                $skip: skip, $top: $scope.itemsPerPage,$orderby:'RelocationBaseId, RRId'
             }, function (result) {
                 // Set total count.
                 $scope.totalItems = result.Count;
@@ -307,7 +307,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     $filter: 'Status eq 1 and (' + df + ')'
                 }, function (drs) {
                     rs.Items.forEach(function (r) {
-                        var duplicated = $filter('filter')(drs.Items, function (j) { return j.IdentityCard == r.IdentityCard; })[0];
+                        var duplicated = $filter('filter')(drs.Items, function (j) { return j.IdentityCard == r.IdentityCard && j.RelocationRecord.RelocationType=='居民'; })[0];
                         loadRb(duplicated);
                         r.duplicated = duplicated;
                     });
@@ -466,7 +466,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     var t1 = ['RRId', 'mResidentName', 'CashPayable', 'CashPaid', 'TotalPayable', 'TotalPaid', 'TotalCompensation', 'EWFPaid', 'DepositEWF'];
 
     // 动拆迁情况 TODO: gender in meta, 标准
-    var t2 = ['RelocationBase', 'RRId', 'mResidentName', 'mResidentPhone', 'Name', 'IdentityCard', 'RelationshipType', 'Village', 'Group', 'DeliveryDate', 'ResidentsCount', 'RelocationType'];
+    var t2 = ['RBId','RelocationBase', 'RRId', 'mResidentName', 'mResidentPhone', 'Name', 'IdentityCard', 'Gender', 'RelationshipType', 'Village', 'Group', 'DoorNumber',
+        'ApprovedSize', 'HouseSize', 'RoomSize', 'AffliateSize', 'ReservedSize', 'UnapprovedSize', 'PunishedSize', 'NoRemovalSize', 'RelocationSize', 'EffectiveSize',
+        'MeasuredSize', 'NoConstructionSize', 'UncertifiedSize', 'BaseNumber', 'TransitionFee', 'SickCompensation', 'DeliveryDate', 'NewVillageDate', 'ResidentsCount','PaymentDate'];
 
     // xxx基地动迁面积及补偿金额汇总表
     var t3 = ['RRId', 'mResidentName', 'MeasuredSize', 'EffectiveSize', 'TotalCompensation'];
@@ -497,7 +499,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     $scope.exportTmpls = [
         { id: '1', name: '动迁补偿款发放明细表', lst: t1 },
-        { id: '2', name: '动拆迁情况', lst: t2 },
+        { id: '2', name: '动拆迁详细情况', lst: t2 },
         { id: '3', name: '动迁面积及补偿金额汇总表', lst: t3 },
         { id: '4', name: '评估总面积汇总表', lst: t4 },
         { id: '5', name: '动迁户人口及房屋有效面积认定汇总表', lst: t5 },
@@ -556,19 +558,30 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 displayName: '家庭人数',
                 visible: true
             });
+            $scope.colList.push({
+                name: 'Gender',
+                displayName: '性别',
+                visible: true
+            });
+            $scope.colList.push({
+                name: 'RBId',
+                displayName: '动迁基地编号',
+                visible: true
+            });
         });
     });
 
     var getRelocationBase = function (baseId) {
         var rbase = $filter('filter')($scope.rbs, function (e) { return e.Id == baseId; }, true)[0];
-        return rbase != null ? rbase.Name : null;
+        return rbase != null ? rbase : null;
     };
 
     var prepareData = function (rr) {
         var mapped = angular.copy(rr);
 
         // Handle relocation base.
-        mapped.RelocationBase = getRelocationBase(rr.RelocationBaseId);
+        mapped.RelocationBase = getRelocationBase(rr.RelocationBaseId).Name;
+        mapped.RBId = getRelocationBase(rr.RelocationBaseId).RBId;
 
         // Convert date to from UTC to locale.
         dateFields.forEach(function (d) {
@@ -579,11 +592,13 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         if ($scope.searchparams.showAllResidents == '1' && mapped.Residents.length > 1) {
             mapped.Residents.forEach(function (r) {
                 var mapped2 = angular.copy(mapped);
+                
 
                 // Add resident record.
                 $scope.residentsHeader.forEach(function (rh) {
                     mapped2[rh.Field] = r[rh.Field];
                 });
+                mapped2.Gender = $filter('togender')(mapped2.IdentityCard)
 
                 // Add resident master.
                 for (var rf in residentMaster) {
@@ -600,7 +615,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             $scope.residentsHeader.forEach(function (rh) {
                 mapped[rh.Field] = mapped.Residents[0][rh.Field];
             });
-
+            mapped.Gender = $filter('togender')(mapped.IdentityCard)
             // Add resident master.
             for (var rf in residentMaster) {
                 mapped[rf] = mapped.Residents[0][residentMaster[rf]];
@@ -617,7 +632,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         // Build table name.
         var tableName = '';
         if ($scope.searchparams.RelocationBaseId != null && $scope.searchparams.RelocationBaseId != '') {
-            tableName += getRelocationBase($scope.searchparams.RelocationBaseId) + '基地';
+            tableName += getRelocationBase($scope.searchparams.RelocationBaseId).Name + '基地';
         }
 
         if ($scope.selectedTmpl == '' || $scope.selectedTmpl == null) {
@@ -641,14 +656,14 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         buildTableName();
 
         if ($scope.cols.length == 0) {
-            $scope.cols = $scope.colList;
+            $scope.cols = [];
         }
 
         $scope.dataSource = [];
 
         if ($scope.searchBy == 'rr') {
             // Search by rr.
-            RestService.getclient('rr').query({ $filter: filterstring.rr }, function (result) {
+            RestService.getclient('rr').query({ $filter: filterstring.rr, $orderby: 'RelocationBaseId, RRId' }, function (result) {
                 result.Items.forEach(function (item) {
                     prepareData(item);
                 });
@@ -682,9 +697,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     // Load template data.
     $scope.loadTmpl = function () {
-        if ($scope.selectedTmpl == '') {
-            $scope.cols = $scope.colList;
-            return;
+        if ($scope.selectedTmp == null || $scope.selectedTmpl == '') {
+            $scope.cols = [];
+            
         }
 
         // Build table name.

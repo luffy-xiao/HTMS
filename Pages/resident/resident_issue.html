@@ -1,7 +1,7 @@
 ﻿<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
     <div>
-        <p class="bg-info">以下拆迁户记录中存在重复身份证信息。请确认后，点击“通过”按钮或修改该拆迁记录</p>
+        <p class="bg-info noprint">以下拆迁户记录中存在重复身份证信息。请确认后，点击“通过”按钮或修改该拆迁记录</p>
     </div>
     
     <div class="table-responsive">
@@ -17,7 +17,7 @@
                     <th>被重复拆迁编号</th>
                     <th>被重复人员姓名</th>
                     <th>被重复关系</th>
-                    <th>操作</th>
+                    <th class="noprint"><button class="btn btn-primary btn-sm noprint" onclick="window.print()">打印</button></th>
                 </tr>
             </thead>
             <tbody>
@@ -32,7 +32,7 @@
                     <td>{{item.duplicated.RelocationRecord.RRId}}</td>
                     <td>{{item.duplicated.Name}}</td>
                     <td>{{item.duplicated.RelationshipType}}</td>
-                    <td>
+                    <td class="noprint">
                         <label class="label-success" ng-show="item.Status==1"> 已通过</label>
                         <label class="label-success" ng-show="item.Status==-1"> 已删除</label>
                         <button ng-show="item.Status==0" type="button" class="btn btn-primary btn-sm" ng-click="pass($index)">通过</button>
@@ -47,7 +47,7 @@
     </div>
 
     <!-- pagination -->
-    <div ng-show="totalItems">
+    <div class="noprint" ng-show="totalItems">
         <pagination total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage" ng-change="pageChanged()"
                     max-size="maxSize" num-pages="numPages" class="pagination-sm" boundary-links="true" rotate="false"
                     first-text="首页" previous-text="<上一页" next-text="下一页>" last-text="尾页"></pagination>
