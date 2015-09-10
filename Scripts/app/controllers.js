@@ -307,7 +307,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     $filter: 'Status eq 1 and (' + df + ')'
                 }, function (drs) {
                     rs.Items.forEach(function (r) {
-                        var duplicated = $filter('filter')(drs.Items, function (j) { return j.IdentityCard == r.IdentityCard && j.RelocationRecord.RelocationType=='居民'; })[0];
+                        var duplicated = $filter('filter')(drs.Items, function (j) { return j.IdentityCard == r.IdentityCard && j.RelocationRecord.RelocationType == '居住'; })[0];
                         loadRb(duplicated);
                         r.duplicated = duplicated;
                     });
@@ -1520,8 +1520,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                                         var pr = $filter('filter')(prs, { Id: con.PlacementRecordId }, true)[0];
                                         prepareData(con, pr.Name);
                                         $scope.contracts.push(con);
-
-                                        $scope.showResult = true;
                                     }
                                 });
                             });
@@ -1529,6 +1527,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     });
                 });
             });
+
+            $scope.showResult = true;
         }
         else if (appFilters.length) {
             var filterstring = "true";
