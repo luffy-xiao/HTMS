@@ -32,6 +32,7 @@ namespace WebApplication6.Controllers
         public async Task<IHttpActionResult> GetAppartment(int id)
         {
             Appartment appartment = await db.Appartments.FindAsync(id);
+            db.Entry(appartment).Reference(c => c.Community).Load();
             if (appartment == null)
             {
                 return NotFound();

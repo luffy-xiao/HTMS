@@ -307,7 +307,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     $filter: 'Status eq 1 and (' + df + ')'
                 }, function (drs) {
                     rs.Items.forEach(function (r) {
-                        var duplicated = $filter('filter')(drs.Items, function (j) { return j.IdentityCard == r.IdentityCard && j.RelocationRecord.RelocationType=='居民'; })[0];
+                        var duplicated = $filter('filter')(drs.Items, function (j) { return j.IdentityCard == r.IdentityCard && j.RelocationRecord.RelocationType == '居住'; })[0];
                         loadRb(duplicated);
                         r.duplicated = duplicated;
                     });
@@ -496,6 +496,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     // xxx基地大病补助汇总表
     var t11 = ['RRId', 'mResidentName', 'SickCompensation'];
+    var t12 = ['RBId', 'RelocationBase', 'RRId', 'mResidentName', 'mResidentPhone', 'Name', 'IdentityCard', 'Gender', 'RelationshipType', 'Village', 'Group', 'DeliverDate','ResidentsCount','RelocationType'];
+
 
     $scope.exportTmpls = [
         { id: '1', name: '动迁补偿款发放明细表', lst: t1 },
@@ -508,7 +510,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         { id: '8', name: '兑换安置房金额转入新村办清册', lst: t8 },
         { id: '9', name: '动迁户水电费情况', lst: t9 },
         { id: '10', name: '安置面积汇总表', lst: t10 },
-        { id: '11', name: '大病补助汇总表', lst: t11 }
+        { id: '11', name: '大病补助汇总表', lst: t11 },
+        { id: '12', name: '动迁户人员情况', lst: t12 }
     ];
 
     // Load column metadata.
@@ -1397,6 +1400,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                
                 deleteitem($modal,RestService, 'contract', $scope, idx, true)
             }
+            $scope.contractstatus = function (idx) {
+                modifyitem($modal, 'contract', $scope, idx, true,'status')
+            }
         })
        
     }
@@ -1437,9 +1443,10 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
  
         { name: 'Owners', displayName: '房主', visible: true },
         { name: 'PaymentAmount', displayName: '购房金额', visible: true },
-        { name: 'DeltaAmount', displayName: '购房差额款', visible: true },
-        { name: 'OtherFee', displayName: '其他费用', visible: true },
-        { name: 'Comment', displayName: '备注', visible: true }
+        { name: 'Status', displayName: '状态', visible: true },
+      
+       
+       
     ];
 
     var prepareData = function (contract, owners) {
@@ -1599,7 +1606,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         { name: 'ApprovedSize', displayName: '有证面积', visible: true },
         { name: 'TotalCompensation', displayName: '安置补偿款', visible: true },
         { name: 'UsedAmount', displayName: '已使用安置补偿款', visible: true },
-        { name: 'AppartmentCount', displayName: '购房个数', visible: true }
+        { name: 'AppartmentCount', displayName: '购房个数', visible: true },
+        { name: 'PRId', displayName: '档案编号', visible: true }
     ];
 
     // Load rr at first.
@@ -1933,9 +1941,10 @@ function additem($modal, type, $scope, item, commit) {
 
     });
 }
-function modifyitem($modal, type, $scope, idx, commit) {
+function modifyitem($modal, type, $scope, idx, commit,suffix ) {
+    if (typeof suffix === 'undefined') { suffix = ''; }
     var items = $scope.items
-    var template = "/pages/modal/" + type + "Modal.html"
+    var template = "/pages/modal/" + type + suffix+"Modal.html"
     if (typeof commit === 'undefined') { commit = true; }
     var modalInstance = $modal.open({
         templateUrl: template,

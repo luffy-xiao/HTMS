@@ -55,6 +55,7 @@
                         <th>单元号</th>
                         <th>室号</th>
                         <th>建筑面积</th>
+                        <th>状态</th>
                         <th>操作</th>
                     </tr>
                     <tr ng-repeat="c in contractlist">
@@ -63,11 +64,14 @@
                       
                         <td>{{c.Appartment.DoorNumber}}</td>
                         <td>{{c.Appartment.Size}}</td>
+                        <td>{{c.Status | contractstatus}}</td>
                         <td>
                             <button type="button" class="btn btn-warning" ng-click="modify($index)">编辑</button>
+                            <button type="button" class="btn btn-warning" ng-click="contractstatus($index)">改变状态</button>
                             <button type="button" class="btn btn-danger" ng-click="del($index)">取消选房</button>
                             <button type="button" class="btn btn-info" ng-click="printA($index)">打印购房确认单清单</button>
                             <button type="button" class="btn btn-info" ng-click="printC($index)">打印购房记录</button>
+                            
                         </td>
                     </tr>
                 </table>

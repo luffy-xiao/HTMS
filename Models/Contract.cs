@@ -44,6 +44,8 @@ namespace WebApplication6.Models
         public decimal? OtherFee { get; set; }
 
         public string Comment { get; set; }
+        public int? Status { get; set; } //状态分为，1.已确认，2.已打印五联单，3.五联单盖章，4.开发票，5.拉合同，.6签收，7.归档。
+        public string StatusComment { get; set; }
         
     }
 

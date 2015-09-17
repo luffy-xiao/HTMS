@@ -31,4 +31,12 @@ angular.module('ms.site.filters', []).filter('togender', function () {
         })
         return name
     }
+}).filter("contractstatus", function () {
+    return function (typeId) {
+        if (typeId == null) {
+            return "未设定"
+        }
+        var status = ["已确认","已打印五联单","五联单盖章","开发票","拉合同","签收","归档"]
+        return status[typeId-1]
+    }
 })
