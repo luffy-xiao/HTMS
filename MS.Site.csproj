@@ -292,6 +292,10 @@
     <Compile Include="Migrations\201509051336407_X10.Designer.cs">
       <DependentUpon>201509051336407_X10.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201509171204239_X11.cs" />
+    <Compile Include="Migrations\201509171204239_X11.Designer.cs">
+      <DependentUpon>201509171204239_X11.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -323,6 +327,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Pages\metadata\relationshiptype_list.html" />
+    <Content Include="Pages\modal\contractstatusModal.html" />
     <Content Include="Pages\modal\rtModal.html" />
     <Content Include="Pages\print\contractrecord.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -531,6 +536,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201509051336407_X10.resx">
       <DependentUpon>201509051336407_X10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201509171204239_X11.resx">
+      <DependentUpon>201509171204239_X11.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

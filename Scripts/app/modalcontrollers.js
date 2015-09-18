@@ -100,6 +100,9 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
 
     // Contract modal.
     if (type == 'contract') {
+        if ($scope.newitem.Status == null) {
+            $scope.newitem.Status = ''
+        }
         $scope.app = RestService.getclient('appartment').get({ id: $scope.newitem.AppartmentId }, function (app) {
             $scope.pr = RestService.getclient('pr').get({ id: $scope.newitem.PlacementRecordId }, function (pr) {
                 RestService.getclient('rr').get({ Id: pr.RelocationRecordId }, function (rr) {

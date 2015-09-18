@@ -56,23 +56,14 @@ namespace WebApplication6.Controllers
             }
             using (var transaction = db.Database.BeginTransaction())
             {
-                var resident_in_db = await db.Residents.FindAsync(id);
-                if (resident_in_db.Status == 0 && resident.Status == 1)
-                {
-                    resident.Status = 1;
-                }
-                // if identity card is changed, do not change the status, since this is an already passed record.
-                else if (!resident.IdentityCard.Equals(resident_in_db.IdentityCard))
-                {
-                    //resident.Status = db.Residents.Count(re => re.IdentityCard.Equals(resident.IdentityCard) && !re.Id.Equals(resident.Id)) > 0 ? 0 : 1;
-                }
-                db.Entry(resident_in_db).State = EntityState.Detached;
                 db.Entry(resident).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                db.SaveChanges();
                 var rr = db.RelocationRecords.Find(resident.RelocationRecordId);
+                db.Entry(rr).Collection(c => c.Residents).Load();
                 var sign = false;
                 foreach (Resident r in rr.Residents)
                 {
+                    db.Entry(r).Reload();
                     if(r.Status == 0){
                         sign = true;
                     }
@@ -81,6 +72,11 @@ namespace WebApplication6.Controllers
                 {
                     rr.Status = 1;
                 }
+                else
+                {
+                    rr.Status = 0;
+                }
+
                 db.Entry(rr).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 transaction.Commit();

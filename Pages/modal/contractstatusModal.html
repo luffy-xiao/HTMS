@@ -1,0 +1,43 @@
+﻿<div>
+    <div class="modal-header">
+        <h3 class="modal-title">{{app.Community.Name + ' ' + app.BuildingNumber + '单元 ' +app.DoorNumber+ '室'}}</h3>
+    </div>
+    <div class="modal-body">
+        <form name="msForm2" ng-submit="submit()" class="form-horizontal" novalidate>
+
+           
+            <div class="form-group  has-feedback">
+                <label class="col-sm-2 control-label">购房状态</label>
+                <div class="col-sm-5">
+                    <span class="nullable">
+                        <select class="form-control" ng-model="newitem.Status" required="">
+                            <option value="">--请选择--</option>
+                            <option value="1">已确认</option>
+                            <option value="2">已打印五联单</option>
+                            <option value="3">五联单盖章</option>
+                            <option value="4">开发票</option>
+                            <option value="5">拉合同</option>
+                            <option value="6">签收</option>
+                            <option value="7">归档</option>
+                         
+                        </select>
+                    </span>
+                </div>
+
+            </div>
+            <div class="form-group  has-feedback">
+                <label class="col-sm-2 control-label">备注</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" ng-model="newitem.StatusComment">
+                </div>
+              
+
+            </div>
+         
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-disabled="msForm2.$invalid" ng-click="ok()">提交</button>
+            <button class="btn btn-warning" ng-click="cancel()">取消</button>
+        </div>
+                  </form>
+     </div>
+</div>

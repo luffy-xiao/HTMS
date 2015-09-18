@@ -101,6 +101,7 @@ namespace WebApplication6.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual int Id { get; set; }
         public string RelocationRecordId { get; set; }
+        public string PRId { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string Name { get {

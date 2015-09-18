@@ -105,7 +105,7 @@ namespace WebApplication6.Controllers
                         {
                             return StatusCode(HttpStatusCode.Conflict);
                         }*/
-                        r.Status = db.Residents.Count(re => re.IdentityCard.Equals(r.IdentityCard) && re.RelocationRecord.RelocationType.Equals("居住")) > 0 ? 0 : 1;
+                        r.Status = db.Residents.Count(re => re.IdentityCard.ToUpper().Equals(r.IdentityCard.ToUpper()) && re.RelocationRecord.RelocationType.Equals("居住")) > 0 ? 0 : 1;
                         if (r.Status == 0)
                         {
                             relocationRecord.Status = 0;
