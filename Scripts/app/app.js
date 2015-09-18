@@ -74,23 +74,21 @@ var appmodule = angular.module('ms.site', ['ngCookies','ngRoute', 'ms.site.contr
                 }).when('/placementrecords/export', {
                     templateUrl: '/pages/contract/placement_export.html',
                     controller: 'PlacementExportCtrl'
-                })
-                  .when('/placementrecords/:prid/contracts/:cid/printconfirmation', {
+                }).when('/placementrecords/:prid/contracts/:cid/printconfirmation', {
                       templateUrl: '/pages/print/contractconfirm.html',
                       controller: 'PrintBCtrl'
-                }).
-                  when('/placementrecords/:prid/printrecords', {
+                }).when('/placementrecords/:prid/contracts/:cid/printreservation', {
+                    templateUrl: '/pages/print/contractreserve.html',
+                    controller: 'PrintBCtrl'
+                }).when('/placementrecords/:prid/printrecords', {
                       templateUrl: '/pages/print/contractrecord.html',
                       controller: 'PrintBCtrl'
-                  })
-                  .when('/placementrecords/:prid/contracts/:cid/printrecord', {
+                }).when('/placementrecords/:prid/contracts/:cid/printrecord', {
                       templateUrl: '/pages/print/contractrecord.html',
                       controller: 'PrintBCtrl'
-                  }).
-                when('/', {
+                }).when('/', {
                     templateUrl: '/pages/legacy/legacy.html',
-                }).
-                otherwise({
+                }).otherwise({
                     redirectTo: '/'
                 })
           }])

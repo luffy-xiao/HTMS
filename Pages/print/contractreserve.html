@@ -1,0 +1,141 @@
+﻿<div style="width:21cm; margin-left:3cm">
+    <button class="btn btn-primary hidden-print" onclick="window.print()">打印</button>
+    <table width="660" border="0">
+        <tr>
+            <td width="660" height="20" align="center"><p class="STYLE6">动 迁 安 置 购 房 定 单</p></td>
+        </tr>
+        <tr>
+            <td width="660" height="20" align="center"></td>
+        </tr>
+        <tr>
+            <td>
+                <table width="660" border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse" bordercolor="#000000">
+                                <tr>
+                                    <td width="105" height="26" align="center" class="STYLE4">安置户<br />户&nbsp;&nbsp;主</td>
+                                    <td width="108" height="26" align="center" class="STYLE4">{{contract.PlacementRecord.Residents[0].Name}}</td>
+                                    <td width="105" height="26" align="center" class="STYLE4">身份证号码</td>
+                                    <td width="130" height="26" align="center" class="STYLE4">{{contract.PlacementRecord.Residents[0].IdentityCard}}</td>
+                                    <td width="106" height="26" align="center" class="STYLE4">动迁协议编号</td>
+                                    <td width="105" height="26" align="center" class="STYLE4">{{rr.RRId}}</td>
+                                </tr>
+                                <tr>
+                                    <td width="110" height="26" align="center" class="STYLE4">过渡地址</td>
+                                    <td width="110" height="26" align="center" class="STYLE4"></td>
+                                    <td width="110" height="26" align="center" class="STYLE4">工作单位</td>
+                                    <td width="110" height="26" align="center" class="STYLE4"></td>
+                                    <td width="110" height="26" align="center" class="STYLE4">电话</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">{{contract.PlacementRecord.Residents[0].Phone}}</td>
+                                </tr>
+                                <tr>
+                                    <td height="26" colspan="2" align="center" class="STYLE4">定购房屋门牌号<br />（暂定）</td>
+                                    <td height="26" colspan="2" align="center" class="STYLE4">{{contract.Appartment.Community.Name}}小区 {{contract.Appartment.BuildingNumber}}单元 {{contract.Appartment.DoorNumber}}室</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">建筑面积<br />（测绘）</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">{{contract.Appartment.Size}}</td>
+                                </tr>
+                                <tr>
+                                    <td width="110" height="26" align="center" class="STYLE4">动迁安置楼盘面积（平方米）</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">{{contract.Size1}}</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">基价<br />（元/平方米）</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">{{contract.Appartment.Price1}}</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">金额（元）</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">{{(contract.Appartment.Price1 * contract.Size1).toFixed(2)}}</td>
+                                </tr>
+                                <tr>
+                                    <td width="110" height="26" align="center" class="STYLE4">动迁优惠楼盘面积（平方米）</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">{{contract.Size2}}</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">基价<br />（元/平方米）</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">{{contract.Appartment.Price2}}</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">金额（元）</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">{{(contract.Appartment.Price2 * contract.Size2).toFixed(2)}}</td>
+                                </tr>
+                                <tr>
+                                    <td width="110" height="26" align="center" class="STYLE4">动迁市场楼盘面积（平方米）</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">{{contract.Size3}}</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">基价<br />（元/平方米）</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">{{contract.Appartment.Price3}}</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">金额（元）</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">{{(contract.Appartment.Price3 * contract.Size3).toFixed(2)}}</td>
+                                </tr>
+                                <tr>
+                                    <td width="110" height="26" align="center" class="STYLE4">动迁xx楼盘面积（平方米）</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">{{contract.Size4}}</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">基价<br />（元/平方米）</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">{{contract.Appartment.Price4}}</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">金额（元）</td>
+                                    <td width="110" height="26" align="center" class="STYLE4">{{(contract.Appartment.Price4 * contract.Size4).toFixed(2)}}</td>
+                                </tr>
+                                <tr>
+                                    <td height="26" colspan="2" align="center" class="STYLE4">金额合计<br />（大写）</td>
+                                    <td height="26" colspan="4" align="center" class="STYLE4">{{DX(ctotalprice)}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="6">
+                                        <div style="padding: 10px 10px 0 10px;">
+                                            说明事项：
+                                            <ol>
+                                                <li>建筑面积最后以相关部门的实测报告面积为准。</li>
+                                                <li>订购房屋门牌号以公安部门核定为准。</li>
+                                                <li>购房预留款按实测面积多退少补，其他相关费用按相关政策执行。</li>
+                                                <li>安置户在签定购房定单后，一律不得调房。</li>
+                                                <li>公建配套的设施位置如箱变、水泵房、健身点、垃圾房等其它配套设施，以公建部门实际实施为准，模型上的位置只作示意。</li>
+                                            </ol>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6">
+                                        <div style="padding: 10px 10px 0 10px;">
+                                            附注：
+                                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;本购房定单请户主须妥善保管，待工程竣工验收合格方可交房，接通知后结清购房款，再办理入户手续。待大产证办理后---填写配套商品房供应单---签订销售合同---办理小产证。</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table width="100%" height="200" border="1" cellpadding="0" cellspacing="0" style="border-top: none; border-collapse: collapse" bordercolor="#000000">
+                    <tbody>
+                        <tr>
+                            <td width="50" align="center" class="STYLE4" style="border-top: none;">安置户<br />代&nbsp;&nbsp;表<br />签&nbsp;&nbsp;章</td>
+                            <td width="220" style="border-top: none;">
+                                <p style="height: 20px;"></p>
+                                <p style="height: 20px;"></p>
+                                <p style="height: 20px;"></p>
+                                <p style="height: 20px;"></p>
+                                <p style="height: 20px;"></p>
+                                <p style="height: 20px; text-align: right;">年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日&nbsp;&nbsp;</p>
+                            </td>
+                            <td width="40" align="center" class="STYLE4" style="border-top: none;">房<br />屋<br />安<br />置<br />单<br />位</td>
+                            <td width="260" style="border-top: none;">
+                                <div>
+                                    <p style="height: 20px;"></p>
+                                    <p style="height: 20px;">&nbsp;&nbsp;上海市浦东新区航头镇动迁安置办公室（章）&nbsp;&nbsp;</p>
+                                    <p style="height: 20px;"></p>
+                                    <p style="height: 20px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;联系电话：</p>
+                                    <p style="height: 20px;"></p>
+                                    <p style="height: 20px; text-align: right;">年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日&nbsp;&nbsp;</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td width="660" height="20" class="STYLE4">
+                <table width="100%" border="0">
+                    <tbody>
+                        <tr>
+                            <td width="60"></td>
+                            <td width="370" class="STYLE4">经办人：</td>
+                            <td width="230" class="STYLE4">复核人：</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>

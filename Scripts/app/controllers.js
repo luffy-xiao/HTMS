@@ -1407,15 +1407,17 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         },true)
     }
     $scope.printA = function (idx) {
-        window.open("/print.html#/placementrecords/"+ $scope.contract.PlacementRecordId+"/contracts/" + $scope.contractlist[idx].Id + "/printconfirmation")
-    }
+        window.open("/print.html#/placementrecords/" + $scope.contract.PlacementRecordId + "/contracts/" + $scope.contractlist[idx].Id + "/printconfirmation");
+    };
     $scope.printB = function (idx) {
-        window.open("/print.html#/placementrecords/" + $scope.prs[idx].Id + "/printrecords")
-    }
+        window.open("/print.html#/placementrecords/" + $scope.prs[idx].Id + "/printrecords");
+    };
     $scope.printC = function (idx) {
-        window.open("/print.html#/placementrecords/" + $scope.contract.PlacementRecordId + "/contracts/" + $scope.contractlist[idx].Id + "/printrecord")
-    }
-
+        window.open("/print.html#/placementrecords/" + $scope.contract.PlacementRecordId + "/contracts/" + $scope.contractlist[idx].Id + "/printrecord");
+    };
+    $scope.printD = function (idx) {
+        window.open("/print.html#/placementrecords/" + $scope.contract.PlacementRecordId + "/contracts/" + $scope.contractlist[idx].Id + "/printreservation");
+    };
 }])
 .controller('ContractExportCtrl', ['$scope', 'RestService', '$filter', '$q', function ($scope, RestService, $filter, $q) {
     $scope.rbs = RestService.getclient('rb').query();
@@ -1895,14 +1897,15 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.idcard = function (idx) {
         var contract = $scope.contracts[idx]
         if (contract.AppartmentOwners != null) {
-            var owner =$filter('filter')(contract.AppartmentOwners, { ShowAsOwner: true }, true)[0]
-            if(owner!= null){
+            var owner = $filter('filter')(contract.AppartmentOwners, { ShowAsOwner: true }, true)[0]
+            if (owner != null) {
                 return $filter('filter')(contract.AppartmentOwners, { ShowAsOwner: true }, true)[0].IdentityCard
             }
-            
+
         }
         return ""
-    }
+    };
+    $scope.DX = DX;
 }])
 
 
@@ -2159,3 +2162,16 @@ function queryByBatch(idArr, idAttr, idField, fieldIsStr) {
 
     return filters;
 }
+
+var DX = function (num) {
+    var strOutput = "";
+    var strUnit = '仟佰拾亿仟佰拾万仟佰拾元角分';
+    num += "00";
+    var intPos = num.indexOf('.');
+    if (intPos >= 0)
+        num = num.substring(0, intPos) + num.substr(intPos + 1, 2);
+    strUnit = strUnit.substr(strUnit.length - num.length);
+    for (var i = 0; i < num.length; i++)
+        strOutput += '零壹贰叁肆伍陆柒捌玖'.substr(num.substr(i, 1), 1) + strUnit.substr(i, 1);
+    return strOutput.replace(/零角零分$/, '整').replace(/零[仟佰拾]/g, '零').replace(/零{2,}/g, '零').replace(/零([亿|万])/g, '$1').replace(/零+元/, '元').replace(/亿零{0,3}万/, '亿').replace(/^元/, "零元");
+};
