@@ -49,12 +49,14 @@
         </table>
     </div>
 
+    <div ng-show="showresult && rrFilteredOut" class="alert alert-info">注意有数条动迁记录因不满足范围搜索条件而未显示。</div>
+
     <!-- pagination -->
     <div ng-show="showresult && totalItems">
         <pagination total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage" ng-change="pageChanged()"
                     max-size="maxSize" num-pages="numPages" class="pagination-sm" boundary-links="true" rotate="false"
                     first-text="首页" previous-text="<上一页" next-text="下一页>" last-text="尾页"></pagination>
-        <span class="pull-right" style="margin: 20px 0;">显示 {{(currentPage - 1) * itemsPerPage + 1}} - {{currentPage * itemsPerPage > totalItems ? totalItems : currentPage * itemsPerPage}} | 总计: {{totalItems}}</span>
+        <span class="pull-right" style="margin: 20px 0;">显示 {{(currentPage - 1) * itemsPerPage + 1}} - {{currentPage * itemsPerPage > totalItems ? totalItems : currentPage * itemsPerPage}} 户 | 总计: {{totalItems}} 动迁户</span>
     </div>
     <div ng-show="showresult && totalItems == 0" class="alert alert-info">没有搜索到对应的记录。</div>
 </div>

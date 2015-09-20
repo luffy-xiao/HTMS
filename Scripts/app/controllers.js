@@ -100,43 +100,60 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     var residentsHeader = ['Name', 'IdentityCard', 'Phone', 'RelationshipType'];
     var residentMaster = { mResidentName: 'Name', mResidentPhone: 'Phone', mResidentIdentityCard: 'IdentityCard' };
 
-    var prepareData = function (rr) {
-        var mapped = angular.copy(rr);
-
+    var prepareData = function (rr, rrIndex) {
         // Handle relocation base.
-        mapped.RelocationBase = getRelocationBase(rr.RelocationBaseId).Name;
+        rr.RelocationBase = getRelocationBase(rr.RelocationBaseId).Name;
 
-        // Whether show all residents.
-        if ($scope.searchparams.showAllResidents == '1' && mapped.Residents.length > 1) {
-            mapped.Residents.forEach(function (r) {
-                var mapped2 = angular.copy(mapped);
+        // Add resident master.
+        for (var rf in residentMaster) {
+            rr[rf] = rr.Residents[0][residentMaster[rf]];
+        }
+
+        // Whether show all residents depends on whether checked 'showAllResidents' and also whether exactly search by Name or IdentityCard.
+        if ($scope.searchparams.showAllResidents == '1' && rr.Residents.length > 1 && $scope.searchBy != 'rs') {
+            rr.Residents.forEach(function (r) {
+                var mapped2 = angular.copy(rr);
 
                 // Add resident record.
                 residentsHeader.forEach(function (rh) {
                     mapped2[rh] = r[rh];
                 });
 
-                // Add resident master.
-                for (var rf in residentMaster) {
-                    mapped2[rf] = mapped.Residents[0][residentMaster[rf]];
-                }
-
                 delete mapped2.Residents;
                 $scope.rrlist.push(mapped2);
             });
         } else {
-            // Add resident record.
-            residentsHeader.forEach(function (rh) {
-                mapped[rh] = mapped.Residents[0][rh];
-            });
+            // Check which exact resident has been searched.
+            var residentsShown = [];
 
-            // Add resident master.
-            for (var rf in residentMaster) {
-                mapped[rf] = mapped.Residents[0][residentMaster[rf]];
+            if (rrIndex) {
+                var rsSearched = rrIndex[rr.Id];
+                rr.Residents.forEach(function (r) {
+                    rsSearched.forEach(function (rHit) {
+                        if (r.Id == rHit) {
+                            residentsShown.push(r);
+                            return;
+                        }
+                    });
+                });
             }
 
-            delete mapped.Residents;
-            $scope.rrlist.push(mapped);
+            // Show master if anything wrong.
+            if (residentsShown.length == 0) {
+                residentsShown.push(rr.Residents[0]);
+            }
+
+            residentsShown.forEach(function (rShown) {
+                var mapped2 = angular.copy(rr);
+
+                // Add resident record.
+                residentsHeader.forEach(function (rh) {
+                    mapped2[rh] = rShown[rh];
+                });
+
+                delete mapped2.Residents;
+                $scope.rrlist.push(mapped2);
+            });
         }
     };
 
@@ -144,22 +161,35 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     var filterstring;
     
     $scope.pageChanged = function () {
+        // Whether rr has been filtered out by scope search.
+        $scope.rrFilteredOut = false;
+
         $scope.rrlist = [];
         var skip = ($scope.currentPage - 1) * $scope.itemsPerPage;
 
         if ($scope.searchBy == 'rs') {
             // Search by rs.
             var rrIds = [];
+
+            // Inverted index from rr Id -> rs Id.
+            var iIndex = {};
             RestService.getclient('resident').query({
                 $filter: filterstring.rs, $inlinecount: 'allpages',
                 $skip: skip, $top: $scope.itemsPerPage
-            }, function (result) {
+            }, function (rss) {
                 // Set total count.
-                $scope.totalItems = result.Count;
+                $scope.totalItems = rss.Count;
                 $scope.showresult = true;
 
-                result.Items.forEach(function (rs) {
+                rss.Items.forEach(function (rs) {
                     rrIds.push(rs.RelocationRecordId);
+
+                    // Build the index.
+                    if (iIndex[rs.RelocationRecordId] == null) {
+                        iIndex[rs.RelocationRecordId] = [rs.Id];
+                    } else {
+                        iIndex[rs.RelocationRecordId].push(rs.Id);
+                    }
                 });
 
                 var idFilters = queryByBatch(rrIds, null, 'Id', false);
@@ -167,10 +197,12 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 // Load rr.
                 idFilters.forEach(function (idf) {
                     fstr = filterstring.rr.length ? filterstring.rr + ' and (' + idf + ')' : idf;
-                    RestService.getclient('rr').query({ $filter: fstr }, function (result) {
-                        result.Items.forEach(function (item) {
-                            prepareData(item);
+                    RestService.getclient('rr').query({ $filter: fstr }, function (rrs) {
+                        rrs.Items.forEach(function (item) {
+                            prepareData(item, iIndex);
                         });
+
+                        $scope.rrFilteredOut = rss.Items.length != rrs.Items.length;
                     });
                 });
             });
@@ -579,55 +611,71 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         return rbase != null ? rbase : null;
     };
 
-    var prepareData = function (rr) {
-        var mapped = angular.copy(rr);
 
+    var prepareData = function (rr, rrIndex) {
         // Handle relocation base.
-        mapped.RelocationBase = getRelocationBase(rr.RelocationBaseId).Name;
-        mapped.RBId = getRelocationBase(rr.RelocationBaseId).RBId;
+        rr.RelocationBase = getRelocationBase(rr.RelocationBaseId).Name;
+        rr.RBId = getRelocationBase(rr.RelocationBaseId).RBId;
 
         // Convert date to from UTC to locale.
         dateFields.forEach(function (d) {
-            mapped[d] = $filter('date')(mapped[d], 'yyyy-MM-dd');
+            rr[d] = $filter('date')(rr[d], 'yyyy-MM-dd');
         });
 
-        // Whether show all residents.
-        if ($scope.searchparams.showAllResidents == '1' && mapped.Residents.length > 1) {
-            mapped.Residents.forEach(function (r) {
-                var mapped2 = angular.copy(mapped);
-                
+        // Add resident master.
+        for (var rf in residentMaster) {
+            rr[rf] = rr.Residents[0][residentMaster[rf]];
+        }
+
+        rr.ResidentsCount = rr.Residents.length;
+
+        // Whether show all residents depends on whether checked 'showAllResidents' and also whether exactly search by Name or IdentityCard.
+        if ($scope.searchparams.showAllResidents == '1' && rr.Residents.length > 1 && $scope.searchBy != 'rs') {
+            rr.Residents.forEach(function (r) {
+                var mapped2 = angular.copy(rr);
 
                 // Add resident record.
                 $scope.residentsHeader.forEach(function (rh) {
                     mapped2[rh.Field] = r[rh.Field];
                 });
-                mapped2.Gender = $filter('togender')(mapped2.IdentityCard)
-
-                // Add resident master.
-                for (var rf in residentMaster) {
-                    mapped2[rf] = mapped.Residents[0][residentMaster[rf]];
-                }
-
-                mapped2.ResidentsCount = mapped.Residents.length;
+                mapped2.Gender = $filter('togender')(mapped2.IdentityCard);
 
                 delete mapped2.Residents;
                 $scope.dataSource.push(mapped2);
             });
         } else {
-            // Add resident record.
-            $scope.residentsHeader.forEach(function (rh) {
-                mapped[rh.Field] = mapped.Residents[0][rh.Field];
-            });
-            mapped.Gender = $filter('togender')(mapped.IdentityCard)
-            // Add resident master.
-            for (var rf in residentMaster) {
-                mapped[rf] = mapped.Residents[0][residentMaster[rf]];
+            // Check which exact resident has been searched.
+            var residentsShown = [];
+
+            if (rrIndex) {
+                var rsSearched = rrIndex[rr.Id];
+                rr.Residents.forEach(function (r) {
+                    rsSearched.forEach(function (rHit) {
+                        if (r.Id == rHit) {
+                            residentsShown.push(r);
+                            return;
+                        }
+                    });
+                });
             }
 
-            mapped.ResidentsCount = mapped.Residents.length;
+            // Show master if anything wrong.
+            if (residentsShown.length == 0) {
+                residentsShown.push(rr.Residents[0]);
+            }
 
-            delete mapped.Residents;
-            $scope.dataSource.push(mapped);
+            residentsShown.forEach(function (rShown) {
+                var mapped2 = angular.copy(rr);
+
+                // Add resident record.
+                $scope.residentsHeader.forEach(function (rh) {
+                    mapped2[rh.Field] = rShown[rh.Field];
+                });
+                mapped2.Gender = $filter('togender')(mapped2.IdentityCard);
+
+                delete mapped2.Residents;
+                $scope.dataSource.push(mapped2);
+            });
         }
     };
 
@@ -676,9 +724,19 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         } else {
             // Search by rs.
             var rrIds = [];
+
+            // Inverted index from rr Id -> rs Id.
+            var iIndex = {};
             RestService.getclient('resident').query({ $filter: filterstring.rs }, function (result) {
                 result.Items.forEach(function (rs) {
                     rrIds.push(rs.RelocationRecordId);
+
+                    // Build the index.
+                    if (iIndex[rs.RelocationRecordId] == null) {
+                        iIndex[rs.RelocationRecordId] = [rs.Id];
+                    } else {
+                        iIndex[rs.RelocationRecordId].push(rs.Id);
+                    }
                 });
 
                 $scope.showResult = true;
@@ -690,7 +748,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     fstr = filterstring.rr.length ? filterstring.rr + ' and (' + idf + ')' : idf;
                     RestService.getclient('rr').query({ $filter: fstr }, function (result) {
                         result.Items.forEach(function (item) {
-                            prepareData(item);
+                            prepareData(item, iIndex);
                         });
                     });
                 });
@@ -700,7 +758,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     // Load template data.
     $scope.loadTmpl = function () {
-        if ($scope.selectedTmp == null || $scope.selectedTmpl == '') {
+        if ($scope.selectedTmpl == null || $scope.selectedTmpl == '') {
             $scope.cols = [];
             
         }
@@ -1433,23 +1491,57 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.contracts = [];
 
     // Table data.
-    $scope.tableName = '购房信息';
+    $scope.colList = [];
+    $scope.tableName = '购房汇总信息';
 
-    // TODO headers for pr need to update.
-    $scope.cols = [
-        { name: 'CommunityName', displayName: '小区', visible: true },
-        { name: 'BuildingNumber', displayName: '单元号', visible: true },
-        { name: 'DoorNumber', displayName: '室号', visible: true },
-        { name: 'Size', displayName: '面积', visible: true },
-        { name: 'TotalPrice', displayName: '总价格', visible: true },
- 
-        { name: 'Owners', displayName: '房主', visible: true },
-        { name: 'PaymentAmount', displayName: '购房金额', visible: true },
-        { name: 'Status', displayName: '状态', visible: true },
-      
-       
-       
+    var dateFields = ['ContractDate', 'Deadline'];
+    var t1 = ['CommunityName', 'BuildingNumber', 'DoorNumber', 'Size', 'TotalPrice', 'Owners', 'PaymentAmount', 'Status', 'EMPTY'];
+    var t2 = [];
+
+    $scope.exportTmpls = [
+        { id: '1', name: '购房汇总信息', lst: t1 },
+        { id: '2', name: '购房汇总详细信息', lst: t2 }
     ];
+
+    // Load contract headers.
+    RestService.getclient('header').query({
+        $filter: "ModelName eq 'contract'"
+    }, function (meta) {
+        // Add extra fields.
+        $scope.colList.push({ name: 'CommunityName', displayName: '小区', visible: true });
+        $scope.colList.push({ name: 'BuildingNumber', displayName: '单元号', visible: true });
+        $scope.colList.push({ name: 'DoorNumber', displayName: '室号', visible: true });
+        $scope.colList.push({ name: 'Size', displayName: '面积', visible: true });
+        $scope.colList.push({ name: 'TotalPrice', displayName: '总价格', visible: true });
+        $scope.colList.push({ name: 'Owners', displayName: '房主', visible: true });
+        // TODO Status is not in dbo.Headers so added here.
+        $scope.colList.push({ name: 'Status', displayName: '状态', visible: true });
+
+        meta.forEach(function (m) {
+            // Skip Id related.
+            if (m.Field.indexOf("Id") >= 0) return;
+
+            $scope.colList.push({
+                name: m.Field,
+                displayName: m.Name,
+                visible: true
+            });
+        });
+
+        // Empty column.
+        $scope.colList.push({ name: 'EMPTY', displayName: '', visible: true });
+
+
+        // Initialize t2.
+        var t2Lst = $scope.exportTmpls[1].lst;
+        $scope.colList.forEach(function (item) {
+            t2Lst.push(item.name);
+        });
+
+        // Default show t1.
+        $scope.selectedTmpl = $scope.exportTmpls[0];
+        $scope.loadTmpl();
+    });
 
     var prepareData = function (contract, owners) {
         contract.CommunityName = contract.Appartment.Community.Name;
@@ -1458,9 +1550,14 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         contract.Size = contract.Appartment.Size;
         // Calcuate total price.
         contract.TotalPrice = totalprice(contract).toFixed(2);
-        contract.Status = contract.Appartment.Status;
+        contract.Status = $filter('contractstatus')(contract.Status);
 
         contract.Owners = owners;
+
+        // Convert date to from UTC to locale.
+        dateFields.forEach(function (d) {
+            contract[d] = $filter('date')(contract[d], 'yyyy-MM-dd');
+        });
     };
 
     // Load rr at first.
@@ -1589,6 +1686,19 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         }
     };
 
+    // Load template data.
+    $scope.loadTmpl = function () {
+        if ($scope.selectedTmpl == null || $scope.selectedTmpl == '') {
+            $scope.cols = [];
+        }
+
+        // Build new cols.
+        var selectedCols = [];
+        $scope.selectedTmpl.lst.forEach(function (field) {
+            selectedCols.push($filter('filter')($scope.colList, { name: field }, true)[0]);
+        });
+        $scope.cols = selectedCols;
+    };
 }])
 .controller('PlacementExportCtrl', ['$scope', 'RestService', '$filter', function ($scope, RestService, $filter) {
     $scope.rbs = RestService.getclient('rb').query();

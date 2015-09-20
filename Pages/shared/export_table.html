@@ -22,7 +22,7 @@
         </thead>
         <tbody>
             <tr ng-repeat="row in rows">
-                <td ng-repeat="col in cols" ng-show="col.visible">{{row[col.name]}}</td>
+                <td ng-repeat="col in cols" ng-show="col.visible">{{col.name != 'EMPTY' ?  row[col.name] : '&nbsp;&nbsp;&nbsp;&nbsp;'}}</td>
             </tr>
         </tbody>
     </table>

@@ -46,6 +46,20 @@
                 </div>
             </div>
         </form>
+        <hr/>
+
+        <p class="bg-info">请选择需要导出的表种类，当表格数据加载完成后点击导出按钮将数据导出到Excel文件，或者点击打印按钮打印表格。</p>
+        <div class="row">
+            <label class="col-sm-2 control-label">购房信息表格</label>
+            <div class="col-sm-3">
+                <span class="nullable">
+                    <select class="form-control" ng-model="selectedTmpl"
+                            ng-options="tmpl.name for tmpl in exportTmpls track by tmpl.id"
+                            ng-change="loadTmpl()">
+                    </select>
+                </span>
+            </div>
+        </div>
     </div>
 
     <div export-table table-name="tableName" cols="cols" rows="contracts" amount-name="个数"></div>
