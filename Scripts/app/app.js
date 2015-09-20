@@ -80,6 +80,9 @@ var appmodule = angular.module('ms.site', ['ngCookies','ngRoute', 'ms.site.contr
                 }).when('/placementrecords/:prid/contracts/:cid/printreservation', {
                     templateUrl: '/pages/print/contractreserve.html',
                     controller: 'PrintBCtrl'
+                }).when('/placementrecords/:prid/contracts/:cid/printreservationfee', {
+                    templateUrl: '/pages/print/contractreservefee.html',
+                    controller: 'PrintBCtrl'
                 }).when('/placementrecords/:prid/printrecords', {
                       templateUrl: '/pages/print/contractrecord.html',
                       controller: 'PrintBCtrl'

@@ -1482,6 +1482,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.printD = function (idx) {
         window.open("/print.html#/placementrecords/" + $scope.contract.PlacementRecordId + "/contracts/" + $scope.contractlist[idx].Id + "/printreservation");
     };
+    $scope.printE = function (idx) {
+        window.open("/print.html#/placementrecords/" + $scope.contract.PlacementRecordId + "/contracts/" + $scope.contractlist[idx].Id + "/printreservationfee");
+    };
 }])
 .controller('ContractExportCtrl', ['$scope', 'RestService', '$filter', '$q', function ($scope, RestService, $filter, $q) {
     $scope.rbs = RestService.getclient('rb').query();

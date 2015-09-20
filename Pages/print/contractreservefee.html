@@ -1,0 +1,104 @@
+﻿<div style="width:21cm; margin-left:3cm">
+    <button class="btn btn-primary hidden-print" onclick="window.print()">打印</button>
+    <table width="660" border="0">
+        <tr>
+            <td width="660" height="20" align="center"><p class="STYLE6">购 房 定 单 费 用 明 细 表</p></td>
+        </tr>
+        <tr>
+            <td width="660" height="20" align="center"></td>
+        </tr>
+        <tr>
+            <td width="660" height="20" align="right" class="STYLE4">定购证号：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        </tr>
+        <tr>
+            <td>
+                <table width="660" border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse" bordercolor="#000000">
+                    <tr>
+                        <td width="105" height="26" align="center" class="STYLE4">户主</td>
+                        <td width="108" height="26" align="center" class="STYLE4">{{contract.PlacementRecord.Residents[0].Name}}</td>
+                        <td width="105" height="26" align="center" class="STYLE4">基地名称</td>
+                        <td width="130" height="26" align="center" class="STYLE4">{{rr.RelocationBase.Name}}</td>
+                    </tr>
+                    <tr>
+                        <td width="110" height="26" align="center" class="STYLE4">动迁时间</td>
+                        <td width="110" height="26" align="center" class="STYLE4">{{rr.RelocationBase.CreatedTime |date:"yyyy-MM-dd"}}</td>
+                        <td width="110" height="26" align="center" class="STYLE4">联系电话</td>
+                        <td width="110" height="26" align="center" class="STYLE4">{{contract.PlacementRecord.Residents[0].Phone}}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table width="660" border="1" cellpadding="0" cellspacing="0" style="border-top: none; border-collapse: collapse" bordercolor="#000000">
+                    <tbody>
+                        <tr>
+                            <td width="105" height="26" align="center" class="STYLE4" style="border-top: none;">序号</td>
+                            <td width="108" height="26" align="center" class="STYLE4" style="border-top: none;">项目</td>
+                            <td width="105" height="26" align="center" class="STYLE4" style="border-top: none;">金额</td>
+                            <td width="105" height="26" align="center" class="STYLE4" style="border-top: none;">说明</td>
+                            <td width="130" height="26" align="center" class="STYLE4" style="border-top: none;">购房人签字</td>
+                        </tr>
+                        <tr>
+                            <td width="105" height="26" align="center" class="STYLE4"><strong>1</strong></td>
+                            <td width="108" height="26" align="center" class="STYLE4">购房预留款</td>
+                            <td width="105" height="26" align="center" class="STYLE4">{{contract.PaymentAmount}}</td>
+                            <td width="105" height="26" align="center" class="STYLE4">按交接证明单</td>
+                            <td width="105" height="26" align="center" class="STYLE4"></td>
+                        </tr>
+                        <tr>
+                            <td width="105" height="26" align="center" class="STYLE4"><strong>2</strong></td>
+                            <td width="108" height="26" align="center" class="STYLE4">安置房定购款</td>
+                            <td width="105" height="26" align="center" class="STYLE4">{{ctotalprice}}</td>
+                            <td width="105" height="26" align="center" class="STYLE4">按定购单</td>
+                            <td width="105" height="26" align="center" class="STYLE4"></td>
+                        </tr>
+                        <tr>
+                            <td width="105" height="26" align="center" class="STYLE4"><strong>3</strong></td>
+                            <td width="108" height="26" align="center" class="STYLE4">预留款不足欠款额</td>
+                            <td width="105" height="26" align="center" class="STYLE4">{{contract.DeltaAmount}}</td>
+                            <td width="105" height="26" align="center" class="STYLE4">(1 - 2)签约入<br/>户前交清</td>
+                            <td width="105" height="26" align="center" class="STYLE4"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td width="660" height="20"><strong>注：以上明细表数据准确，签约时本表与定购单一起带上，二者缺一不可。</strong></td>
+        </tr>
+        <tr>
+            <td width="660" height="20" align="center"></td>
+        </tr>
+        <tr>
+            <td width="660" height="20" align="center"><strong>动拆迁商品房安置房（毛坯房）有关标准的说明</strong></td>
+        </tr>
+        <tr>
+            <td>
+                <ol>
+                    <li>客厅、房间、墙、顶粉刷为混合砂浆压光，厨卫间顶为混合砂浆压光，墙面为水泥砂浆搓麻。</li>
+                    <li>客厅、房间地坪为水泥砂浆压光，厨卫间地坪为水泥砂浆搓麻。</li>
+                    <li>照明预埋电管按设计到位，每室一盏普通灯具。</li>
+                    <li>电话、有线电视预埋管按设计到位。</li>
+                    <li>每户装一只普通座式马桶、厨房装普通磁质水池一只。</li>
+                    <li>每户只安装钢木防盗进户门，其他木门不安装。</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td width="660" height="20" align="center"></td>
+        </tr>
+        <tr>
+            <td width="660" height="20">经办人：</td>
+        </tr>
+        <tr>
+            <td width="660" height="20" align="center"></td>
+        </tr>
+        <tr>
+            <td width="660" height="20" align="right">上海市浦东新区航头镇动迁安置办公室（章）</td>
+        </tr>
+        <tr>
+            <td width="660" height="20" align="right">日期：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;月&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        </tr>
+    </table>
+</div>
