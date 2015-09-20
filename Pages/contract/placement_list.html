@@ -94,7 +94,7 @@
                 <td>{{pr.ApprovedSize}}</td>
                 <td>{{pr.TotalCompensation}}</td>
                 <td>{{pr.UsedAmount.toFixed(2)}}</td>
-                <td>{{pr.RepurchasePrice != null ? ((pr.Size - pr.UsedSize) * pr.RepurchasePrice).toFixed(2) : ''}}</td>
+                <td>{{pr.RepurchasePrice != null ? (pr.Size > pr.UsedSize ? ((pr.Size - pr.UsedSize) * pr.RepurchasePrice).toFixed(2) : 0) : ''}}</td>
                 <td>
                     <input ng-show="user.Roles[0].Id==3 || user.Roles[0].Id==1" type="button" class="btn btn-primary btn-sm" value="修改" ng-click="modify($index)" />
                     <input ng-show="user.Roles[0].Id==3 || user.Roles[0].Id==1" type="button" class="btn btn-primary btn-sm" value="删除" ng-click="del($index)" />

@@ -41,7 +41,10 @@
                         <td>{{pr.UsedSize}}</td>
                         <td>{{pr.TotalCompensation}}</td>
                         <td>{{pr.UsedAmount}}</td>
-                        <td><button type="button" class="btn btn-primary" ng-click="printB($index)">打印购房记录</button></td>
+                        <td>
+                            <button type="button" class="btn btn-primary" ng-click="printB($index)">打印购房记录</button>
+                            <button type="button" class="btn btn-info" ng-click="printE($index)">打印购房定单费用明细</button>
+                        </td>
                     </tr>
                 </table>
                 <p class="bg-info" ng-if="prs.length == 0">该户尚无安置记录。</p>
@@ -72,7 +75,6 @@
                             <button type="button" class="btn btn-info" ng-click="printA($index)">打印购房确认清单</button>
                             <button type="button" class="btn btn-info" ng-click="printC($index)">打印购房记录</button>
                             <button type="button" class="btn btn-info" ng-click="printD($index)">打印购房定单</button>
-                            <button type="button" class="btn btn-info" ng-click="printE($index)">打印购房定单费用明细</button>
                         </td>
                     </tr>
                 </table>
@@ -150,13 +152,6 @@
                     </tr>
                 </table>
             </div>
-
         </div>
-        
-
     </form>
-   
-     
-
-
 </div>

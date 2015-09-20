@@ -8,22 +8,22 @@
             <td width="660" height="20" align="center"></td>
         </tr>
         <tr>
-            <td width="660" height="20" align="right" class="STYLE4">定购证号：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td width="660" height="20" align="right" class="STYLE4">定购证号：&nbsp;&nbsp;{{pr.DocumentNumber}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
         </tr>
         <tr>
             <td>
                 <table width="660" border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse" bordercolor="#000000">
                     <tr>
                         <td width="105" height="26" align="center" class="STYLE4">户主</td>
-                        <td width="108" height="26" align="center" class="STYLE4">{{contract.PlacementRecord.Residents[0].Name}}</td>
+                        <td width="108" height="26" align="center" class="STYLE4">{{pr.Residents[0].Name}}</td>
                         <td width="105" height="26" align="center" class="STYLE4">基地名称</td>
                         <td width="130" height="26" align="center" class="STYLE4">{{rr.RelocationBase.Name}}</td>
                     </tr>
                     <tr>
                         <td width="110" height="26" align="center" class="STYLE4">动迁时间</td>
-                        <td width="110" height="26" align="center" class="STYLE4">{{rr.RelocationBase.CreatedTime |date:"yyyy-MM-dd"}}</td>
+                        <td width="110" height="26" align="center" class="STYLE4">{{rr.NewVillageDate |date:"yyyy-MM-dd"}}</td>
                         <td width="110" height="26" align="center" class="STYLE4">联系电话</td>
-                        <td width="110" height="26" align="center" class="STYLE4">{{contract.PlacementRecord.Residents[0].Phone}}</td>
+                        <td width="110" height="26" align="center" class="STYLE4">{{pr.Residents[0].Phone}}</td>
                     </tr>
                 </table>
             </td>
@@ -42,22 +42,43 @@
                         <tr>
                             <td width="105" height="26" align="center" class="STYLE4"><strong>1</strong></td>
                             <td width="108" height="26" align="center" class="STYLE4">购房预留款</td>
-                            <td width="105" height="26" align="center" class="STYLE4">{{contract.PaymentAmount}}</td>
+                            <td width="105" height="26" align="center" class="STYLE4">{{pr.TotalCompensation}}</td>
                             <td width="105" height="26" align="center" class="STYLE4">按交接证明单</td>
                             <td width="105" height="26" align="center" class="STYLE4"></td>
                         </tr>
                         <tr>
                             <td width="105" height="26" align="center" class="STYLE4"><strong>2</strong></td>
                             <td width="108" height="26" align="center" class="STYLE4">安置房定购款</td>
-                            <td width="105" height="26" align="center" class="STYLE4">{{ctotalprice}}</td>
+                            <td width="105" height="26" align="center" class="STYLE4">{{pr.UsedAmount}}</td>
                             <td width="105" height="26" align="center" class="STYLE4">按定购单</td>
                             <td width="105" height="26" align="center" class="STYLE4"></td>
                         </tr>
                         <tr>
                             <td width="105" height="26" align="center" class="STYLE4"><strong>3</strong></td>
-                            <td width="108" height="26" align="center" class="STYLE4">预留款不足欠款额</td>
-                            <td width="105" height="26" align="center" class="STYLE4">{{contract.DeltaAmount}}</td>
-                            <td width="105" height="26" align="center" class="STYLE4">(1 - 2)签约入<br/>户前交清</td>
+                            <td width="108" height="26" align="center" class="STYLE4">预留款余额</td>
+                            <td width="105" height="26" align="center" class="STYLE4">{{pr.TotalCompensation > pr.UsedAmount ? (pr.TotalCompensation - pr.UsedAmount) : 0}}</td>
+                            <td width="105" height="26" align="center" class="STYLE4">（ 1 - 2 ）</td>
+                            <td width="105" height="26" align="center" class="STYLE4"></td>
+                        </tr>
+                        <tr>
+                            <td width="105" height="26" align="center" class="STYLE4"><strong>4</strong></td>
+                            <td width="108" height="26" align="center" class="STYLE4">余额奖励</td>
+                            <td width="105" height="26" align="center" class="STYLE4">{{pr.Size > pr.UsedSize ? ((pr.Size - pr.UsedSize) * pr.RepurchasePrice).toFixed(2) : 0}}</td>
+                            <td width="105" height="26" align="center" class="STYLE4">{{ pr.RepurchasePrice != null ? '(' + pr.Size + '-' + pr.UsedSize + ')*' + pr.RepurchasePrice : ''}}</td>
+                            <td width="105" height="26" align="center" class="STYLE4"></td>
+                        </tr>
+                        <tr>
+                            <td width="105" height="26" align="center" class="STYLE4"><strong>5</strong></td>
+                            <td width="108" height="26" align="center" class="STYLE4">余额和奖励合计</td>
+                            <td width="105" height="26" align="center" class="STYLE4">{{( pr.TotalCompensation > pr.UsedAmount ? (pr.TotalCompensation - pr.UsedAmount) : 0 ) + ( pr.Size > pr.UsedSize ? ((pr.Size - pr.UsedSize) * pr.RepurchasePrice).toFixed(2) : 0 )}}</td>
+                            <td width="105" height="26" align="center" class="STYLE4">（ 3 + 4 ）</td>
+                            <td width="105" height="26" align="center" class="STYLE4"></td>
+                        </tr>
+                        <tr>
+                            <td width="105" height="26" align="center" class="STYLE4"><strong>6</strong></td>
+                            <td width="108" height="26" align="center" class="STYLE4">预留款不足欠<br/>款额</td>
+                            <td width="105" height="26" align="center" class="STYLE4">{{pr.TotalCompensation < pr.UsedAmount ? (pr.UsedAmount - pr.TotalCompensation) : 0}}</td>
+                            <td width="105" height="26" align="center" class="STYLE4">（1 - 2）签约入<br/>户前交清</td>
                             <td width="105" height="26" align="center" class="STYLE4"></td>
                         </tr>
                     </tbody>

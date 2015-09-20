@@ -1483,7 +1483,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         window.open("/print.html#/placementrecords/" + $scope.contract.PlacementRecordId + "/contracts/" + $scope.contractlist[idx].Id + "/printreservation");
     };
     $scope.printE = function (idx) {
-        window.open("/print.html#/placementrecords/" + $scope.contract.PlacementRecordId + "/contracts/" + $scope.contractlist[idx].Id + "/printreservationfee");
+        window.open("/print.html#/placementrecords/" + $scope.prs[idx].Id + "/printrecordsfee");
     };
 }])
 .controller('ContractExportCtrl', ['$scope', 'RestService', '$filter', '$q', function ($scope, RestService, $filter, $q) {
