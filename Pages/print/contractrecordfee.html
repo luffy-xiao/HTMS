@@ -70,7 +70,7 @@
                         <tr>
                             <td width="105" height="26" align="center" class="STYLE4"><strong>5</strong></td>
                             <td width="108" height="26" align="center" class="STYLE4">余额和奖励合计</td>
-                            <td width="105" height="26" align="center" class="STYLE4">{{( pr.TotalCompensation > pr.UsedAmount ? (pr.TotalCompensation - pr.UsedAmount).toFixed(2) : 0 ) + ( pr.Size > pr.UsedSize ? ((pr.Size - pr.UsedSize) * pr.RepurchasePrice).toFixed(2) : 0 )}}</td>
+                            <td width="105" height="26" align="center" class="STYLE4">{{(( pr.TotalCompensation > pr.UsedAmount ? (pr.TotalCompensation - pr.UsedAmount) : 0 ) + ( pr.Size > pr.UsedSize ? ((pr.Size - pr.UsedSize) * pr.RepurchasePrice) : 0 )).toFixed(2)}}</td>
                             <td width="105" height="26" align="center" class="STYLE4">（ 3 + 4 ）</td>
                             <td width="105" height="26" align="center" class="STYLE4"></td>
                         </tr>
