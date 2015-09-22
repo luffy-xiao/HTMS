@@ -83,7 +83,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 }]).controller('RBListCtrl', ['$scope', '$modal', 'RestService', function ($scope, $modal, RestService) {
     $scope.items = RestService.getclient('rb').query();
     InitCtrl($scope, $modal, 'rb', RestService, {});
-}]).controller('ResidentSearchCtrl', ['$scope', '$modal', 'RestService', '$location', '$filter', function ($scope, $modal, RestService, $location, $filter) {
+}]).controller('ResidentSearchCtrl', ['$scope', '$modal', 'RestService', '$location', '$filter', '$q', function ($scope, $modal, RestService, $location, $filter, $q) {
     // Init resident query.
     initResidentSearch($scope, RestService);
 
@@ -193,17 +193,25 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 });
 
                 var idFilters = queryByBatch(rrIds, null, 'Id', false);
-                var fstr;
+                var fstr, pros = [], retCount = 0;
                 // Load rr.
                 idFilters.forEach(function (idf) {
                     fstr = filterstring.rr.length ? filterstring.rr + ' and (' + idf + ')' : idf;
-                    RestService.getclient('rr').query({ $filter: fstr }, function (rrs) {
+                    var rrPro = RestService.getclient('rr').query({ $filter: fstr }, function (rrs) {
                         rrs.Items.forEach(function (item) {
                             prepareData(item, iIndex);
                         });
 
-                        $scope.rrFilteredOut = rss.Items.length != rrs.Items.length;
+                        // Record the return result count.
+                        retCount += rrs.Items.length;
                     });
+
+                    pros.push(rrPro.$promise);
+                });
+
+                // All rr have been loaded.
+                $q.all(pros).then(function (result) {
+                    $scope.rrFilteredOut = (rss.Items.length != retCount) && (filterstring.rr.length > 0);
                 });
             });
         } else {
