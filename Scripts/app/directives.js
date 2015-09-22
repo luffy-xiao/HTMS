@@ -110,7 +110,8 @@ appDirectives.directive('exportTable', function () {
             tableName: '=',
             amountName: '@',
             cols: '=',
-            rows: '='
+            rows: '=',
+            summary: '='
         },
         controller: ['$scope', '$filter', '$window', function ($scope, $filter, $window) {
             // Print html table.

@@ -25,5 +25,10 @@
                 <td ng-repeat="col in cols" ng-show="col.visible">{{col.name != 'EMPTY' ?  row[col.name] : '&nbsp;&nbsp;&nbsp;&nbsp;'}}</td>
             </tr>
         </tbody>
+        <tfoot ng-show="rows.length != 0">
+            <tr>
+                <td ng-repeat="col in cols" ng-show="col.visible">{{ summary[col.name] != null ? summary[col.name].toFixed(2) : '&nbsp;&nbsp;&nbsp;&nbsp;'}}</td>
+            </tr>
+        </tfoot>
     </table>
 </div>

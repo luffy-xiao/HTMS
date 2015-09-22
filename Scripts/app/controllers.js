@@ -546,6 +546,21 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         { id: '12', name: '动迁户人员情况', lst: t12 }
     ];
 
+    // Summary fields.
+    $scope.summary = {
+        'TotalCompensation': 0,
+        'CashPayable': 0,
+        'TotalPayable': 0,
+        'CashPaid': 0,
+        'TotalPaid': 0,
+        'OtherPayment': 0,
+        'DepositEWF': 0,
+        'EWFPaid': 0,
+        'EWAmount': 0,
+        'SickCompensation': 0,
+        'TransitionFee': 0
+    };
+
     // Load column metadata.
     RestService.getclient('header').query({ $filter: "ModelName eq 'resident'" }, function (result) {
         $scope.residentsHeader = result;
@@ -677,6 +692,13 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 $scope.dataSource.push(mapped2);
             });
         }
+
+        // Calculate summary fields by rr (Not duplicated summary).
+        angular.forEach($scope.summary, function (sumVal, sumField) {
+            if (rr[sumField]) {
+                $scope.summary[sumField] += rr[sumField];
+            }
+        });
     };
 
     var buildTableName = function () {
@@ -711,6 +733,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         }
 
         $scope.dataSource = [];
+        resetSummary($scope.summary);
 
         if ($scope.searchBy == 'rr') {
             // Search by rr.
@@ -1506,6 +1529,17 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         { id: '2', name: '购房汇总详细信息', lst: t2 }
     ];
 
+    $scope.summary = {
+        'GasFee': 0,
+        'TransitionFee': 0,
+        'TVFee': 0,
+        'InterestFee': 0,
+        'OtherFee': 0,
+        'DeltaAmount': 0,
+        'PaymentAmount': 0,
+        'TotalPrice': 0
+    };
+
     // Load contract headers.
     RestService.getclient('header').query({
         $filter: "ModelName eq 'contract'"
@@ -1561,12 +1595,17 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         dateFields.forEach(function (d) {
             contract[d] = $filter('date')(contract[d], 'yyyy-MM-dd');
         });
+
+        // Calculate summary fields by contract.
+        angular.forEach($scope.summary, function (sumVal, sumField) {
+            if (contract[sumField]) {
+                $scope.summary[sumField] += contract[sumField];
+            }
+        });
     };
 
     // Load rr at first.
     $scope.search = function () {
-        $scope.contracts = [];
-
         var rbFilter = '', appFilters = [], appFiltersObj = {};
         if ($scope.searchparams.RelocationBaseId != '' && $scope.searchparams.RelocationBaseId != null) {
             rbFilter = $scope.searchparams.RelocationBaseId;
@@ -1600,6 +1639,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             alert('请输入至少一项查询条件。');
             return;
         }
+
+        $scope.contracts = [];
+        resetSummary($scope.summary);
 
         // Query rb -> rr -> pr.
         if (rbFilter != '') {
@@ -1725,6 +1767,11 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         { name: 'PRId', displayName: '档案编号', visible: true }
     ];
 
+    $scope.summary = {
+        'TotalCompensation': 0,
+        'UsedAmount': 0
+    };
+
     // Load rr at first.
     $scope.search = function () {
         if ($scope.searchparams.RelocationBaseId == '' || $scope.searchparams.RelocationBaseId == null) {
@@ -1733,6 +1780,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         }
         
         $scope.prList = [];
+        resetSummary($scope.summary);
 
         var relocationBase = $filter('filter')($scope.rbs, function (e) { return e.Id == $scope.searchparams.RelocationBaseId; }, true)[0];
         var rrIdCache = {};
@@ -1754,6 +1802,13 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                         pr.RRId = rrIdCache[pr.RelocationRecordId];
 
                         $scope.prList.push(pr);
+
+                        // Calculate summary fields by pr.
+                        angular.forEach($scope.summary, function (sumVal, sumField) {
+                            if (pr[sumField]) {
+                                $scope.summary[sumField] += pr[sumField];
+                            }
+                        });
                     });
 
                     $scope.showResult = true;
@@ -2296,4 +2351,10 @@ var DX = function (num) {
     for (var i = 0; i < num.length; i++)
         strOutput += '零壹贰叁肆伍陆柒捌玖'.substr(num.substr(i, 1), 1) + strUnit.substr(i, 1);
     return strOutput.replace(/零角零分$/, '整').replace(/零[仟佰拾]/g, '零').replace(/零{2,}/g, '零').replace(/零([亿|万])/g, '$1').replace(/零+元/, '元').replace(/亿零{0,3}万/, '亿').replace(/^元/, "零元");
+};
+
+var resetSummary = function (sumObj) {
+    angular.forEach(sumObj, function (value, key) {
+        sumObj[key] = 0;
+    });
 };
