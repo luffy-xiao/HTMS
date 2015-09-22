@@ -17,5 +17,9 @@
  thead {display:  table-header-group;}
 
  .noscroll {overflow: visible;}
+
+ .nopagebreak{
+     page-break-inside: avoid
+ }
 }
 

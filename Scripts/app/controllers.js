@@ -103,7 +103,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     var prepareData = function (rr, rrIndex) {
         // Handle relocation base.
         rr.RelocationBase = getRelocationBase(rr.RelocationBaseId).Name;
-
+        rr.RBId = getRelocationBase(rr.RelocationBaseId).RBId
         // Add resident master.
         for (var rf in residentMaster) {
             rr[rf] = rr.Residents[0][residentMaster[rf]];
@@ -490,7 +490,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.dataSource = [];
 
     // Columns need special handling.
-    var residentMaster = { mResidentName: 'Name', mResidentPhone: 'Phone', mResidentIdentityCard: 'IdentityCard' };
+    var residentMaster = { mResidentName: 'Name',  mResidentIdentityCard: 'IdentityCard' };
     var dateFields = ['DateCreated', 'PaymentDate', 'DeliveryDate', 'NewVillageDate'];
 
     // Export templates.
@@ -498,7 +498,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     var t1 = ['RRId', 'mResidentName', 'CashPayable', 'CashPaid', 'TotalPayable', 'TotalPaid', 'TotalCompensation', 'EWFPaid', 'DepositEWF'];
 
     // 动拆迁情况 TODO: gender in meta, 标准
-    var t2 = ['RBId','RelocationBase', 'RRId', 'mResidentName', 'mResidentPhone', 'Name', 'IdentityCard', 'Gender', 'RelationshipType', 'Village', 'Group', 'DoorNumber',
+    var t2 = ['RBId','RelocationBase', 'RRId', 'mResidentName', 'Phone', 'Name', 'IdentityCard', 'Gender', 'RelationshipType', 'Village', 'Group', 'DoorNumber',
         'ApprovedSize', 'HouseSize', 'RoomSize', 'AffliateSize', 'ReservedSize', 'UnapprovedSize', 'PunishedSize', 'NoRemovalSize', 'RelocationSize', 'EffectiveSize',
         'MeasuredSize', 'NoConstructionSize', 'UncertifiedSize', 'BaseNumber', 'TransitionFee', 'SickCompensation', 'DeliveryDate', 'NewVillageDate', 'ResidentsCount','PaymentDate'];
 
@@ -528,7 +528,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     // xxx基地大病补助汇总表
     var t11 = ['RRId', 'mResidentName', 'SickCompensation'];
-    var t12 = ['RBId', 'RelocationBase', 'RRId', 'mResidentName', 'mResidentPhone', 'Name', 'IdentityCard', 'Gender', 'RelationshipType', 'Village', 'Group', 'DeliverDate','ResidentsCount','RelocationType'];
+    var t12 = ['RBId', 'RelocationBase', 'RRId', 'mResidentName', 'Phone', 'Name', 'IdentityCard', 'Gender', 'RelationshipType', 'Village', 'Group', 'DeliverDate','ResidentsCount','RelocationType'];
 
 
     $scope.exportTmpls = [
@@ -587,12 +587,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 });
             });
 
-            // Add person count field.
-            $scope.colList.push({
-                name: 'ResidentsCount',
-                displayName: '家庭人数',
-                visible: true
-            });
+
             $scope.colList.push({
                 name: 'Gender',
                 displayName: '性别',
@@ -626,8 +621,10 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         for (var rf in residentMaster) {
             rr[rf] = rr.Residents[0][residentMaster[rf]];
         }
-
-        rr.ResidentsCount = rr.Residents.length;
+        if (rr.ResidentsCount == null) {
+            rr.ResidentsCount = rr.Residents.length;
+        }
+        
 
         // Whether show all residents depends on whether checked 'showAllResidents' and also whether exactly search by Name or IdentityCard.
         if ($scope.searchparams.showAllResidents == '1' && rr.Residents.length > 1 && $scope.searchBy != 'rs') {
@@ -2131,7 +2128,9 @@ function InitDataPicker($scope) {
         dt: false,
         dt2: false,
         dt3: false,
-        dt4: false
+        dt4: false,
+        dt5: false,
+        dt6:false
     }
 
     $scope.dateOptions = {
@@ -2240,6 +2239,12 @@ function getResidentFilters($scope) {
     }
     if (params.DeliveryDateEnd != null) {
         filters.rr.push('DeliveryDate le ' + "datetime'" + params.DeliveryDateEnd.toISOString() + "'");
+    }
+    if (params.NewVillageDateStart != null) {
+        filters.rr.push('NewVillageDate ge ' + "datetime'" + params.NewVillageDateStart.toISOString() + "'");
+    }
+    if (params.NewVillageDateEnd != null) {
+        filters.rr.push('NewVillageDate le ' + "datetime'" + params.NewVillageDateEnd.toISOString() + "'");
     }
 
     // Set searchBy: residents first.

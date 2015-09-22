@@ -19,6 +19,8 @@ namespace WebApplication6.Models
         public string Group { get; set; }
         public string DoorNumber { get; set; }
         public string RRId { get; set; }
+        public int? ResidentsCount { get; set; }
+        public int? EffectiveResidentsCount { get; set; }
         public int? Status { get; set; } //0 is valid, 1 is invalid
          
         public DateTime? DateCreated { get; set; }
