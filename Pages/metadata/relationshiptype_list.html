@@ -6,7 +6,7 @@
             <th><input type="button" class="btn btn-primary btn-sm" value="添加" ng-click="add()" /></th>
         </tr>
         <tr ng-repeat="item in items">
-            <td>{{$index}}</td>
+            <td>{{$index +1}}</td>
             <td>{{item.Name}}</td>
             <td>
                 <input type="button" class="btn btn-default btn-xs" value="修改" ng-click="modify($index)" />

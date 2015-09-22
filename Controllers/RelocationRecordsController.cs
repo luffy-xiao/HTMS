@@ -116,6 +116,10 @@ namespace WebApplication6.Controllers
                         r.Status = 1;
                     }
                 }
+                if (relocationRecord.Status == null)
+                {
+                    relocationRecord.Status = 1;
+                }
                 db.RelocationRecords.Add(relocationRecord);
                 try
                 {

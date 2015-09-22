@@ -16,29 +16,33 @@
         <table class="table table-striped">
             <thead>
                 <tr>
+                    <th>拆迁基地编号</th>
                     <th>拆迁基地</th>
                     <th>拆迁编号</th>
+                    <th>村</th>
                     <th>户主姓名</th>
                     <th>户主身份证</th>
-                    <th>户主手机</th>
+                    <th>手机</th>
                     <th>关系</th>
                     <th>姓名</th>
                     <th>身份证</th>
-                    <th>记录状态</th>
+                 
                     <th>操作</th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="rr in rrlist">
+                    <td>{{rr.RBId}}</td>
                     <td>{{rr.RelocationBase}}</td>
                     <td>{{rr.RRId}}</td>
+                    <td>{{rr.Village}}</td>
                     <td>{{rr.mResidentName}}</td>
                     <td>{{rr.mResidentIdentityCard}}</td>
                     <td>{{rr.mResidentPhone}}</td>
                     <td>{{rr.RelationshipType}}</td>
                     <td>{{rr.Name}}</td>
                     <td>{{rr.IdentityCard}}</td>
-                    <td>{{rr.Status}}</td>
+                  
                     <td>
                         <button type="button" class="btn btn-primary btn-sm" ng-click="navtodetail(rr,true)">查看</button>
                         <button ng-show="user.Roles[0].Id==1" type="button" class="btn btn-default btn-sm" ng-click="navtodetail(rr,false)">修改</button>

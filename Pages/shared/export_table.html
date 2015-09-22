@@ -13,15 +13,15 @@
 </div>
 
 <h3 class="noshow" style="text-align: center;">{{tableName}}&nbsp;&nbsp;&nbsp;<small>{{amountName}}：{{rows.length}}</small></h3>
-<div class="table-responsive noscroll">
-    <table class="table table-bordered table-hover table-condensed table-striped">
+<div class="table-responsive noscroll" >
+    <table class="" style="border:0">
         <thead>
             <tr>
                 <th ng-repeat="col in cols" ng-show="col.visible">{{col.displayName}}</th>
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="row in rows">
+            <tr ng-repeat="row in rows" >
                 <td ng-repeat="col in cols" ng-show="col.visible">{{col.name != 'EMPTY' ?  row[col.name] : '&nbsp;&nbsp;&nbsp;&nbsp;'}}</td>
             </tr>
         </tbody>
