@@ -528,7 +528,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     // xxx基地大病补助汇总表
     var t11 = ['RRId', 'mResidentName', 'SickCompensation'];
-    var t12 = ['RBId', 'RelocationBase', 'RRId', 'mResidentName', 'Phone', 'Name', 'IdentityCard', 'Gender', 'RelationshipType', 'Village', 'Group', 'DeliverDate','ResidentsCount','RelocationType'];
+
+    // 动迁户人员情况
+    var t12 = ['RBId', 'RelocationBase', 'RRId', 'mResidentName', 'Phone', 'Name', 'IdentityCard', 'Gender', 'RelationshipType', 'Village', 'Group', 'DeliveryDate', 'ResidentsCount', 'RelocationType'];
 
 
     $scope.exportTmpls = [
@@ -558,7 +560,21 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         'EWFPaid': 0,
         'EWAmount': 0,
         'SickCompensation': 0,
-        'TransitionFee': 0
+        'ApprovedSize': 0,
+        'HouseSize': 0,
+        'RoomSize': 0,
+        'AffliateSize': 0,
+        'ReservedSize': 0,
+        'UnapprovedSize': 0,
+        'PunishedSize': 0,
+        'NoRemovalSize': 0,
+        'RelocationSize': 0,
+        'EffectiveSize': 0,
+        'MeasuredSize': 0,
+        'NoConstructionSize': 0,
+        'UncertifiedSize': 0,
+        'TransitionFee': 0,
+        'ResidentsCount': 0
     };
 
     // Load column metadata.
@@ -780,7 +796,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.loadTmpl = function () {
         if ($scope.selectedTmpl == null || $scope.selectedTmpl == '') {
             $scope.cols = [];
-            
+            return;
         }
 
         // Build table name.
@@ -1527,13 +1543,19 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     ];
 
     $scope.summary = {
+        'Size2': 0,
+        'Size1': 0,
+        'Size3': 0,
+        'Size4': 0,
         'GasFee': 0,
         'TransitionFee': 0,
         'TVFee': 0,
         'InterestFee': 0,
         'OtherFee': 0,
+        'TransitionSize': 0,
         'DeltaAmount': 0,
         'PaymentAmount': 0,
+        'Size': 0,
         'TotalPrice': 0
     };
 
@@ -1596,7 +1618,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         // Calculate summary fields by contract.
         angular.forEach($scope.summary, function (sumVal, sumField) {
             if (contract[sumField]) {
-                $scope.summary[sumField] += contract[sumField];
+                $scope.summary[sumField] += (typeof contract[sumField] == 'string' ? parseFloat(contract[sumField]) : contract[sumField]);
             }
         });
     };
@@ -1732,6 +1754,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.loadTmpl = function () {
         if ($scope.selectedTmpl == null || $scope.selectedTmpl == '') {
             $scope.cols = [];
+            return;
         }
 
         // Build new cols.
@@ -1765,8 +1788,12 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     ];
 
     $scope.summary = {
+        'Size': 0,
+        'UsedSize': 0,
+        'ApprovedSize': 0,
         'TotalCompensation': 0,
-        'UsedAmount': 0
+        'UsedAmount': 0,
+        'AppartmentCount': 0
     };
 
     // Load rr at first.
