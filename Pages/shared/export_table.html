@@ -12,9 +12,9 @@
     </div>
 </div>
 
-<h3 class="noshow" style="text-align: center;">{{tableName}}&nbsp;&nbsp;&nbsp;<small>{{amountName}}：{{rows.length}}</small></h3>
-<div class="table-responsive noscroll" >
-    <table class="table" style="border:0">
+<h5 class="" style="text-align: center;">{{tableName}}&nbsp;&nbsp;&nbsp;<small>{{amountName}}：{{rows.length}}</small></h5>
+   <div>
+    <table class="table-condensed">
         <thead>
             <tr>
                 <th ng-repeat="col in cols" ng-show="col.visible">{{col.displayName}}</th>
@@ -24,11 +24,10 @@
             <tr ng-repeat="row in rows | orderBy:orderBy">
                 <td ng-repeat="col in cols" ng-show="col.visible">{{col.name != 'EMPTY' ?  row[col.name] : '&nbsp;&nbsp;&nbsp;&nbsp;'}}</td>
             </tr>
-        </tbody>
-        <tfoot ng-show="rows.length != 0">
-            <tr>
+
+            <tr ng-show="rows.length != 0">
                 <td ng-repeat="col in cols" ng-show="col.visible">{{ $index == 0 ? '合计' : ( summary[col.name] != null ? summary[col.name].toFixed(2) : '&nbsp;&nbsp;&nbsp;&nbsp;' )}}</td>
             </tr>
-        </tfoot>
+        </tbody>
     </table>
 </div>
