@@ -637,6 +637,10 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 displayName: '动迁基地编号',
                 visible: true
             });
+
+            // Default show t1.
+            $scope.selectedTmpl = $scope.exportTmpls[0];
+            $scope.loadTmpl();
         });
     });
 
@@ -1566,6 +1570,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         'Size': 0,
         'TotalPrice': 0
     };
+
+    // Order by.
+    $scope.orderBy = ['CommunityName', 'BuildingNumber', 'DoorNumber'];
 
     // Load contract headers.
     RestService.getclient('header').query({
