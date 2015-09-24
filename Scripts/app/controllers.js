@@ -1600,7 +1600,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         });
 
         // Empty column.
-        $scope.colList.push({ name: 'EMPTY', displayName: '', visible: true });
+        $scope.colList.push({ name: 'EMPTY', displayName: ' ', visible: true });
 
 
         // Initialize t2.
@@ -1656,10 +1656,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     }
 
                     if (matched) {
-                        // Get owners from pr.
-                        //var pr = $filter('filter')(prs, { Id: con.PlacementRecordId }, true)[0];
-                        //prepareData(con, pr.Name);
-
                         // Get owners from contract appartmentowners.
                         var owners = '';
                         con.AppartmentOwners.forEach(function (ao) {
@@ -1779,39 +1775,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                         var filters = queryByBatch(prs, 'Id', 'PlacementRecordId', false);
 
                         getContractsFromPrFilters(filters, appFiltersObj);
-                        /*
-                        filters.forEach(function (f) {
-                            RestService.getclient('contract').query({ $filter: f, $orderby: "Id" }, function (contracts) {
-                                contracts.forEach(function (con) {
-                                    // Filter by appartment.
-                                    var matched = true;
-                                    for (var f in appFiltersObj) {
-                                        if (con.Appartment[f] != appFiltersObj[f]) {
-                                            matched = false;
-                                            break;
-                                        }
-                                    }
-
-                                    if (matched) {
-                                        // Get owners from pr.
-                                        //var pr = $filter('filter')(prs, { Id: con.PlacementRecordId }, true)[0];
-                                        //prepareData(con, pr.Name);
-
-                                        // Get owners from contract appartmentowners.
-                                        var owners = '';
-                                        con.AppartmentOwners.forEach(function (ao) {
-                                            owners += (ao.Name + ' ');
-                                        });
-                                        prepareData(con, owners);
-                                        
-                                        $scope.contracts.push(con);
-
-                                        $scope.showResult = true;
-                                    }
-                                });
-                            });
-                        });
-                        */
                     });
                 });
             });
@@ -1825,43 +1788,22 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             RestService.getclient('appartment').query({ $filter: filterstring }, function (result) {
                 var filters = queryByBatch(result.Items, 'Id', 'AppartmentId', false);
 
-                var pros = [];
-                var indexByPr = {};
-
                 filters.forEach(function (f) {
                     var loadCon = RestService.getclient('contract').query({ $filter: f }, function (cons) {
                         cons.forEach(function (con) {
-                            prepareData(con, '');
-                            $scope.contracts.push(con);
+                            // Get owners from contract appartmentowners.
+                            var owners = '';
+                            con.AppartmentOwners.forEach(function (ao) {
+                                owners += (ao.Name + ' ');
+                            });
 
-                            // Index contracts by pr.
-                            if (indexByPr[con.PlacementRecordId] == null) {
-                                indexByPr[con.PlacementRecordId] = [con];
-                            } else {
-                                indexByPr[con.PlacementRecordId].push(con);
-                            }
+                            prepareData(con, owners);
+                            $scope.contracts.push(con);
                         });
                     });
-                    // Remember the promise.
-                    pros.push(loadCon.$promise);
                 });
 
                 $scope.showResult = true;
-
-                // All contracts have been loaded.
-                $q.all(pros).then(function (result) {
-                    var fs = queryByBatch(Object.keys(indexByPr), null, 'Id', false);
-                    fs.forEach(function (f) {
-                        RestService.getclient('pr').query({ $filter: f }, function (prs) {
-                            prs.forEach(function (pr) {
-                                // Fill pr info in contract.
-                                indexByPr[pr.Id].forEach(function (con) {
-                                    con.Owners = pr.Name;
-                                });
-                            });
-                        });
-                    });
-                });
             });
         }
     };

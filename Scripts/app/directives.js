@@ -125,13 +125,26 @@ appDirectives.directive('exportTable', function () {
             $scope.export = function () {
                 var now = $filter('date')(new Date(), 'yyyyMMddHHmmss');
                 var selected = [];
-                $scope.cols.forEach(function (col) {
+
+                // Handle summary row.
+                var summaryRow = {};
+
+                $scope.cols.forEach(function (col, idx) {
                     if (col.visible) {
                         selected.push('`' + col.name + '` AS `' + col.displayName + '`');
+                        
+                        if (idx == 0) {
+                            summaryRow[col.name] = '合计';
+                        } else {
+                            summaryRow[col.name] = $scope.summary[col.name] != null ? $scope.summary[col.name].toFixed(2) : ' ';
+                        }
                     }
                 });
 
-                alasql('SELECT ' + selected.join() + ' INTO XLSX("' + $scope.tableName + '_' + now + '.xlsx") FROM ?', [$scope.rows]);
+                var dataSet = angular.copy($scope.rows);
+                dataSet.push(summaryRow);
+
+                alasql('SELECT ' + selected.join() + ' INTO XLSX("' + $scope.tableName + '_' + now + '.xlsx") FROM ?', [dataSet]);
             };
         }]
     };
