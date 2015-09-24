@@ -232,7 +232,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     };
 
     $scope.search = function () {
-        filterstring = getResidentFilters($scope);
+        filterstring = getResidentFilters($scope, $filter);
         if (filterstring.rs.length == 0 && filterstring.rr.length == 0) {
             alert('请输入至少一项查询条件。');
             return;
@@ -744,7 +744,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     // Load table data.
     $scope.search = function () {
-        var filterstring = getResidentFilters($scope);
+        var filterstring = getResidentFilters($scope, $filter);
         if (filterstring.rs.length == 0 && filterstring.rr.length == 0) {
             alert('请输入至少一项查询条件。');
             return;
@@ -1638,26 +1638,84 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         });
     };
 
+    // Search conditions literal.
+    $scope.searchConds = [];
+
+    // Filters are batched contracts query by pr ids.
+    var getContractsFromPrFilters = function (filters, appFiltersObj) {
+        filters.forEach(function (f) {
+            RestService.getclient('contract').query({ $filter: f, $orderby: "Id" }, function (contracts) {
+                contracts.forEach(function (con) {
+                    // Filter by appartment.
+                    var matched = true;
+                    for (var f in appFiltersObj) {
+                        if (con.Appartment[f] != appFiltersObj[f]) {
+                            matched = false;
+                            break;
+                        }
+                    }
+
+                    if (matched) {
+                        // Get owners from pr.
+                        //var pr = $filter('filter')(prs, { Id: con.PlacementRecordId }, true)[0];
+                        //prepareData(con, pr.Name);
+
+                        // Get owners from contract appartmentowners.
+                        var owners = '';
+                        con.AppartmentOwners.forEach(function (ao) {
+                            owners += (ao.Name + ' ');
+                        });
+                        prepareData(con, owners);
+
+                        $scope.contracts.push(con);
+
+                        $scope.showResult = true;
+                    }
+                });
+            });
+        });
+    };
+
     // Load rr at first.
     $scope.search = function () {
-        var rbFilter = '', appFilters = [], appFiltersObj = {};
+        var rsFilters = [], rbFilter = '', appFilters = [], appFiltersObj = {}, searchConds = [];
+
+        // Add rs Name and IdentityCard search conditions.
+        if ($scope.searchparams.Name != null && $scope.searchparams.Name.trim() != '') {
+            rsFilters.push("substringof('" + $scope.searchparams.Name + "',Name)");
+            searchConds.push("姓名：" + $scope.searchparams.Name);
+        }
+        if ($scope.searchparams.IdentityCard != null && $scope.searchparams.IdentityCard.trim() != '') {
+            rsFilters.push("substringof('" + $scope.searchparams.IdentityCard + "',IdentityCard)");
+            searchConds.push("身份证号：" + $scope.searchparams.IdentityCard);
+        }
+
         if ($scope.searchparams.RelocationBaseId != '' && $scope.searchparams.RelocationBaseId != null) {
             rbFilter = $scope.searchparams.RelocationBaseId;
+
+            var rbase = $filter('filter')($scope.rbs, function (e) { return e.Id == $scope.searchparams.RelocationBaseId; }, true)[0];
+            searchConds.push("动迁基地：" + (rbase != null ? rbase.Name : ''));
         }
 
         if ($scope.searchparams.CommunityId != '' && $scope.searchparams.CommunityId != null) {
             appFilters.push("CommunityId eq " + $scope.searchparams.CommunityId);
             appFiltersObj.CommunityId = parseInt($scope.searchparams.CommunityId);
+
+            var community = $filter('filter')($scope.clist, function (e) { return e.Id == $scope.searchparams.CommunityId; }, true)[0];
+            searchConds.push("选择小区：" + (community != null ? community.Name : ''));
         }
 
         if ($scope.searchparams.BuildingNumber != null && $scope.searchparams.BuildingNumber.trim() != '') {
             if (!isNaN($scope.searchparams.BuildingNumber)) {
                 appFilters.push("BuildingNumber eq " + $scope.searchparams.BuildingNumber);
                 appFiltersObj.BuildingNumber = parseInt($scope.searchparams.BuildingNumber);
+
+                searchConds.push("单元：" + $scope.searchparams.BuildingNumber);
             }
         }
 
-        // TODO contract inside app should be 1? Is this extra?
+        // TODO contract inside app should be 1? Is this useless?
+        /**
         if ($scope.searchparams.Status != null && $scope.searchparams.Status != '') {
             if ($scope.searchparams.Status == 0) {
                 appFilters.push("Status eq '可售'");
@@ -1668,17 +1726,49 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 appFiltersObj.Status = '已售';
             }
         }
+        **/
 
-        if (rbFilter == '' && appFilters.length == 0) {
+        if (rsFilters.length == 0 && rbFilter == '' && appFilters.length == 0) {
             alert('请输入至少一项查询条件。');
             return;
         }
 
+        $scope.searchConds = searchConds;
+
         $scope.contracts = [];
         resetSummary($scope.summary);
 
+        // Query rr at highest priority.
+        if (rsFilters.length) {
+            var rsFiltersStr = "Status eq 1";
+            rsFilters.forEach(function (f) {
+                rsFiltersStr += (" and " + f);
+            });
+
+            RestService.getclient('resident').query({ $filter: rsFiltersStr }, function (rss) {
+                // Filter to choose with PlacementRecordId and rb if specified.
+                var prIds = [];
+
+                rss.Items.forEach(function (rs) {
+                    if (rs.PlacementRecordId != null) {
+                        if (rbFilter != '') {
+                            if (rs.RelocationRecord != null && rs.RelocationRecord.RelocationBaseId == parseInt(rbFilter)) {
+                                prIds.push(rs.PlacementRecordId);
+                            }
+                        } else {
+                            prIds.push(rs.PlacementRecordId);
+                        }
+                    }
+                });
+
+                // Query contract by pr batch.
+                var filters = queryByBatch(prIds, null, 'PlacementRecordId', false);
+
+                getContractsFromPrFilters(filters, appFiltersObj);
+            });
+        }
         // Query rb -> rr -> pr.
-        if (rbFilter != '') {
+        else if (rbFilter != '') {
             // Query rr. TODO RelocationRecord status eq 1
             RestService.getclient('rr').query({ $filter: 'Status eq 1 and RelocationBaseId eq ' + rbFilter }, function (result) {
                 // Query pr by rr batch.
@@ -1688,6 +1778,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                         // Query contract by pr batch.
                         var filters = queryByBatch(prs, 'Id', 'PlacementRecordId', false);
 
+                        getContractsFromPrFilters(filters, appFiltersObj);
+                        /*
                         filters.forEach(function (f) {
                             RestService.getclient('contract').query({ $filter: f, $orderby: "Id" }, function (contracts) {
                                 contracts.forEach(function (con) {
@@ -1701,9 +1793,17 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                                     }
 
                                     if (matched) {
-                                        // Get owners.
-                                        var pr = $filter('filter')(prs, { Id: con.PlacementRecordId }, true)[0];
-                                        prepareData(con, pr.Name);
+                                        // Get owners from pr.
+                                        //var pr = $filter('filter')(prs, { Id: con.PlacementRecordId }, true)[0];
+                                        //prepareData(con, pr.Name);
+
+                                        // Get owners from contract appartmentowners.
+                                        var owners = '';
+                                        con.AppartmentOwners.forEach(function (ao) {
+                                            owners += (ao.Name + ' ');
+                                        });
+                                        prepareData(con, owners);
+                                        
                                         $scope.contracts.push(con);
 
                                         $scope.showResult = true;
@@ -1711,6 +1811,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                                 });
                             });
                         });
+                        */
                     });
                 });
             });
@@ -1817,14 +1918,16 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             alert('请选择动迁基地。');
             return;
         }
-        
+
         $scope.prList = [];
         resetSummary($scope.summary);
 
         var relocationBase = $filter('filter')($scope.rbs, function (e) { return e.Id == $scope.searchparams.RelocationBaseId; }, true)[0];
         var rrIdCache = {};
 
-        // TODO RelocationRecord status eq 1
+        $scope.searchConds = ["动迁基地：" + (relocationBase != null ? relocationBase.Name : '')];
+
+        // RelocationRecord status eq 1
         RestService.getclient('rr').query({ $filter: 'Status eq 1 and RelocationBaseId eq ' + $scope.searchparams.RelocationBaseId }, function (result) {
             // Query pr by batch. related to 'MaxNodeCount' in backend controller.
             var filters = queryByBatch(result.Items, 'Id', 'RelocationRecordId', true);
@@ -2033,9 +2136,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         $scope.contracts = RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + pr.Id, $orderby: "Id" }, function (contracts) {
             if (cid != null) {
                 var i = 0;
-                contracts.forEach(function (c){
+                contracts.forEach(function (c) {
                     if (c.Id == cid) {
-                       // $scope.contract = c
+                        // $scope.contract = c
                         $scope.idx = i
                     }
                     i++
@@ -2054,22 +2157,16 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     while (item.PlacementRecord.Residents.length < 6) {
                         item.PlacementRecord.Residents.push({})
                     }
-                    item.AppartmentOwners = $filter('filter')(item.AppartmentOwners,{ShowOnCert:true},true)
+                    item.AppartmentOwners = $filter('filter')(item.AppartmentOwners, { ShowOnCert: true }, true);
                     while (item.AppartmentOwners.length < 6) {
-                        item.AppartmentOwners.push({})
+                        item.AppartmentOwners.push({});
                     }
                     $scope.pr = item.PlacementRecord;
-                    $scope.contracts = RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + $scope.pr.Id, $orderby: "Id" }, function (contracts) {
-                        contracts.forEach(function (contract) {
-
-                        })
-                    })
-                })
+                    $scope.contracts = RestService.getclient('contract').query({ $filter: "PlacementRecordId eq " + $scope.pr.Id, $orderby: "Id" });
+                });
             }
-        })
-        $scope.rr = RestService.getclient('rr').get({id:pr.RelocationRecordId},function(rr){
-        
-        })
+        });
+        $scope.rr = RestService.getclient('rr').get({ id: pr.RelocationRecordId });
     })
   
     $scope.totalprice = function (idx) {
@@ -2294,55 +2391,89 @@ function initResidentSearch($scope, RestService) {
 }
 
 /** Get query filter for relocationrecord, also set searchBy in scope: rs or rr **/
-function getResidentFilters($scope) {
+function getResidentFilters($scope, $filter) {
     var params = $scope.searchparams;
     var filters = { rs: [], rr: [] };
+    var searchConds = [];
 
     // Filters by resident.
     if (params.Name != null && params.Name.trim() != '') {
-        filters.rs.push("substringof('" + params.Name + "',Name)")
+        filters.rs.push("substringof('" + params.Name + "',Name)");
+        searchConds.push("姓名：" + params.Name);
     }
     if (params.IdentityCard != null && params.IdentityCard.trim() != '') {
-        filters.rs.push("substringof('" + params.IdentityCard + "',IdentityCard)")
+        filters.rs.push("substringof('" + params.IdentityCard + "',IdentityCard)");
+        searchConds.push("身份证：" + params.IdentityCard);
     }
 
     // Filters by relocationrecord.
     if (params.RelocationBaseId != null && params.RelocationBaseId != '') {
         filters.rr.push('RelocationBaseId eq ' + params.RelocationBaseId);
+        var rbase = $filter('filter')($scope.rbs, function (e) { return e.Id == params.RelocationBaseId; }, true)[0];
+        searchConds.push("动迁基地：" + (rbase != null ? rbase.Name : ''));
     }
     if (params.RRId != null && params.RRId.trim() != '') {
         filters.rr.push("RRId eq '" + params.RRId + "'");
+        searchConds.push("拆迁编号：" + params.RRId);
     }
     if (params.RelocationType != null && params.RelocationType.trim() != '') {
         filters.rr.push("RelocationType eq '" + params.RelocationType + "'");
+        searchConds.push("动迁户性质：" + params.RelocationType);
     }
     if (params.Village != null && params.Village.trim() != '') {
         filters.rr.push("Village eq '" + params.Village + "'");
+        searchConds.push("所在村：" + params.Village);
     }
     if (params.Group != null && params.Group.trim() != '') {
         filters.rr.push("Group eq '" + params.Group + "'");
+        searchConds.push("组：" + params.Group);
     }
     if (params.DoorNumber != null && params.DoorNumber.trim() != '') {
         filters.rr.push("DoorNumber eq '" + params.DoorNumber + "'");
+        searchConds.push("门牌号：" + params.DoorNumber);
     }
+
+    var pDateScope = '';
     if (params.PaymentDateStart != null) {
         filters.rr.push('PaymentDate ge ' + "datetime'" + params.PaymentDateStart.toISOString() + "'");
+        pDateScope = '付款日期：' + $filter('date')(params.PaymentDateStart, 'yyyy-MM-dd') + ' - ';
     }
     if (params.PaymentDateEnd != null) {
         filters.rr.push('PaymentDate le ' + "datetime'" + params.PaymentDateEnd.toISOString() + "'");
+        pDateScope += $filter('date')(params.PaymentDateEnd, 'yyyy-MM-dd');
     }
+    if (pDateScope.length) {
+        searchConds.push(pDateScope);
+    }
+
+    var dDateScope = '';
     if (params.DeliveryDateStart != null) {
         filters.rr.push('DeliveryDate ge ' + "datetime'" + params.DeliveryDateStart.toISOString() + "'");
+        dDateScope = "交房日期：" + $filter('date')(params.DeliveryDateStart, 'yyyy-MM-dd') + ' - ';
     }
     if (params.DeliveryDateEnd != null) {
         filters.rr.push('DeliveryDate le ' + "datetime'" + params.DeliveryDateEnd.toISOString() + "'");
+        dDateScope += $filter('date')(params.DeliveryDateEnd, 'yyyy-MM-dd');
     }
+    if (dDateScope.length) {
+        searchConds.push(dDateScope);
+    }
+
+    var vDateScope = '';
     if (params.NewVillageDateStart != null) {
         filters.rr.push('NewVillageDate ge ' + "datetime'" + params.NewVillageDateStart.toISOString() + "'");
+        vDateScope = "协议日期：" + $filter('date')(params.NewVillageDateStart, 'yyyy-MM-dd') + ' - ';
     }
     if (params.NewVillageDateEnd != null) {
         filters.rr.push('NewVillageDate le ' + "datetime'" + params.NewVillageDateEnd.toISOString() + "'");
+        vDateScope += $filter('date')(params.NewVillageDateEnd, 'yyyy-MM-dd');
     }
+    if (vDateScope.length) {
+        searchConds.push(vDateScope);
+    }
+
+    // Set search conditions literal.
+    $scope.searchConds = searchConds;
 
     // Set searchBy: residents first.
     $scope.searchBy = filters.rs.length ? 'rs' : 'rr';

@@ -3,8 +3,19 @@
         <p class="bg-info">请查询购房信息。</p>
         <form name="s1" class="form-horizontal" novalidate>
             <div class="form-group">
+                <label class="col-sm-2 control-label">户主姓名</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" ng-model="searchparams.Name">
+                </div>
+                <label class="col-sm-1 control-label">身份证号</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" ng-model="searchparams.IdentityCard">
+                </div>
+            </div>
+            <hr/>
+            <div class="form-group">
                 <label class="col-sm-2 control-label">动迁基地名称</label>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <span class="nullable">
                         <select class="form-control" ng-model="searchparams.RelocationBaseId" ng-options="rb.Id as rb.Name for rb in rbs">
                             <option value="">--请选择--</option>
@@ -14,17 +25,15 @@
             </div>
             <div class="form-group ">
                 <label class="col-sm-2 control-label">选择小区</label>
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                     <span class="nullable">
                         <select class="form-control" ng-model="searchparams.CommunityId" ng-options="c.Id as c.Name for c in clist" required="" ng-change="loadbuildings()">
                             <option value="">--请选择--</option>
                         </select>
                     </span>
                 </div>
-            </div>
-            <div class="form-group ">
-                <label class="col-sm-2 control-label">单元</label>
-                <div class="col-sm-4">
+                <label class="col-sm-1 control-label">单元</label>
+                <div class="col-sm-3">
                     <input type="text" class="form-control" ng-model="searchparams.BuildingNumber">
                 </div>
             </div>
@@ -62,6 +71,6 @@
         </div>
     </div>
 
-    <div export-table table-name="tableName" cols="cols" rows="contracts" summary="summary" order-by="orderBy" amount-name="个数"></div>
+    <div export-table table-name="tableName" cols="cols" rows="contracts" summary="summary" order-by="orderBy" amount-name="个数" tips="searchConds"></div>
     <div class="alert alert-info" ng-show="showResult && contracts.length == 0">没有查询到对应的记录。</div>
 </div>

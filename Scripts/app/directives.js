@@ -112,7 +112,8 @@ appDirectives.directive('exportTable', function () {
             cols: '=',
             rows: '=',
             summary: '=',
-            orderBy: '='
+            orderBy: '=',
+            tips: '='
         },
         controller: ['$scope', '$filter', '$window', function ($scope, $filter, $window) {
             // Print html table.
