@@ -14,7 +14,7 @@
             <div class="form-group  has-feedback">
                 <label class="col-sm-2 control-label">密码</label>
                 <div class="col-sm-5">
-                    <input name="password" type="password" class="form-control" ng-model="newitem.Password" required="" ng-minlength="6">
+                    <input name="password" type="password" class="form-control" ng-model="newitem.Password" required="">
                 </div>
             </div>
             <div class="form-group  has-feedback">
@@ -43,10 +43,7 @@
         </form>
     </div>
     <div class="modal-footer">
-        {{newitem | json}}
         <button class="btn btn-primary" ng-disabled="msForm.$invalid" ng-click="ok()">提交</button>
         <button class="btn btn-warning" ng-click="cancel()">取消</button>
-
     </div>
-
 </div>

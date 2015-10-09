@@ -1,6 +1,5 @@
 ﻿<div class="col-sm-3 col-md-2 sidebar">
     <ul id="main-nav" class="main-nav nav nav-tabs nav-stacked" style="">
-
         <li>
             <a href="#ResidentMgmt" class="nav-header collapsed" data-toggle="collapse">
                 动迁信息管理
@@ -8,7 +7,7 @@
             </a>
             <ul id="ResidentMgmt" class="nav nav-list secondmenu collapse in">
                 <li ng-show="user.Roles[0].Id!=3"><a href="#/resident/create">增加动迁户信息</a></li>
-                <li ><a href="#/resident/search">查询动迁户信息</a></li>
+                <li><a href="#/resident/search">查询动迁户信息</a></li>
                 <li ng-show="user.Roles[0].Id!=3"><a href="#/resident/issue">问题动迁户信息</a></li>
 
                 <li ng-show="user.Roles[0].Id!=3"><a href="#/resident/export">动迁记录汇总</a></li>
@@ -48,24 +47,21 @@
             </ul>
         </li>
 
-        <li ng-show="user.Roles[0].Id==1">
+        <li ng-show="user.Roles[0].Id == 1 || user.Roles[0].Id == 2">
             <a href="#sysSetting" class="nav-header collapsed" data-toggle="collapse">
-               
                 系统设置
                 <span class="pull-right glyphicon glyphicon-chevron-toggle"></span>
             </a>
             <ul id="sysSetting" class="nav nav-list secondmenu collapse in">
-                <li><a href="#/relocationbases">动迁基地管理</a></li>
-                <li><a href="#/communities">楼盘信息管理</a></li>
-                <li><a href="#/villages">村信息管理</a></li>
-                <li><a href="#/relationships">称谓管理</a></li>
-              <!--  <li><a href="#/groups">组信息管理</a></li>-->
-                <li><a href="#/pricetemplate">价格模版管理</a></li>
-                <li><a href="#/users">用户管理</a></li>
+                <li ng-show="user.Roles[0].Id == 1 || user.Roles[0].Id == 2"><a href="#/relocationbases">动迁基地管理</a></li>
+                <li ng-show="user.Roles[0].Id == 1"><a href="#/communities">楼盘信息管理</a></li>
+                <li ng-show="user.Roles[0].Id == 1 || user.Roles[0].Id == 2"><a href="#/villages">村信息管理</a></li>
+                <li ng-show="user.Roles[0].Id == 1 || user.Roles[0].Id == 2"><a href="#/relationships">称谓管理</a></li>
+                <!--  <li><a href="#/groups">组信息管理</a></li>-->
+                <li ng-show="user.Roles[0].Id == 1"><a href="#/pricetemplate">价格模版管理</a></li>
+                <li ng-show="user.Roles[0].Id == 1 || user.Roles[0].Id == 2"><a href="#/users">用户管理</a></li>
                 <li><a href="#"></a></li>
             </ul>
         </li>
-
-
     </ul>
 </div>

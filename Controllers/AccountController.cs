@@ -108,8 +108,8 @@ namespace WebApplication6.Controllers
 
             return Ok();
         }
-         [Authorize(Roles = "Administrator")]
 
+        [Authorize(Roles = "Administrator")]
         [Route("api/Users")]
         public async Task<IHttpActionResult> PostUser(User newuser)
         {
@@ -160,8 +160,8 @@ namespace WebApplication6.Controllers
             return ApplicationDbContext.Roles.ToList<IdentityRole>();
 
         }
-         [Authorize(Roles = "Administrator")]
-        
+
+        [Authorize(Roles = "Administrator,Operator1")]
         [Route("api/Users")]
         public List<User> GetUsers()
         {

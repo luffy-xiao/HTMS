@@ -3,13 +3,13 @@
         <tr>
             <th>用户名</th>
             <th>角色</th>
-            <th><input type="button" class="btn btn-primary btn-sm" value="添加用户" ng-click="add()" /></th>
+            <th ng-show="user.Roles[0].Id == 1"><input type="button" class="btn btn-primary btn-sm" value="添加用户" ng-click="add()" /></th>
         </tr>
         <tr ng-repeat="item in items">
             <td>{{item.UserName}}</td>
             <td>{{item.Roles[0].Id | usertype}}</td>
-            <td>
-            <!--   <input type="button" class="btn btn-default btn-xs" value="修改" ng-click="modify($index)" />        -->
+            <td ng-show="user.Roles[0].Id == 1">
+                <!--   <input type="button" class="btn btn-default btn-xs" value="修改" ng-click="modify($index)" />        -->
                 <input type="button" class="btn btn-warning btn-xs" value="删除" ng-click="del($index)" />
                 <input type="button" class="btn btn-warning btn-xs" value="重置密码" />
             </td>
