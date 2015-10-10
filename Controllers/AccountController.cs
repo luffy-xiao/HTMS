@@ -64,16 +64,17 @@ namespace WebApplication6.Controllers
         }
 
         public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
+        
         [Authorize(Roles = "Administrator,Operator1,Operator2")]
         // POST api/Account/Logout
- 
         [Route("api/Account/Logout")]
         public IHttpActionResult Logout()
         {
             Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
             return Ok();
         }
-         [Authorize(Roles = "Administrator,Operator1,Operator2")]
+
+        [Authorize(Roles = "Administrator,Operator1,Operator2")]
         // Get api/Account/info
         [Route("api/Account/info")]
         public async Task<User> GetInfo()
@@ -89,6 +90,7 @@ namespace WebApplication6.Controllers
            
             return user;
         }
+
         [Authorize(Roles = "Administrator,Operator1,Operator2")]
         // POST api/Account/SetPassword
         [Route("api/Account/SetPassword")]
@@ -100,6 +102,27 @@ namespace WebApplication6.Controllers
             }
 
             IdentityResult result = await UserManager.AddPasswordAsync(User.Identity.GetUserId(), model.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                return GetErrorResult(result);
+            }
+
+            return Ok();
+        }
+
+        [Authorize(Roles = "Administrator")]
+        // POST api/Account/ResetPassword
+        [Route("api/Account/ResetPassword")]
+        public async Task<IHttpActionResult> SetOthersPassword(SetPasswordBindingModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            string resetToken = await UserManager.GeneratePasswordResetTokenAsync(model.UserId);
+            IdentityResult result = await UserManager.ResetPasswordAsync(model.UserId, resetToken, model.NewPassword);
 
             if (!result.Succeeded)
             {
@@ -145,7 +168,8 @@ namespace WebApplication6.Controllers
             }
             return Ok(newuser);
         }
-         [Authorize(Roles = "Administrator")]
+
+        [Authorize(Roles = "Administrator")]
         [Route("api/UserRoles")]
         public List<IdentityRole> GetUserRoles()
         {
@@ -181,7 +205,7 @@ namespace WebApplication6.Controllers
            
         }
 
-       [Authorize(Roles = "Administrator")]  
+        [Authorize(Roles = "Administrator")]  
         [Route("api/Users/{userId}")]
         public async Task<IHttpActionResult> DeleteUser(string userId)
         {

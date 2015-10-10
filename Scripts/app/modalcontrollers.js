@@ -32,6 +32,26 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
         $modalInstance.dismiss()
     };
 
+}]).controller('ResetPasswordModalCtrl', ['$scope', '$http', '$modalInstance', 'item', function ($scope, $http, $modalInstance, item) {
+    $scope.item = item;
+    $scope.ok = function () {
+        var pData = {
+            UserId: $scope.item.Id,
+            NewPassword: $scope.NewPassword,
+            ConfirmPassword: $scope.ConfirmPassword
+        };
+        
+        $http.post("/api/Account/ResetPassword", pData).success(function (data) {
+            alert('重置密码成功。');
+        }).error(function (error) {
+            alert(angular.toJson(error));
+        });
+
+        $modalInstance.close();
+    };
+    $scope.cancel = function () {
+        $modalInstance.dismiss();
+    };
 }]).controller('ConfirmModalCtrl', ['$scope', 'UserService', '$modalInstance', function ($scope, UserService, $modalInstance) {
     $scope.ok = function () {
         $modalInstance.close()

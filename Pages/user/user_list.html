@@ -11,7 +11,7 @@
             <td ng-show="user.Roles[0].Id == 1">
                 <!--   <input type="button" class="btn btn-default btn-xs" value="修改" ng-click="modify($index)" />        -->
                 <input type="button" class="btn btn-warning btn-xs" value="删除" ng-click="del($index)" />
-                <input type="button" class="btn btn-warning btn-xs" value="重置密码" />
+                <input type="button" class="btn btn-warning btn-xs" value="重置密码" ng-click="changePassword($index)"/>
             </td>
         </tr>
     </table>

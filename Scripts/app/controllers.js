@@ -80,6 +80,20 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.items = RestService.getclient('user').query();
     InitCtrl($scope, $modal, 'user', RestService, { Roles: [] });
 
+    // Change password.
+    $scope.changePassword = function (idx) {
+        var items = $scope.items;
+        var modalInstance = $modal.open({
+            templateUrl: "/pages/modal/userPasswordModal.html",
+            size: 'lg',
+            controller: "ResetPasswordModalCtrl",
+            resolve: {
+                item: function () {
+                    return items[idx];
+                }
+            }
+        });
+    };
 }]).controller('RBListCtrl', ['$scope', '$modal', 'RestService', function ($scope, $modal, RestService) {
     $scope.items = RestService.getclient('rb').query();
     InitCtrl($scope, $modal, 'rb', RestService, {});

@@ -333,6 +333,7 @@
     <Content Include="Pages\metadata\relationshiptype_list.html" />
     <Content Include="Pages\modal\contractstatusModal.html" />
     <Content Include="Pages\modal\rtModal.html" />
+    <Content Include="Pages\modal\userPasswordModal.html" />
     <Content Include="Pages\print\contractrecord.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

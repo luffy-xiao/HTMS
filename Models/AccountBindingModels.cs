@@ -71,7 +71,11 @@ namespace WebApplication6.Models
     public class SetPasswordBindingModel
     {
         [Required]
-        [StringLength(100, ErrorMessage = "{0} 必须至少包含 {2} 个字符。", MinimumLength = 6)]
+        [Display(Name = "用户Id")]
+        public string UserId { get; set; }
+
+        [Required]
+        //[StringLength(100, ErrorMessage = "{0} 必须至少包含 {2} 个字符。", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "新密码")]
         public string NewPassword { get; set; }
