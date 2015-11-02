@@ -35,6 +35,24 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         });
     }
 
+    // Auto calculation for the TotalPayable and TotalPaid if has not manually changed.
+    $scope.manualChange = {payable: false, paid: false};
+    $scope.cascadingChange = function () {
+        if (!$scope.manualChange.payable) {
+            $scope.rr.TotalPayable = $scope.rr.TotalCompensation - $scope.rr.CashPayable;
+        }
+
+        if (!$scope.manualChange.paid) {
+            $scope.rr.TotalPaid = $scope.rr.TotalCompensation - $scope.rr.CashPaid;
+        }
+    }
+    $scope.manualTotalPayableChange = function () {
+        $scope.manualChange.payable = true;
+    }
+    $scope.manualTotalPaidChange = function () {
+        $scope.manualChange.paid = true;
+    }
+
     //datapickers
     InitDataPicker($scope);
 
@@ -2340,7 +2358,7 @@ function initResidentSearch($scope, RestService) {
     InitDataPicker($scope);
 
     // Searching.
-    $scope.searchparams = {showAllResidents: 0};
+    $scope.searchparams = {showAllResidents: 1};
 
     // Flag whether initiate search by resident (rs) or relocationrecord (rr).
     $scope.searchBy = 'rs';
