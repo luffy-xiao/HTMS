@@ -16,7 +16,8 @@ var appmodule = angular.module('ms.site', ['ngCookies','ngRoute', 'ms.site.contr
                 }).
                 when('/resident/search', {
                     templateUrl: '/pages/resident/resident_search.html',
-                    controller: 'ResidentSearchCtrl'
+                    controller: 'ResidentSearchCtrl',
+                    reloadOnSearch: false
                 }).
                 when('/resident/issue', {
                     templateUrl: '/pages/resident/resident_issue.html',

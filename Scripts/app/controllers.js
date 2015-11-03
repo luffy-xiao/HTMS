@@ -115,9 +115,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 }]).controller('RBListCtrl', ['$scope', '$modal', 'RestService', function ($scope, $modal, RestService) {
     $scope.items = RestService.getclient('rb').query();
     InitCtrl($scope, $modal, 'rb', RestService, {});
-}]).controller('ResidentSearchCtrl', ['$scope', '$modal', 'RestService', '$location', '$filter', '$q', function ($scope, $modal, RestService, $location, $filter, $q) {
+}]).controller('ResidentSearchCtrl', ['$scope', '$modal', 'RestService', '$location', '$filter', '$q', '$routeParams', '$window', function ($scope, $modal, RestService, $location, $filter, $q, $routeParams, $window) {
     // Init resident query.
-    initResidentSearch($scope, RestService);
+    var preconds = initResidentSearch($scope, RestService);
 
     // Pagination.
     $scope.currentPage = 1;
@@ -272,6 +272,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             // Search from beginning when click search button.
             $scope.currentPage = 1;
             $scope.pageChanged();
+
+            // Set url query parameters.
+            changeUrlQuery();
         }
     };
 
@@ -283,6 +286,45 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         $scope.items = $scope.rrlist;
         deleteitem($modal, RestService, 'rr', $scope, idx, true);
     };
+
+    var encodeQueryData = function (data) {
+        var ret = [];
+        for (var d in data) {
+            var v = data[d];
+            // Date in ISO shorter format.
+            if (v instanceof Date) {
+                v = v.toISOString();
+            }
+            ret.push(encodeURIComponent(d) + "=" + encodeURIComponent(v));
+        }
+        return ret.join("&");
+    };
+
+    var changeUrlQuery = function () {
+        var newUrl = $location.path() + '?' + encodeQueryData($scope.searchparams);
+        $location.url(newUrl);
+    };
+
+    // Support query parameters.
+    $q.all(preconds).then(function (ret) {
+        if (Object.keys($routeParams).length > 0) {
+            var originalParams = angular.copy($routeParams);
+            // Handle special data type.
+            if (originalParams.RelocationBaseId != null && originalParams.RelocationBaseId.length) {
+                originalParams.RelocationBaseId = parseInt(originalParams.RelocationBaseId);
+            }
+
+            ['PaymentDateStart', 'PaymentDateEnd', 'DeliveryDateStart', 'DeliveryDateEnd', 'NewVillageDateStart', 'NewVillageDateEnd'].forEach(function (d) {
+                if (originalParams[d] != null && originalParams[d].length) {
+                    originalParams[d] = new Date(originalParams[d]);
+                }
+            });
+
+            $scope.searchparams = originalParams;
+
+            $scope.search();
+        }
+    });
 }]).controller('ResidentDetailCtrl', ['$scope', '$modal', '$filter', 'RestService', '$routeParams','$location', function ($scope, $modal, $filter, RestService, $routeParams,$location) {
     $scope.rbs = RestService.getclient('rb').query();
     $scope.rr = RestService.getclient('rr').get({ id: $routeParams.id }, function (rr) {
@@ -2362,6 +2404,9 @@ function initResidentSearch($scope, RestService) {
 
     // Flag whether initiate search by resident (rs) or relocationrecord (rr).
     $scope.searchBy = 'rs';
+
+    // Return 2 service call promise if the caller needed.
+    return [$scope.rbs.$promise, $scope.vlist.$promise];
 }
 
 /** Get query filter for relocationrecord, also set searchBy in scope: rs or rr **/
