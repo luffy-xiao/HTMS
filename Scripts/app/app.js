@@ -97,6 +97,16 @@ var appmodule = angular.module('ms.site', ['ngCookies','ngRoute', 'ms.site.contr
                 })
           }])
 
+appmodule.directive('datepickerPopup', function () {
+    return {
+        restrict: 'EAC',
+        require: 'ngModel',
+        link: function (scope, element, attr, controller) {
+            //remove the default formatter from the input directive to prevent conflict
+            controller.$formatters.shift();
+        }
+    }
+});
 
 appmodule.run(function ($http, $cookies) {
     if ($cookies.token != null) {
