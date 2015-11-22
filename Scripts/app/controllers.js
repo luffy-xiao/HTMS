@@ -56,6 +56,26 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     //datapickers
     InitDataPicker($scope);
 
+    // Check whether RRId & RelocationBaseId is duplicated.
+    $scope.RRIdDuplicated = true;
+    $scope.checkRRIdDuplicated = function () {
+        if ($scope.rr.RelocationBaseId != null && $scope.rr.RelocationBaseId != '') {
+            if ($scope.rr.RRId != null && $scope.rr.RRId.trim() != '') {
+                RestService.getclient('rr').query({ $filter: 'Status eq 1 and RelocationBaseId eq ' + $scope.rr.RelocationBaseId + " and RRId eq '" + $scope.rr.RRId + "'" }, function (data) {
+                    if (data.Items.length > 0) {
+                        // Duplicated.
+                        $scope.RRIdDuplicated = false;
+                    } else {
+                        $scope.RRIdDuplicated = true;
+                    }
+                });
+            } else {
+                // RRId not specified yet.
+                $scope.RRIdDuplicated = true;
+            }
+        }
+    };
+
 }]).controller('NavCtrl', ['$scope', '$rootScope', '$modal', 'UserService', function ($scope, $rootScope, $modal, UserService) {
     function openlogindialog() {
         var modalInstance = $modal.open({

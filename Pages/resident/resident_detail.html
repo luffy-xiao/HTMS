@@ -42,8 +42,9 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">拆迁编号</label>
             <div class="col-sm-5">
-                <input type="text" class="form-control" ng-model="rr.RRId" />
+                <input type="text" class="form-control" ng-model="rr.RRId" ng-change="checkRRIdDuplicated()" />
             </div>
+            <label class="col-sm-5" ng-show="!RRIdDuplicated">拆迁编号重复！请填写新的拆迁编号。</label>
         </div>
         <div class="form-group">
             <label class="col-sm-2 control-label">动迁户性质</label>
@@ -57,9 +58,9 @@
                 </span>
             </div>
             <div ng-if="rr.RelocationType == '居住'">
-                <label class="col-sm-2 control-label">宅基户号或批件文号</label>
+                <label class="col-sm-2 control-label">宅基户号或批建文号</label>
                 <div class="col-sm-2">
-                    <input type="text" class="form-control" ng-model="rr.DocumentNumber" required="" ng-disabled="readonly == 'true'">
+                    <input type="text" class="form-control" ng-model="rr.DocumentNumber" ng-disabled="readonly == 'true'">
                 </div>
             </div>
         </div>
@@ -104,6 +105,7 @@
                 <th>姓名</th>
                 <th>身份证号</th>
                 <th>性别</th>
+                <th>联系电话</th>
                 <th>关系</th>
                 <th><input type="button" ng-show="buttonshow" class="btn btn-primary btn-sm" value="添加家庭成员" ng-click="add()" /></th>
             </tr>
@@ -111,6 +113,7 @@
                 <td>{{person.Name}}</td>
                 <td>{{person.IdentityCard}}</td>
                 <td>{{person.IdentityCard | togender}}</td>
+                <td>{{person.Phone}}</td>
                 <td>{{person.RelationshipType }}</td>
                 <td>
                     <input ng-show="buttonshow" type="button" class="btn btn-default btn-xs" value="修改" ng-click="modify($index)"/>

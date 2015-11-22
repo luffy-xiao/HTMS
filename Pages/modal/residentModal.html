@@ -23,6 +23,12 @@
                         <input type="text" class="form-control" value="{{ newitem.IdentityCard | togender}}" readonly>
                     </div>
                 </div>
+                <div class="form-group  has-feedback" ng-if="newitem.RelationshipType=='户主'">
+                    <label class="col-sm-2 control-label">联系电话</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" ng-model="newitem.Phone" required="" ng-minlength="8">
+                    </div>
+                </div>
                 <div class="form-group  has-feedback">
                     <label class="col-sm-2 control-label">关系</label>
                     <div class="col-sm-5">
