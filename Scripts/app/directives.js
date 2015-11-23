@@ -149,3 +149,22 @@ appDirectives.directive('exportTable', function () {
         }]
     };
 })
+appDirectives.directive('enterFocusNext', function () {
+    return {
+        restrict: 'A',
+        link: function ($scope, elem, attrs) {
+            elem.bind('keydown', function (e) {
+                var code = e.keyCode || e.which;
+                if (code === 13) {
+                    e.preventDefault();
+
+                    // Focus marker.
+                    var partsId = attrs.id.match(/fm(\d+)/);
+                    var currentId = parseInt(partsId[1]);
+
+                    angular.element(document.querySelector('#fm' + (currentId + 1))).focus();
+                }
+            });
+        }
+    }
+});

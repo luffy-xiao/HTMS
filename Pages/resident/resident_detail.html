@@ -12,7 +12,7 @@
             <label class="col-sm-2 control-label">动迁基地名称</label>
             <div class="col-sm-5">
                 <span  class="nullable">
-                    <select class="form-control" ng-model="rr.RelocationBaseId" ng-options="rb.Id as rb.Name for rb in rbs" required="" ng-change="checkRRIdDuplicated()">
+                    <select id="fm0" class="form-control" ng-model="rr.RelocationBaseId" ng-options="rb.Id as rb.Name for rb in rbs" required="" ng-change="checkRRIdDuplicated()">
                         <option value="">--请选择--</option>
                     </select>
                 </span>
@@ -32,17 +32,17 @@
         <div class="form-group has-feedback">
             <label class="col-sm-2 control-label">组</label>
             <div class="col-sm-2">
-                <input type="text" class="form-control" ng-model="rr.Group" required="" integer>
+                <input type="text" id="fm1" class="form-control" ng-model="rr.Group" required="" integer enter-focus-next />
             </div>
             <label class="col-sm-1 control-label">门牌号</label>
             <div class="col-sm-2">
-                <input type="text" class="form-control" ng-model="rr.DoorNumber" required="" integer>
+                <input type="text" id="fm2" class="form-control" ng-model="rr.DoorNumber" required="" integer enter-focus-next />
             </div>
         </div>
         <div class="form-group">
             <label class="col-sm-2 control-label">拆迁编号</label>
             <div class="col-sm-5">
-                <input type="text" class="form-control" ng-model="rr.RRId" ng-change="checkRRIdDuplicated()" />
+                <input type="text" id="fm3" class="form-control" ng-model="rr.RRId" ng-change="checkRRIdDuplicated()" enter-focus-next />
             </div>
             <label class="col-sm-5 control-label text-danger" style="text-align: left;" ng-show="!RRIdDuplicated">拆迁编号重复！请填写新的拆迁编号。</label>
         </div>
@@ -50,7 +50,7 @@
             <label class="col-sm-2 control-label">动迁户性质</label>
             <div class="col-sm-2">
                 <span class="nullable">
-                    <select class="form-control" ng-model="rr.RelocationType" required="">
+                    <select class="form-control" ng-model="rr.RelocationType" required="" id="fm4">
                         <option value="">--请选择--</option>
                         <option value="居住">居住</option>
                         <option value="非居住">非居住</option>
@@ -60,7 +60,7 @@
             <div ng-if="rr.RelocationType == '居住'">
                 <label class="col-sm-2 control-label">宅基户号或批建文号</label>
                 <div class="col-sm-2">
-                    <input type="text" class="form-control" ng-model="rr.DocumentNumber" ng-disabled="readonly == 'true'">
+                    <input type="text" id="fm5" class="form-control" ng-model="rr.DocumentNumber" ng-disabled="readonly == 'true'" enter-focus-next />
                 </div>
             </div>
         </div>
@@ -77,20 +77,20 @@
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">户主姓名</label>
             <div class="col-sm-5">
-                <input type="text" class="form-control" ng-model="rr.Residents[0].Name" required="">
+                <input type="text" id="fm6" class="form-control" ng-model="rr.Residents[0].Name" required="" enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">身份证号</label>
             <div class="col-sm-5">
-                <input type="text" class="form-control" ng-model="rr.Residents[0].IdentityCard" idcard>
+                <input type="text" id="fm7" class="form-control" ng-model="rr.Residents[0].IdentityCard" idcard enter-focus-next />
             </div>
             <label class="col-sm-2 control-label">性别：{{rr.Residents[0].IdentityCard | togender}}</label>
         </div>
         <div class="form-group  has-feedback">  
             <label class="col-sm-2 control-label">联系电话</label>
             <div class="col-sm-5">
-                <input type="text" class="form-control" ng-model="rr.Residents[0].Phone" required="" ng-minlength="8">
+                <input type="text" id="fm8" class="form-control" ng-model="rr.Residents[0].Phone" required="" ng-minlength="8" enter-focus-next />
             </div>
         </div>
        
@@ -126,56 +126,56 @@
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">补偿款总金额</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.TotalCompensation" ng-init="rr.TotalCompensation=0" ng-change="cascadingChange()" currency>
+                <input type="number" id="fm9" class="form-control" ng-model="rr.TotalCompensation" ng-init="rr.TotalCompensation=0" ng-change="cascadingChange()" currency enter-focus-next />
             </div> 
         </div>
 
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">应付现款</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.CashPayable" ng-init="rr.CashPayable=0" ng-change="cascadingChange()" currency>
+                <input type="number" id="fm10" class="form-control" ng-model="rr.CashPayable" ng-init="rr.CashPayable=0" ng-change="cascadingChange()" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">已付现款</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.CashPaid" ng-init="rr.CashPaid=0" ng-change="cascadingChange()" currency>
+                <input type="number" id="fm11" class="form-control" ng-model="rr.CashPaid" ng-init="rr.CashPaid=0" ng-change="cascadingChange()" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">应付总房款</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.TotalPayable" ng-init="rr.TotalPayable=0" ng-blur="manualTotalPayableChange()" currency>
+                <input type="number" id="fm12" class="form-control" ng-model="rr.TotalPayable" ng-init="rr.TotalPayable=0" ng-blur="manualTotalPayableChange()" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">已付总房款</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.TotalPaid" ng-init="rr.TotalPaid=0" ng-blur="manualTotalPaidChange()" currency>
+                <input type="number" id="fm13" class="form-control" ng-model="rr.TotalPaid" ng-init="rr.TotalPaid=0" ng-blur="manualTotalPaidChange()" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">其他支出</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.OtherPayment" ng-init="rr.OtherPayment=0"  currency>
+                <input type="number" id="fm14" class="form-control" ng-model="rr.OtherPayment" ng-init="rr.OtherPayment=0" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">水电费押金</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.DepositEWF" ng-init="rr.DepositEWF=0"  currency>
+                <input type="number" id="fm15" class="form-control" ng-model="rr.DepositEWF" ng-init="rr.DepositEWF=0" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">代缴交水电费</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.EWFPaid" ng-init="rr.EWFPaid=0"  currency>
+                <input type="number" id="fm16" class="form-control" ng-model="rr.EWFPaid" ng-init="rr.EWFPaid=0" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">抄表度数</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.EWAmount" ng-init="rr.EWAmount=0"  currency>
+                <input type="number" id="fm17" class="form-control" ng-model="rr.EWAmount" ng-init="rr.EWAmount=0" currency enter-focus-next />
             </div>
         </div>
        
@@ -183,81 +183,81 @@
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">评估总面积</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.MeasuredSize" ng-init="rr.MeasuredSize=0" currency>
+                <input type="number" id="fm18" class="form-control" ng-model="rr.MeasuredSize" ng-init="rr.MeasuredSize=0" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">有效面积</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.EffectiveSize" ng-init="rr.EffectiveSize=0" currency>
+                <input type="number" id="fm19" class="form-control" ng-model="rr.EffectiveSize" ng-init="rr.EffectiveSize=0" currency enter-focus-next />
             </div>
         </div>
 
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">应建未建</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.NoConstructionSize" ng-init="rr.NoConstructionSize=0" currency>
+                <input type="number" id="fm20" class="form-control" ng-model="rr.NoConstructionSize" ng-init="rr.NoConstructionSize=0" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">无证面积</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.UncertifiedSize" ng-init="rr.UncertifiedSize=0" currency>
+                <input type="number" id="fm21" class="form-control" ng-model="rr.UncertifiedSize" ng-init="rr.UncertifiedSize=0" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">批建总面积</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.ApprovedSize" ng-init="rr.ApprovedSize=0"  currency>
+                <input type="number" id="fm22" class="form-control" ng-model="rr.ApprovedSize" ng-init="rr.ApprovedSize=0" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">楼房面积</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.HouseSize" ng-init="rr.HouseSize=0"  currency>
+                <input type="number" id="fm23" class="form-control" ng-model="rr.HouseSize" ng-init="rr.HouseSize=0" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">平房面积</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.RoomSize" ng-init="rr.RoomSize=0"  currency>
+                <input type="number" id="fm24" class="form-control" ng-model="rr.RoomSize" ng-init="rr.RoomSize=0" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">村舍面积</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.AffliateSize" ng-init="rr.AffliateSize=0"  currency>
+                <input type="number" id="fm25" class="form-control" ng-model="rr.AffliateSize" ng-init="rr.AffliateSize=0" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">保留面积</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.ReservedSize" ng-init="rr.ReservedSize=0"  currency>
+                <input type="number" id="fm26" class="form-control" ng-model="rr.ReservedSize" ng-init="rr.ReservedSize=0" currency enter-focus-next />
             </div>
         </div>
 
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">无证总面积</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.UnapprovedSize" ng-init="rr.UnapprovedSize=0"  currency>
+                <input type="number" id="fm27" class="form-control" ng-model="rr.UnapprovedSize" ng-init="rr.UnapprovedSize=0" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">已罚面积</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.PunishedSize" ng-init="rr.PunishedSize=0"  currency>
+                <input type="number" id="fm28" class="form-control" ng-model="rr.PunishedSize" ng-init="rr.PunishedSize=0" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">应拆未拆</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.NoRemovalSize" ng-init="rr.NoRemovalSize=0"  currency>
+                <input type="number" id="fm29" class="form-control" ng-model="rr.NoRemovalSize" ng-init="rr.NoRemovalSize=0" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">安置面积</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.RelocationSize" ng-init="rr.RelocationSize=0"  currency>
+                <input type="number" id="fm30" class="form-control" ng-model="rr.RelocationSize" ng-init="rr.RelocationSize=0" currency enter-focus-next />
             </div>
         </div>
        
@@ -265,32 +265,32 @@
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">基准户数</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.BaseNumber" ng-init="rr.BaseNumber=0"  integer>
+                <input type="number" id="fm31" class="form-control" ng-model="rr.BaseNumber" ng-init="rr.BaseNumber=0" integer enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">家庭人数</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.ResidentsCount" ng-init="rr.ResidentsCount = 0 " integer>
+                <input type="number" id="fm32" class="form-control" ng-model="rr.ResidentsCount" ng-init="rr.ResidentsCount = 0 " integer enter-focus-next />
             </div>
         </div>
 
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">认定人口数</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.EffectiveResidentsCount" ng-init="rr.EffectiveResidentsCount=0" integer>
+                <input type="number" id="fm33" class="form-control" ng-model="rr.EffectiveResidentsCount" ng-init="rr.EffectiveResidentsCount=0" integer enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">过渡费</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.TransitionFee" ng-init="rr.TransitionFee=0"  currency>
+                <input type="number" id="fm34" class="form-control" ng-model="rr.TransitionFee" ng-init="rr.TransitionFee=0" currency enter-focus-next />
             </div>
         </div>
         <div class="form-group  has-feedback">
             <label class="col-sm-2 control-label">大病补助</label>
             <div class="col-sm-5">
-                <input type="number" class="form-control" ng-model="rr.SickCompensation" ng-init="rr.SickCompensation=0"  currency>
+                <input type="number" id="fm35" class="form-control" ng-model="rr.SickCompensation" ng-init="rr.SickCompensation=0" currency enter-focus-next />
             </div>
         </div>
         <hr/>
@@ -298,8 +298,8 @@
             <label class="col-sm-2 control-label">付款日期</label>
             <div class="col-sm-5">
                 <p class="input-group datepicker">
-                    <input type="text" class="form-control" datepicker-popup datepickerlocaldate datepicker-options="dateOptions" ng-model="rr.PaymentDate" is-open="datepickers.dt2" show-weeks="false" 
-                           close-text="关闭" current-text="今天" clear-text="清除" />
+                    <input type="text" id="fm36" class="form-control" datepicker-popup datepickerlocaldate datepicker-options="dateOptions" ng-model="rr.PaymentDate" is-open="datepickers.dt2" show-weeks="false"
+                           close-text="关闭" current-text="今天" clear-text="清除" enter-focus-next />
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-default" ng-click="open($event,'dt2')"><i class="glyphicon glyphicon-calendar"></i></button>
                     </span>
@@ -311,8 +311,8 @@
             <label class="col-sm-2 control-label">交房日期</label>
             <div class="col-sm-5">
                 <p class="input-group datepicker">
-                    <input type="text" class="form-control" datepicker-popup datepicker-options="dateOptions" ng-model="rr.DeliveryDate" is-open="datepickers.dt4" show-weeks="false"
-                           close-text="关闭" current-text="今天" clear-text="清除" />
+                    <input type="text" id="fm37" class="form-control" datepicker-popup datepicker-options="dateOptions" ng-model="rr.DeliveryDate" is-open="datepickers.dt4" show-weeks="false"
+                           close-text="关闭" current-text="今天" clear-text="清除" enter-focus-next />
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-default" ng-click="open($event,'dt4')"><i class="glyphicon glyphicon-calendar"></i></button>
                     </span>
@@ -325,8 +325,8 @@
             <label class="col-sm-2 control-label">协议日期</label>
             <div class="col-sm-5">
                 <p class="input-group datepicker">
-                    <input type="text" class="form-control" datepicker-popup datepicker-options="dateOptions" ng-model="rr.NewVillageDate" is-open="datepickers.dt3" show-weeks="false" 
-                           close-text="关闭" current-text="今天" clear-text="清除" />
+                    <input type="text" id="fm38" class="form-control" datepicker-popup datepicker-options="dateOptions" ng-model="rr.NewVillageDate" is-open="datepickers.dt3" show-weeks="false"
+                           close-text="关闭" current-text="今天" clear-text="清除" enter-focus-next />
                     <span class="input-group-btn">
                         <button type="button" class="btn btn-default" ng-click="open($event,'dt3')"><i class="glyphicon glyphicon-calendar"></i></button>
                     </span>

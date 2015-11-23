@@ -76,6 +76,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         }
     };
 
+    // Foucus on 1st select when loading.
+    angular.element(document.querySelector('#fm0')).focus();
+
 }]).controller('NavCtrl', ['$scope', '$rootScope', '$modal', 'UserService', function ($scope, $rootScope, $modal, UserService) {
     function openlogindialog() {
         var modalInstance = $modal.open({
