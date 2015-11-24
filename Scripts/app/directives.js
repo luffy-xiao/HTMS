@@ -162,7 +162,9 @@ appDirectives.directive('enterFocusNext', function () {
                     var partsId = attrs.id.match(/fm(\d+)/);
                     var currentId = parseInt(partsId[1]);
 
-                    angular.element(document.querySelector('#fm' + (currentId + 1))).focus();
+                    var nextEle = angular.element(document.querySelector('#fm' + (currentId + 1)));
+                    nextEle.focus();
+                    nextEle.select();
                 }
             });
         }
