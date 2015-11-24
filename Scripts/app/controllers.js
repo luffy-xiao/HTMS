@@ -5,7 +5,7 @@
 var appControllers = angular.module('ms.site.controllers', ['ms.site.controllers.modal', 'ui.grid', 'ui.bootstrap']);
 
 
-appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestService','$location', function ($scope, $modal, RestService,$location) {
+appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestService','$location', function ($scope, $modal, RestService, $location) {
 
     $scope.rbs = RestService.getclient('rb').query();
     $scope.rr = {};
@@ -53,28 +53,11 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         $scope.manualChange.paid = true;
     }
 
-    //datapickers
+    // datepickers
     InitDataPicker($scope);
 
-    // Check whether RRId & RelocationBaseId is duplicated.
-    $scope.RRIdDuplicated = true;
-    $scope.checkRRIdDuplicated = function () {
-        if ($scope.rr.RelocationBaseId != null && $scope.rr.RelocationBaseId != '') {
-            if ($scope.rr.RRId != null && $scope.rr.RRId.trim() != '') {
-                RestService.getclient('rr').query({ $filter: 'Status eq 1 and RelocationBaseId eq ' + $scope.rr.RelocationBaseId + " and RRId eq '" + $scope.rr.RRId + "'" }, function (data) {
-                    if (data.Items.length > 0) {
-                        // Duplicated.
-                        $scope.RRIdDuplicated = false;
-                    } else {
-                        $scope.RRIdDuplicated = true;
-                    }
-                });
-            } else {
-                // RRId not specified yet.
-                $scope.RRIdDuplicated = true;
-            }
-        }
-    };
+    // Init RRId duplication checking.
+    initRRIdDuplicationChecker($scope, RestService);
 
     // Foucus on 1st select when loading.
     angular.element(document.querySelector('#fm0')).focus();
@@ -348,7 +331,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             $scope.search();
         }
     });
-}]).controller('ResidentDetailCtrl', ['$scope', '$modal', '$filter', 'RestService', '$routeParams','$location', function ($scope, $modal, $filter, RestService, $routeParams,$location) {
+}]).controller('ResidentDetailCtrl', ['$scope', '$modal', '$filter', 'RestService', '$routeParams', '$location', function ($scope, $modal, $filter, RestService, $routeParams, $location) {
     $scope.rbs = RestService.getclient('rb').query();
     $scope.rr = RestService.getclient('rr').get({ id: $routeParams.id }, function (rr) {
         
@@ -405,6 +388,14 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     }
    
     InitDataPicker($scope);
+
+    // Init RRId duplication checking when in edit mode.
+    if (readonly == "false") {
+        initRRIdDuplicationChecker($scope, RestService);
+    }
+
+    // Foucus on 1st select when loading.
+    angular.element(document.querySelector('#fm0')).focus();
     
 }]).controller('ResidentIssueCtrl', ['$scope', '$modal', 'RestService', '$location', '$filter', function ($scope, $modal, RestService, $location, $filter) {
     // Load rb.
@@ -2578,3 +2569,32 @@ var resetSummary = function (sumObj) {
         sumObj[key] = 0;
     });
 };
+
+function initRRIdDuplicationChecker($scope, RestService) {
+    // Check whether RRId & RelocationBaseId is duplicated.
+    $scope.RRIdDuplicated = true;
+    $scope.checkRRIdDuplicated = function () {
+        if ($scope.rr.RelocationBaseId != null && $scope.rr.RelocationBaseId != '') {
+            if ($scope.rr.RRId != null && $scope.rr.RRId.trim() != '') {
+                // Check whether is editing some rr.
+                var rrIdFilter = '';
+                if ($scope.rr.Id > 0) {
+                    rrIdFilter = ' and Id ne ' + $scope.rr.Id;
+                }
+                RestService.getclient('rr').query({
+                    $filter: 'Status eq 1 and RelocationBaseId eq ' + $scope.rr.RelocationBaseId + " and RRId eq '" + $scope.rr.RRId + "'" + rrIdFilter
+                }, function (data) {
+                    if (data.Items.length > 0) {
+                        // Duplicated.
+                        $scope.RRIdDuplicated = false;
+                    } else {
+                        $scope.RRIdDuplicated = true;
+                    }
+                });
+            } else {
+                // RRId not specified yet.
+                $scope.RRIdDuplicated = true;
+            }
+        }
+    };
+}
