@@ -17,7 +17,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.vlist = RestService.getclient('village').query();
    
     $scope.items = $scope.rr.Residents;
-    InitCtrl($scope, $modal, 'resident',RestService,{},false)
+    InitCtrl($scope, $modal, 'resident', RestService, {}, false);
 
     $scope.ok = function () {
         // Check RelocationType & DocumentNumber.
@@ -343,7 +343,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         }
         $scope.items.splice($scope.items.indexOf(owner),1)
         $scope.items.unshift(owner);
-        InitCtrl($scope, $modal, 'resident', RestService, { RelocationRecordId: $scope.rr.Id }, true)
+        InitCtrl($scope, $modal, 'resident', RestService, { RelocationRecordId: $scope.rr.Id }, true);
     })
 
     $scope.notnew = true;
@@ -456,9 +456,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         modalInstance.result.then(function () {
             $scope.items[idx].Status = 1;
             RestService.getclient('resident').update({ id: $scope.items[idx].Id }, $scope.items[idx], function (r) {
-                $scope.items[idx].Status =1
+                $scope.items[idx].Status = 1;
             }, function (err) {
-                alert(err.statusCode)
+                alert(err.statusCode);
             })
         })
         
@@ -490,16 +490,16 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         InitCtrl($scope, $modal, 'group', RestService, { VillageId: $scope.SelectedVId });
     }
 }]).controller('CommunityCtrl', ['$scope', '$modal', 'RestService', function ($scope, $modal, RestService) {
-    $scope.items = RestService.getclient('community').query()
-    InitCtrl($scope, $modal, 'community', RestService, {})
+    $scope.items = RestService.getclient('community').query();
+    InitCtrl($scope, $modal, 'community', RestService, {});
 
 }]).controller('BuildingCtrl', ['$scope', '$modal', 'RestService', function ($scope, $modal, RestService) {
-    $scope.clist = RestService.getclient('community').query()
+    $scope.clist = RestService.getclient('community').query();
     $scope.query = function () {
         $scope.items = RestService.getclient('building').query({ $filter: "CommunityId eq " + $scope.SelectedVId }, function () {
             $scope.showresult = true;
         })
-        InitCtrl($scope, $modal, 'building', RestService, { CommunityId: $scope.SelectedVId })
+        InitCtrl($scope, $modal, 'building', RestService, { CommunityId: $scope.SelectedVId });
     }
 
    
@@ -1318,7 +1318,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.$on("added", function (item) {
         $window.location.reload()
     })
-    InitCtrl($scope, $modal, 'pt', RestService, {})
+    InitCtrl($scope, $modal, 'pt', RestService, {});
   
 
 }]).controller('ContractCtrl', ['$scope', '$modal', 'RestService', '$filter', '$cookies', function ($scope, $modal, RestService, $filter, $cookies) {

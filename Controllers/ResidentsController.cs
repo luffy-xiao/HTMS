@@ -59,29 +59,36 @@ namespace WebApplication6.Controllers
                 db.Entry(resident).State = EntityState.Modified;
                 db.SaveChanges();
                 var rr = db.RelocationRecords.Find(resident.RelocationRecordId);
-                db.Entry(rr).Collection(c => c.Residents).Load();
-                var sign = false;
-                foreach (Resident r in rr.Residents)
+
+                if (rr.RelocationType.Equals("居住"))
                 {
-                    db.Entry(r).Reload();
-                    if(r.Status == 0){
-                        sign = true;
+                    db.Entry(rr).Collection(c => c.Residents).Load();
+                    var sign = false;
+                    foreach (Resident r in rr.Residents)
+                    {
+                        db.Entry(r).Reload();
+                        if (r.Status == 0)
+                        {
+                            sign = true;
+                        }
                     }
-                }
-                if (sign == false)
-                {
-                    rr.Status = 1;
+                    if (sign == false)
+                    {
+                        rr.Status = 1;
+                    }
+                    else
+                    {
+                        rr.Status = 0;
+                    }
                 }
                 else
                 {
-                    rr.Status = 0;
+                    rr.Status = 1;
                 }
 
                 db.Entry(rr).State = EntityState.Modified;
                 await db.SaveChangesAsync();
-                transaction.Commit();
-               
-               
+                transaction.Commit(); 
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -95,15 +102,46 @@ namespace WebApplication6.Controllers
             {
                 return BadRequest(ModelState);
             }
-            if (db.Residents.Count(re => re.IdentityCard.Equals(resident.IdentityCard)) > 0) // resident already exist
+
+            using (var transaction = db.Database.BeginTransaction())
             {
-                resident.Status = 0;
-                
+                var rr = db.RelocationRecords.Find(resident.RelocationRecordId);
+
+                /**
+                 * Check resident validity:
+                 * 1. If rr RelocationType is '非居住', do not need to check the validity, resident status and rr status should be 1
+                 * 2. If there is resident (RelocationType is '居住') with same IdentityCard, then resident status is 0
+                 * 3. Otherwise, resident status is 1
+                 **/
+                if (rr.RelocationType.Equals("居住"))
+                {
+                    if (db.Residents.Count(re => re.IdentityCard.Equals(resident.IdentityCard) && re.RelocationRecord.RelocationType.Equals("居住")) > 0)
+                    {
+                        // Resident invalid, this consequently causes rr Status to 0. 
+                        resident.Status = 0;
+                    }
+                    else
+                    {
+                        resident.Status = 1;
+                    }
+                }
+                else
+                {
+                    resident.Status = 1;
+                }
+
+                db.Residents.Add(resident);
+
+                if (resident.Status == 0 && rr.Status != 0)
+                {
+                    rr.Status = 0;
+                    db.Entry(rr).State = EntityState.Modified;
+                }
+
+                await db.SaveChangesAsync();
+                transaction.Commit();
             }
-
-            db.Residents.Add(resident);
-            await db.SaveChangesAsync();
-
+            
             return CreatedAtRoute("DefaultApi", new { id = resident.Id }, resident);
         }
 

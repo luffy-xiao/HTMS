@@ -58,7 +58,7 @@ namespace WebApplication6.Controllers
                 return BadRequest();
             }
             var origin = db.RelocationRecords.Where(i => i.Id == id).AsNoTracking().First();
-            db.Changes.AddRange(Helper.Logger.ChangeRecords<RelocationRecord>(origin, relocationRecord,RequestContext.Principal.Identity.Name));
+            db.Changes.AddRange(Helper.Logger.ChangeRecords<RelocationRecord>(origin, relocationRecord, RequestContext.Principal.Identity.Name));
 
             db.Entry(relocationRecord).State = EntityState.Modified;
             
@@ -91,24 +91,37 @@ namespace WebApplication6.Controllers
                 return BadRequest(ModelState);
             }
 
-             using (var transaction = db.Database.BeginTransaction())
+            using (var transaction = db.Database.BeginTransaction())
             {
                 var Residents = relocationRecord.Residents;
-               
+
+                /**
+                 * Check resident validity:
+                 * 1. If rr RelocationType is '非居住', do not need to check the validity, resident status and rr status should be 1
+                 * 2. If there is resident (RelocationType is '居住') with same IdentityCard, then resident status is 0
+                 * 3. Otherwise, resident status is 1
+                 **/
+                var ifLive = relocationRecord.RelocationType.Equals("居住");
                 foreach (var r in Residents)
                 {
-                    if (r.RelationshipType != null && r.IdentityCard != null && !r.RelationshipType.Equals("") && !r.IdentityCard.Equals(""))
+                    if (ifLive)
                     {
-
-                        /*
-                        if (r.RelationshipType.Equals("户主") && db.Residents.Count(re => re.IdentityCard.Equals(r.IdentityCard) && re.RelationshipType.Equals("户主")) > 0)
+                        if (r.RelationshipType != null && r.IdentityCard != null && !r.RelationshipType.Equals("") && !r.IdentityCard.Equals(""))
                         {
-                            return StatusCode(HttpStatusCode.Conflict);
-                        }*/
-                        r.Status = db.Residents.Count(re => re.IdentityCard.ToUpper().Equals(r.IdentityCard.ToUpper()) && re.RelocationRecord.RelocationType.Equals("居住")) > 0 ? 0 : 1;
-                        if (r.Status == 0)
+                            /*
+                            if (r.RelationshipType.Equals("户主") && db.Residents.Count(re => re.IdentityCard.Equals(r.IdentityCard) && re.RelationshipType.Equals("户主")) > 0)
+                            {
+                                return StatusCode(HttpStatusCode.Conflict);
+                            }*/
+                            r.Status = db.Residents.Count(re => re.IdentityCard.ToUpper().Equals(r.IdentityCard.ToUpper()) && re.RelocationRecord.RelocationType.Equals("居住")) > 0 ? 0 : 1;
+                            if (r.Status == 0)
+                            {
+                                relocationRecord.Status = 0;
+                            }
+                        }
+                        else
                         {
-                            relocationRecord.Status = 0;
+                            r.Status = 1;
                         }
                     }
                     else
@@ -116,6 +129,7 @@ namespace WebApplication6.Controllers
                         r.Status = 1;
                     }
                 }
+
                 if (relocationRecord.Status == null)
                 {
                     relocationRecord.Status = 1;
@@ -132,10 +146,7 @@ namespace WebApplication6.Controllers
                 db.Changes.Add(Helper.Logger.NewRecord<RelocationRecord>(relocationRecord, RequestContext.Principal.Identity.Name));
                 await db.SaveChangesAsync();
                 transaction.Commit();
-            }
-         
-
-    
+            }     
 
             return CreatedAtRoute("DefaultApi", new { id = relocationRecord.Id }, relocationRecord);
         }
