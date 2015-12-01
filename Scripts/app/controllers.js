@@ -605,7 +605,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     var t4 = ['RRId', 'mResidentName', 'MeasuredSize'];
 
     // 动迁户人口及房屋有效面积认定汇总表
-    var t5 = ['RRId', 'mResidentName', 'ResidentsCount', 'MeasuredSize', 'EffectiveSize', 'NoConstructionSize', 'UncertifiedSize'];
+    var t5 = ['RRId', 'mResidentName', 'ResidentsCount', 'MeasuredSize', 'ApprovedSize', 'EffectiveSize', 'NoConstructionSize', 'UncertifiedSize'];
 
     // 过渡费发放汇总表
     var t6 = ['RRId', 'mResidentName', 'EffectiveSize', 'DeliveryDate', 'TransitionFee'];
@@ -613,8 +613,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     // xxx基地拆迁户付款汇总表 TODO 银行存单
     var t7 = ['RRId', 'mResidentName', 'mResidentIdentityCard', 'CashPaid'];
 
-    // xxx基地兑换安置房金额转入新村办清册
-    var t8 = ['RRId', 'Name', 'TotalCompensation'];
+    // xxx基地兑换安置房金额转入安置清册
+    var t8 = ['RRId', 'Name', 'IdentityCard', 'TotalPayable'];
 
     // xxx基地动迁户水电费情况 TODO 还水电费
     var t9 = ['RRId', 'mResidentName', 'EWAmount', 'DepositEWF', 'EWFPaid'];
@@ -637,7 +637,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         { id: '5', name: '动迁户人口及房屋有效面积认定汇总表', lst: t5 },
         { id: '6', name: '过渡费发放汇总表', lst: t6 },
         { id: '7', name: '拆迁户付款汇总表', lst: t7 },
-        { id: '8', name: '兑换安置房金额转入新村办清册', lst: t8 },
+        { id: '8', name: '兑换安置房金额转入安置清册', lst: t8 },
         { id: '9', name: '动迁户水电费情况', lst: t9 },
         { id: '10', name: '安置面积汇总表', lst: t10 },
         { id: '11', name: '大病补助汇总表', lst: t11 },
