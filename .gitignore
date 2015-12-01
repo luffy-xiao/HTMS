@@ -4,4 +4,9 @@ obj
 
 MS.Site.csproj
 MS.Site.csproj.user
-web.config
+Web.config
+Web.Debug.config
+Web.Release.config
+
+template_header.xlsx
+template_model.xlsx
