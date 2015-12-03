@@ -47,6 +47,7 @@
     </div>
 
     <!-- pagination -->
+    <!--
     <div class="noprint" ng-show="totalItems">
         <pagination total-items="totalItems" items-per-page="itemsPerPage" ng-model="currentPage" ng-change="pageChanged()"
                     max-size="maxSize" num-pages="numPages" class="pagination-sm" boundary-links="true" rotate="false"
@@ -54,4 +55,6 @@
         <span class="pull-right" style="margin: 20px 0;">显示 {{(currentPage - 1) * itemsPerPage + 1}} - {{currentPage * itemsPerPage > totalItems ? totalItems : currentPage * itemsPerPage}} | 总计: {{totalItems}}</span>
     </div>
     <div ng-show="totalItems == 0" class="alert alert-info">没有搜索到对应的记录。</div>
+    -->
+    <div ng-show="items.length == 0" class="alert alert-info">没有搜索到对应的记录。</div>
 </div>
