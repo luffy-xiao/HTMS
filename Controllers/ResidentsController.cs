@@ -115,7 +115,7 @@ namespace WebApplication6.Controllers
                  **/
                 if (rr.RelocationType.Equals("居住"))
                 {
-                    if (db.Residents.Count(re => re.IdentityCard.Equals(resident.IdentityCard) && re.RelocationRecord.RelocationType.Equals("居住")) > 0)
+                    if (db.Residents.Count(re => re.IdentityCard.ToUpper().Equals(resident.IdentityCard.ToUpper()) && re.RelocationRecord.RelocationType.Equals("居住")) > 0)
                     {
                         // Resident invalid, this consequently causes rr Status to 0. 
                         resident.Status = 0;

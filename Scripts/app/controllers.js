@@ -445,7 +445,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     $scope.items.forEach(function (r) {
                         // Avoid overwritten in loop.
                         if (r.duplicated == undefined) {
-                            var duplicated = $filter('filter')(drs.Items, function (j) { return j.IdentityCard == r.IdentityCard && j.RelocationRecord.RelocationType == '居住'; })[0];
+                            var duplicated = $filter('filter')(drs.Items, function (j) { return j.IdentityCard.toUpperCase() == r.IdentityCard.toUpperCase() && j.RelocationRecord.RelocationType == '居住'; })[0];
                             if (duplicated != undefined) {
                                 loadRb(duplicated);
                                 r.duplicated = duplicated;
