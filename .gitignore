@@ -7,6 +7,3 @@ MS.Site.csproj.user
 Web.config
 Web.Debug.config
 Web.Release.config
-
-template_header.xlsx
-template_model.xlsx

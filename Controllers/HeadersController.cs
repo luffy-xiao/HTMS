@@ -14,7 +14,7 @@ using WebApplication6.Models;
 
 namespace WebApplication6.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    [Authorize]
     public class HeadersController : ApiController
     {
         private WebApplication6Context db = new WebApplication6Context();
@@ -39,6 +39,7 @@ namespace WebApplication6.Controllers
             return Ok(header);
         }
 
+        [Authorize(Roles = "Administrator")]
         // PUT: api/Headers/5
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutHeader(int id, Header header)
@@ -74,6 +75,7 @@ namespace WebApplication6.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        [Authorize(Roles = "Administrator")]
         // POST: api/Headers
         [ResponseType(typeof(Header))]
         public async Task<IHttpActionResult> PostHeader(Header header)
@@ -89,6 +91,7 @@ namespace WebApplication6.Controllers
             return CreatedAtRoute("DefaultApi", new { id = header.Id }, header);
         }
 
+        [Authorize(Roles = "Administrator")]
         // DELETE: api/Headers/5
         [ResponseType(typeof(Header))]
         public async Task<IHttpActionResult> DeleteHeader(int id)
