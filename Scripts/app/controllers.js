@@ -604,7 +604,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     // Export templates.
     // 动迁补偿款发放明细表 TODO 扣水电费, 还水电费
-    var t1 = ['RRId', 'mResidentName', 'CashPayable', 'CashPaid', 'TotalPayable', 'TotalPaid', 'TotalCompensation', 'EWFPaid', 'DepositEWF'];
+    var t1 = ['RRId', 'mResidentName', 'Name', 'CashPayable', 'CashPaid', 'TotalPayable', 'TotalPaid', 'TotalCompensation', 'EWFPaid', 'DepositEWF'];
 
     // 动拆迁情况 TODO: gender in meta, 标准
     var t2 = ['RBId','RelocationBase', 'RRId', 'mResidentName', 'Phone', 'Name', 'IdentityCard', 'Gender', 'RelationshipType', 'Village', 'Group', 'DoorNumber',
@@ -612,31 +612,31 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         'EffectiveSize', 'NoConstructionSize', 'UncertifiedSize', 'ApprovedSize', 'BaseNumber', 'TransitionFee', 'SickCompensation', 'DeliveryDate', 'NewVillageDate', 'ResidentsCount', 'PaymentDate'];
 
     // xxx基地动迁面积及补偿金额汇总表
-    var t3 = ['RRId', 'mResidentName', 'MeasuredSize', 'EffectiveSize', 'TotalCompensation'];
+    var t3 = ['RRId', 'mResidentName', 'Name', 'MeasuredSize', 'EffectiveSize', 'TotalCompensation'];
 
     // xxx基地评估总面积汇总表
-    var t4 = ['RRId', 'mResidentName', 'MeasuredSize'];
+    var t4 = ['RRId', 'mResidentName', 'Name', 'MeasuredSize'];
 
     // 动迁户人口及房屋有效面积认定汇总表
-    var t5 = ['RRId', 'mResidentName', 'ResidentsCount', 'MeasuredSize', 'ApprovedSize', 'EffectiveSize', 'NoConstructionSize', 'UncertifiedSize'];
+    var t5 = ['RRId', 'mResidentName', 'Name', 'ResidentsCount', 'MeasuredSize', 'ApprovedSize', 'EffectiveSize', 'NoConstructionSize', 'UncertifiedSize'];
 
     // 过渡费发放汇总表
-    var t6 = ['RRId', 'mResidentName', 'EffectiveSize', 'DeliveryDate', 'TransitionFee'];
+    var t6 = ['RRId', 'mResidentName', 'Name', 'EffectiveSize', 'DeliveryDate', 'TransitionFee'];
 
     // xxx基地拆迁户付款汇总表 TODO 银行存单
-    var t7 = ['RRId', 'mResidentName', 'mResidentIdentityCard', 'CashPaid'];
+    var t7 = ['RRId', 'mResidentName', 'Name', 'mResidentIdentityCard', 'CashPaid'];
 
     // xxx基地兑换安置房金额转入安置清册
-    var t8 = ['RRId', 'Name', 'IdentityCard', 'TotalPayable'];
+    var t8 = ['RRId', 'mResidentName', 'Name', 'IdentityCard', 'TotalPayable'];
 
     // xxx基地动迁户水电费情况 TODO 还水电费
-    var t9 = ['RRId', 'mResidentName', 'EWAmount', 'DepositEWF', 'EWFPaid'];
+    var t9 = ['RRId', 'mResidentName', 'Name', 'EWAmount', 'DepositEWF', 'EWFPaid'];
 
     // xxx基地安置面积汇总表
-    var t10 = ['RRId', 'mResidentName', 'RelocationSize'];
+    var t10 = ['RRId', 'mResidentName', 'Name', 'RelocationSize'];
 
     // xxx基地大病补助汇总表
-    var t11 = ['RRId', 'mResidentName', 'SickCompensation'];
+    var t11 = ['RRId', 'mResidentName', 'Name', 'SickCompensation'];
 
     // 动迁户人员情况
     var t12 = ['RBId', 'RelocationBase', 'RRId', 'mResidentName', 'Phone', 'Name', 'IdentityCard', 'Gender', 'RelationshipType', 'Village', 'Group', 'DeliveryDate', 'ResidentsCount', 'RelocationType'];
