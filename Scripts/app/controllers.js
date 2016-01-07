@@ -366,8 +366,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         RestService.getclient('rr').update({ Id: $scope.rr.Id }, $scope.rr, function () {
             $location.path('/resident/detail/' + $scope.rr.Id + "/readonly=" + true)
         }, function (err) {
-            alert(err)
-        })
+            alert(err);
+        });
 
     }
     $scope.edit = function () {
@@ -2289,6 +2289,7 @@ function additem($modal, type, $scope, item, commit) {
             }
         }
     });
+
     modalInstance.result.then(function (item) {
         items.push(item);
         $scope.$broadcast('added', item);

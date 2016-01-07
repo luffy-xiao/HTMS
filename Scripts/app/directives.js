@@ -133,7 +133,7 @@ appDirectives.directive('exportTable', function () {
                 $scope.cols.forEach(function (col, idx) {
                     if (col.visible) {
                         selected.push('`' + col.name + '` AS `' + col.displayName + '`');
-                        
+
                         if ($scope.showSummary) {
                             if (idx == 0) {
                                 summaryRow[col.name] = '合计';
@@ -153,7 +153,7 @@ appDirectives.directive('exportTable', function () {
             };
         }]
     };
-})
+});
 appDirectives.directive('enterFocusNext', function () {
     return {
         restrict: 'A',
@@ -174,4 +174,17 @@ appDirectives.directive('enterFocusNext', function () {
             });
         }
     }
+});
+appDirectives.directive('focusMe', function ($timeout) {
+    return {
+        link: function (scope, element, attrs) {
+            scope.$watch(attrs.focusMe, function (value) {
+                if (value === true) {
+                    $timeout(function() {
+                        element[0].focus();
+                    });
+                }
+            });
+        }
+    };
 });

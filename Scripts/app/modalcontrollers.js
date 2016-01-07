@@ -72,7 +72,7 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
         $modalInstance.dismiss();
     };
 }]).controller('SaveItemModalCtrl', ['$scope', 'RestService', '$modalInstance', 'type', 'item', 'commit', '$filter', function ($scope, RestService, $modalInstance, type, item, commit, $filter) {
-    InitDataPicker($scope)
+    InitDataPicker($scope);
     if (type == 'appartment') {
         $scope.ftypes = RestService.getclient('ftype').query();
         $scope.apptypes = RestService.getclient('apptype').query();
@@ -230,7 +230,6 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
     $scope.cancel = function () {
         $modalInstance.dismiss()
     };
-
 
 }])
 
