@@ -3,12 +3,12 @@
         <tr>
             <th>序号</th>
             <th>村名称</th>
-            <th ng-show="user.Roles[0].Id == 1"><input type="button" class="btn btn-primary btn-sm" value="添加" ng-click="add()" /></th>
+            <th ng-show="user.Roles[0].Id == 1 || user.Roles[0].Id == 2"><input type="button" class="btn btn-primary btn-sm" value="添加" ng-click="add()" /></th>
         </tr>
         <tr ng-repeat="item in items">
             <td>{{$index +1}}</td>
             <td>{{item.Name}}</td>
-            <td ng-show="user.Roles[0].Id == 1">
+            <td ng-show="user.Roles[0].Id == 1 || user.Roles[0].Id == 2">
                 <input type="button" class="btn btn-default btn-xs" value="修改" ng-click="modify($index)" />
                 <input type="button" class="btn btn-warning btn-xs" value="删除" ng-click="del($index)" />
             </td>

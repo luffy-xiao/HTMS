@@ -608,8 +608,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
     // 动拆迁情况 TODO: gender in meta, 标准
     var t2 = ['RBId','RelocationBase', 'RRId', 'mResidentName', 'Phone', 'Name', 'IdentityCard', 'Gender', 'RelationshipType', 'Village', 'Group', 'DoorNumber',
-        'ApprovedSize', 'HouseSize', 'RoomSize', 'AffliateSize', 'ReservedSize', 'UnapprovedSize', 'PunishedSize', 'NoRemovalSize', 'RelocationSize', 'EffectiveSize',
-        'MeasuredSize', 'NoConstructionSize', 'UncertifiedSize', 'BaseNumber', 'TransitionFee', 'SickCompensation', 'DeliveryDate', 'NewVillageDate', 'ResidentsCount','PaymentDate'];
+        'HouseSize', 'RoomSize', 'AffliateSize', 'ReservedSize', 'UnapprovedSize', 'PunishedSize', 'NoRemovalSize', 'RelocationSize', 'MeasuredSize',
+        'EffectiveSize', 'NoConstructionSize', 'UncertifiedSize', 'ApprovedSize', 'BaseNumber', 'TransitionFee', 'SickCompensation', 'DeliveryDate', 'NewVillageDate', 'ResidentsCount', 'PaymentDate'];
 
     // xxx基地动迁面积及补偿金额汇总表
     var t3 = ['RRId', 'mResidentName', 'MeasuredSize', 'EffectiveSize', 'TotalCompensation'];
@@ -643,18 +643,18 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
 
     $scope.exportTmpls = [
-        { id: '1', name: '动迁补偿款发放明细表', lst: t1 },
-        { id: '2', name: '动拆迁详细情况', lst: t2 },
-        { id: '3', name: '动迁面积及补偿金额汇总表', lst: t3 },
-        { id: '4', name: '评估总面积汇总表', lst: t4 },
-        { id: '5', name: '动迁户人口及房屋有效面积认定汇总表', lst: t5 },
-        { id: '6', name: '过渡费发放汇总表', lst: t6 },
-        { id: '7', name: '拆迁户付款汇总表', lst: t7 },
-        { id: '8', name: '兑换安置房金额转入安置清册', lst: t8 },
-        { id: '9', name: '动迁户水电费情况', lst: t9 },
-        { id: '10', name: '安置面积汇总表', lst: t10 },
-        { id: '11', name: '大病补助汇总表', lst: t11 },
-        { id: '12', name: '动迁户人员情况', lst: t12 }
+        { id: '1', name: '动迁补偿款发放明细表', lst: t1, summary: true },
+        { id: '2', name: '动拆迁详细情况', lst: t2, summary: true },
+        { id: '3', name: '动迁面积及补偿金额汇总表', lst: t3, summary: true },
+        { id: '4', name: '评估总面积汇总表', lst: t4, summary: true },
+        { id: '5', name: '动迁户人口及房屋有效面积认定汇总表', lst: t5, summary: true },
+        { id: '6', name: '过渡费发放汇总表', lst: t6, summary: true },
+        { id: '7', name: '拆迁户付款汇总表', lst: t7, summary: true },
+        { id: '8', name: '兑换安置房金额转入安置清册', lst: t8, summary: true },
+        { id: '9', name: '动迁户水电费情况', lst: t9, summary: true },
+        { id: '10', name: '安置面积汇总表', lst: t10, summary: true },
+        { id: '11', name: '大病补助汇总表', lst: t11, summary: true },
+        { id: '12', name: '动迁户人员情况', lst: t12, summary: false }
     ];
 
     // Summary fields.
@@ -685,6 +685,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         'TransitionFee': 0,
         'ResidentsCount': 0
     };
+    // Flag whether show summary in table level.
+    $scope.showSummary = true;
 
     // Load column metadata.
     RestService.getclient('header').query({ $filter: "ModelName eq 'resident'" }, function (result) {
@@ -914,6 +916,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
         // Build table name.
         buildTableName();
+
+        // Whehter show summary for this template.
+        $scope.showSummary = $scope.selectedTmpl.summary;
 
         // Build new cols.
         var selectedCols = [];

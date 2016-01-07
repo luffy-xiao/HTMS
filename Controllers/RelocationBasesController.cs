@@ -36,7 +36,7 @@ namespace WebApplication6.Controllers
 
             return Ok(relocationBase);
         }
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,Operator1")]
         // PUT: api/RelocationBases/5
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutRelocationBase(int id, RelocationBase relocationBase)
@@ -71,7 +71,7 @@ namespace WebApplication6.Controllers
 
             return StatusCode(HttpStatusCode.NoContent);
         }
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,Operator1")]
         // POST: api/RelocationBases
         [ResponseType(typeof(RelocationBase))]
         public async Task<IHttpActionResult> PostRelocationBase(RelocationBase relocationBase)
@@ -88,7 +88,7 @@ namespace WebApplication6.Controllers
         }
 
         // DELETE: api/RelocationBases/5
-          [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,Operator1")]
         [ResponseType(typeof(RelocationBase))]
         public async Task<IHttpActionResult> DeleteRelocationBase(int id)
         {

@@ -36,7 +36,7 @@ namespace WebApplication6.Controllers
 
             return Ok(relationshipType);
         }
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,Operator1")]
         // PUT: api/RelationshipTypes/5
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutRelationshipTypes(int id, RelationshipType relationshipType)
@@ -71,7 +71,7 @@ namespace WebApplication6.Controllers
 
             return StatusCode(HttpStatusCode.NoContent);
         }
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,Operator1")]
         // POST: api/RelationshipTypes
         [ResponseType(typeof(RelationshipType))]
         public async Task<IHttpActionResult> PostRelationshipTypes(RelationshipType relationshipType)
@@ -103,6 +103,7 @@ namespace WebApplication6.Controllers
         }
 
         // DELETE: api/RelationshipTypes/5
+        [Authorize(Roles = "Administrator,Operator1")]
         [ResponseType(typeof(RelationshipType))]
         public async Task<IHttpActionResult> DeleteRelationshipTypes(int id)
         {

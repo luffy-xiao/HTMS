@@ -112,6 +112,7 @@ appDirectives.directive('exportTable', function () {
             cols: '=',
             rows: '=',
             summary: '=',
+            showSummary: '=',
             orderBy: '=',
             tips: '='
         },
@@ -133,16 +134,20 @@ appDirectives.directive('exportTable', function () {
                     if (col.visible) {
                         selected.push('`' + col.name + '` AS `' + col.displayName + '`');
                         
-                        if (idx == 0) {
-                            summaryRow[col.name] = '合计';
-                        } else {
-                            summaryRow[col.name] = $scope.summary[col.name] != null ? $scope.summary[col.name].toFixed(2) : ' ';
+                        if ($scope.showSummary) {
+                            if (idx == 0) {
+                                summaryRow[col.name] = '合计';
+                            } else {
+                                summaryRow[col.name] = $scope.summary[col.name] != null ? $scope.summary[col.name].toFixed(2) : ' ';
+                            }
                         }
                     }
                 });
 
                 var dataSet = angular.copy($scope.rows);
-                dataSet.push(summaryRow);
+                if ($scope.showSummary) {
+                    dataSet.push(summaryRow);
+                }
 
                 alasql('SELECT ' + selected.join() + ' INTO XLSX("' + $scope.tableName + '_' + now + '.xlsx") FROM ?', [dataSet]);
             };

@@ -26,7 +26,7 @@
                 <td ng-repeat="col in cols" ng-show="col.visible">{{col.name != 'EMPTY' ?  row[col.name] : '&nbsp;&nbsp;&nbsp;&nbsp;'}}</td>
             </tr>
 
-            <tr ng-show="rows.length != 0">
+            <tr ng-show="rows.length != 0 && showSummary">
                 <td ng-repeat="col in cols" ng-show="col.visible">{{ $index == 0 ? '合计' : ( summary[col.name] != null ? summary[col.name].toFixed(2) : '&nbsp;&nbsp;&nbsp;&nbsp;' )}}</td>
             </tr>
         </tbody>

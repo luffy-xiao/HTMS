@@ -39,7 +39,7 @@ namespace WebApplication6.Controllers
         }
 
         // PUT: api/Villages/5
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,Operator1")]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutVillage(int id, Village village)
         {
@@ -75,7 +75,7 @@ namespace WebApplication6.Controllers
         }
 
         // POST: api/Villages
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,Operator1")]
         [ResponseType(typeof(Village))]
         public async Task<IHttpActionResult> PostVillage(Village village)
         {
@@ -91,6 +91,7 @@ namespace WebApplication6.Controllers
         }
 
         // DELETE: api/Villages/5
+        [Authorize(Roles = "Administrator,Operator1")]
         [ResponseType(typeof(Village))]
         public async Task<IHttpActionResult> DeleteVillage(int id)
         {
