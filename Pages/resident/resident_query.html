@@ -17,7 +17,7 @@
     <label class="col-sm-1 control-label">动迁基地</label>
     <div class="col-sm-3">
         <span class="nullable">
-            <select class="form-control" ng-model="searchparams.RelocationBaseId" ng-options="rb.Id as rb.Name for rb in rbs">
+            <select class="form-control" ng-model="searchparams.RelocationBaseId" ng-options="rb.Id as rb.RBId + '_' + rb.Name for rb in rbs">
                 <option value="">--请选择--</option>
             </select>
         </span>
