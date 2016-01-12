@@ -39,11 +39,11 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.manualChange = {payable: false, paid: false};
     $scope.cascadingChange = function () {
         if (!$scope.manualChange.payable) {
-            $scope.rr.TotalPayable = $scope.rr.TotalCompensation - $scope.rr.CashPayable;
+            $scope.rr.TotalPayable = ($scope.rr.TotalCompensation - $scope.rr.CashPayable).toFixed(2);
         }
 
         if (!$scope.manualChange.paid) {
-            $scope.rr.TotalPaid = $scope.rr.TotalCompensation - $scope.rr.CashPaid;
+            $scope.rr.TotalPaid = ($scope.rr.TotalCompensation - $scope.rr.CashPaid).toFixed(2);
         }
     }
     $scope.manualTotalPayableChange = function () {
