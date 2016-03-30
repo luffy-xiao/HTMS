@@ -33,8 +33,8 @@
                     <label class="col-sm-2 control-label">关系</label>
                     <div class="col-sm-5">
                         <span class="nullable">
-                            <label ng-show="newitem.RelationshipType=='户主'" class=" label-info form-control">{{newitem.RelationshipType}}</label>
-                            <select id="fm103" ng-show="newitem.RelationshipType!='户主'" class="form-control" ng-model="newitem.RelationshipType" ng-options="rt.Name as rt.Name+' ' for rt in rts" required="">
+                            <label ng-if="newitem.RelationshipType=='户主'" class=" label-info form-control">{{newitem.RelationshipType}}</label>
+                            <select id="fm103" ng-show="newitem.RelationshipType != '户主'" class=" form-control" ng-model="newitem.RelationshipType" ng-options="rt.Name as rt.Name+' ' for rt in rts" required="">
                                 <option value="">--请选择--</option>
                             </select>
                         </span>

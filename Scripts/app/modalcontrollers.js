@@ -79,7 +79,13 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
         $scope.dtypes = RestService.getclient('dtype').query();
     }
     if (type == 'resident') {
-        $scope.rts = RestService.getclient('rt').query();     
+        RestService.getclient('rt').query({}, function (ret) {
+            if (item.RelationshipType == null) {
+                $scope.rts = [{'Name': '户主'}].concat(ret);
+            } else {
+                $scope.rts = ret;
+            }
+        });
     }
 
     $scope.newitem = angular.copy(item);
