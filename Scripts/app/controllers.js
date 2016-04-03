@@ -36,22 +36,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     }
 
     // Auto calculation for the TotalPayable and TotalPaid if has not manually changed.
-    $scope.manualChange = {payable: false, paid: false};
-    $scope.cascadingChange = function () {
-        if (!$scope.manualChange.payable) {
-            $scope.rr.TotalPayable = ($scope.rr.TotalCompensation - $scope.rr.CashPayable).toFixed(2);
-        }
-
-        if (!$scope.manualChange.paid) {
-            $scope.rr.TotalPaid = ($scope.rr.TotalCompensation - $scope.rr.CashPaid).toFixed(2);
-        }
-    }
-    $scope.manualTotalPayableChange = function () {
-        $scope.manualChange.payable = true;
-    }
-    $scope.manualTotalPaidChange = function () {
-        $scope.manualChange.paid = true;
-    }
+    initAutoCalculationForRR($scope);
 
     // datepickers
     InitDataPicker($scope);
@@ -392,6 +377,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     // Init RRId duplication checking when in edit mode.
     if (readonly == "false") {
         initRRIdDuplicationChecker($scope, RestService);
+
+        // Auto calculation for the TotalPayable and TotalPaid if has not manually changed.
+        initAutoCalculationForRR($scope);
     }
 
     // Foucus on 1st select when loading.
@@ -2388,6 +2376,26 @@ function InitDataPicker($scope) {
 
         $scope.datepickers[which] = true;
     };
+}
+
+function initAutoCalculationForRR($scope) {
+    // Auto calculation for the TotalPayable and TotalPaid if has not manually changed.
+    $scope.manualChange = { payable: false, paid: false };
+    $scope.cascadingChange = function () {
+        if (!$scope.manualChange.payable) {
+            $scope.rr.TotalPayable = ($scope.rr.TotalCompensation - $scope.rr.CashPayable).toFixed(2);
+        }
+
+        if (!$scope.manualChange.paid) {
+            $scope.rr.TotalPaid = ($scope.rr.TotalCompensation - $scope.rr.CashPaid).toFixed(2);
+        }
+    }
+    $scope.manualTotalPayableChange = function () {
+        $scope.manualChange.payable = true;
+    }
+    $scope.manualTotalPaidChange = function () {
+        $scope.manualChange.paid = true;
+    }
 }
 
 function calculatepr(prs, RestService) {
