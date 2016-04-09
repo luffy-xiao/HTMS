@@ -597,7 +597,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     // 动拆迁情况 TODO: gender in meta, 标准
     var t2 = ['RBId','RelocationBase', 'RRId', 'mResidentName', 'Phone', 'Name', 'IdentityCard', 'Gender', 'RelationshipType', 'Village', 'Group', 'DoorNumber',
         'HouseSize', 'RoomSize', 'AffliateSize', 'ReservedSize', 'UnapprovedSize', 'PunishedSize', 'NoRemovalSize', 'RelocationSize', 'MeasuredSize',
-        'EffectiveSize', 'NoConstructionSize', 'UncertifiedSize', 'ApprovedSize', 'BaseNumber', 'TransitionFee', 'SickCompensation', 'DeliveryDate', 'NewVillageDate', 'ResidentsCount', 'PaymentDate'];
+        'EffectiveSize', 'NoConstructionSize', 'UncertifiedSize', 'ApprovedSize', 'BaseNumber', 'TransitionFee', 'SickCompensation', 'DeliveryDate', 'NewVillageDate', 'ResidentsCount', 'EffectiveResidentsCount', 'PaymentDate'];
 
     // xxx基地动迁面积及补偿金额汇总表
     var t3 = ['RRId', 'mResidentName', 'Name', 'MeasuredSize', 'EffectiveSize', 'TotalCompensation'];
@@ -627,7 +627,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     var t11 = ['RRId', 'mResidentName', 'Name', 'SickCompensation'];
 
     // 动迁户人员情况
-    var t12 = ['RBId', 'RelocationBase', 'RRId', 'mResidentName', 'Phone', 'Name', 'IdentityCard', 'Gender', 'RelationshipType', 'Village', 'Group', 'DeliveryDate', 'ResidentsCount', 'RelocationType'];
+    var t12 = ['RBId', 'RelocationBase', 'RRId', 'mResidentName', 'Phone', 'Name', 'IdentityCard', 'Gender', 'RelationshipType', 'Village', 'Group', 'DeliveryDate', 'ResidentsCount', 'EffectiveResidentsCount', 'RelocationType'];
 
 
     $scope.exportTmpls = [
@@ -671,7 +671,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         'NoConstructionSize': 0,
         'UncertifiedSize': 0,
         'TransitionFee': 0,
-        'ResidentsCount': 0
+        'ResidentsCount': 0,
+        'EffectiveResidentsCount': 0
     };
     // Flag whether show summary in table level.
     $scope.showSummary = true;
