@@ -73,12 +73,23 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
     };
 }]).controller('SaveItemModalCtrl', ['$scope', 'RestService', '$modalInstance', 'type', 'item', 'commit', '$filter', function ($scope, RestService, $modalInstance, type, item, commit, $filter) {
     InitDataPicker($scope);
+    $scope.newitem = angular.copy(item);
+
+    var IDCARD_REGEXP = /(^\d{17}(\d|X)$)/;
+
     if (type == 'appartment') {
         $scope.ftypes = RestService.getclient('ftype').query();
         $scope.apptypes = RestService.getclient('apptype').query();
         $scope.dtypes = RestService.getclient('dtype').query();
     }
     if (type == 'resident') {
+        // Whether validate id.
+        if ($scope.newitem.IdentityCard) {
+            $scope.ifValidateId = IDCARD_REGEXP.test($scope.newitem.IdentityCard)
+        } else {
+            $scope.ifValidateId = true;
+        }
+
         RestService.getclient('rt').query({}, function (ret) {
             if (item.RelationshipType == null) {
                 $scope.rts = [{'Name': '户主'}].concat(ret);
@@ -88,7 +99,6 @@ appControllers.controller('LoginModalCtrl', ['$scope', 'UserService', '$modalIns
         });
     }
 
-    $scope.newitem = angular.copy(item);
     if (type == 'pr') {
         if (item.Id != null) {//modify item, show the residents in the record
             $scope.rr = {}

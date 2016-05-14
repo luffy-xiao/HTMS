@@ -13,14 +13,20 @@
                 </div>
                 <div class="form-group  has-feedback">
                     <label class="col-sm-2 control-label">身份证号</label>
-                    <div class="col-sm-5">
+                    <div class="col-sm-5" ng-if="ifValidateId">
                         <input id="fm101" type="text" class="form-control" ng-model="newitem.IdentityCard" required="" idcard enter-focus-next>
+                    </div>
+                    <div class="col-sm-5" ng-if="!ifValidateId">
+                        <input id="fm101" type="text" class="form-control" ng-model="newitem.IdentityCard" required="" enter-focus-next>
+                    </div>
+                    <div class="col-sm-2">
+                        <input name="ifValidateId" type="checkbox" ng-model="ifValidateId" /> 验证身份证
                     </div>
                 </div>
                 <div class="form-group  has-feedback">
                     <label class="col-sm-2 control-label">性别</label>
                     <div class="col-sm-5">
-                        <input id="fm102" type="text" class="form-control" value="{{ newitem.IdentityCard | togender}}" readonly enter-focus-next>
+                        <input id="fm102" type="text" class="form-control" value="{{ifValidateId ? (newitem.IdentityCard | togender) : ''}}" readonly enter-focus-next>
                     </div>
                 </div>
                 <div class="form-group  has-feedback" ng-if="newitem.RelationshipType == null || newitem.RelationshipType=='户主'">

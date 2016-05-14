@@ -15,7 +15,10 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.rr.DateCreated = moment().format("YYYY-MM-DD");
     $scope.buttonshow = true;
     $scope.vlist = RestService.getclient('village').query();
-   
+
+    // Whether validate id.
+    $scope.ifValidateId = true;
+    
     $scope.items = $scope.rr.Residents;
     InitCtrl($scope, $modal, 'resident', RestService, {}, false);
 
@@ -317,27 +320,40 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         }
     });
 }]).controller('ResidentDetailCtrl', ['$scope', '$modal', '$filter', 'RestService', '$routeParams', '$location', function ($scope, $modal, $filter, RestService, $routeParams, $location) {
+    $scope.notnew = true;
+    $scope.readonly = $routeParams.readonly;
+    var readonly = $routeParams.readonly;
+    var IDCARD_REGEXP = /(^\d{17}(\d|X)$)/;
+
+    // Whether validate id.
+    $scope.ifValidateId = true;
+
     $scope.rbs = RestService.getclient('rb').query();
     $scope.rr = RestService.getclient('rr').get({ id: $routeParams.id }, function (rr) {
         
         $scope.vlist = RestService.getclient('village').query();
-        $scope.items = rr.Residents
-        var owner = $filter('filter')($scope.items, { RelationshipType: '户主' }, true)[0]
-        if (owner == null) {
-            owner = $scope.items[0]
+        $scope.items = rr.Residents;
+
+        // In edit mode, dynamically determine whether idcard is special without validation.
+        if ($scope.readonly == 'false') {
+            $scope.ifValidateId = IDCARD_REGEXP.test(rr.Residents[0].IdentityCard);
+        } else {
+            // Readonly mode, just show.
+            $scope.ifValidateId = false;
         }
-        $scope.items.splice($scope.items.indexOf(owner),1)
+
+        var owner = $filter('filter')($scope.items, { RelationshipType: '户主' }, true)[0];
+        if (owner == null) {
+            owner = $scope.items[0];
+        }
+        $scope.items.splice($scope.items.indexOf(owner), 1);
         $scope.items.unshift(owner);
         InitCtrl($scope, $modal, 'resident', RestService, { RelocationRecordId: $scope.rr.Id }, true);
     })
-
-    $scope.notnew = true;
-    $scope.readonly = $routeParams.readonly;
-    var readonly = $routeParams.readonly;
    
     if (readonly == "true") {
-        $("input").attr('readonly', true)
-        $("select").attr('disabled', true)
+        $("input").attr('readonly', true);
+        $("select").attr('disabled', true);
     } else {
         $scope.buttonshow = true;
     }
