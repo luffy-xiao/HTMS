@@ -325,6 +325,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\dashboard.css" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\loading.gif" />
     <Content Include="Content\Print.css" />
     <Content Include="Content\ui-grid.min.css" />
     <Content Include="favicon.ico" />

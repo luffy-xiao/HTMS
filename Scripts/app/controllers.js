@@ -206,6 +206,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 // Set total count.
                 $scope.totalItems = rss.Count;
                 $scope.showresult = true;
+                $scope.isLoading = false;
 
                 rss.Items.forEach(function (rs) {
                     rrIds.push(rs.RelocationRecordId);
@@ -253,16 +254,22 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     prepareData(rr);
                 });
                 $scope.showresult = true;
+                $scope.isLoading = false;
             });
         }
     };
 
+    $scope.isLoading = false;
+    $scope.searchStr = '';
     $scope.search = function () {
         filterstring = getResidentFilters($scope, $filter);
         if (filterstring.rs.length == 0 && filterstring.rr.length == 0) {
             alert('请输入至少一项查询条件。');
             return;
         } else {
+            $scope.isLoading = true;
+            $scope.searchStr = $scope.searchConds.join(', ');
+
             // Search from beginning when click search button.
             $scope.currentPage = 1;
             $scope.pageChanged();
@@ -2472,6 +2479,7 @@ function getResidentFilters($scope, $filter) {
     var params = $scope.searchparams;
     var filters = { rs: [], rr: [] };
     var searchConds = [];
+    var searchStr = '';
 
     // Filters by resident.
     if (params.Name != null && params.Name.trim() != '') {
