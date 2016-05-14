@@ -2479,7 +2479,6 @@ function getResidentFilters($scope, $filter) {
     var params = $scope.searchparams;
     var filters = { rs: [], rr: [] };
     var searchConds = [];
-    var searchStr = '';
 
     // Filters by resident.
     if (params.Name != null && params.Name.trim() != '') {
