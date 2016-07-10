@@ -344,9 +344,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         // In edit mode, dynamically determine whether idcard is special without validation.
         if ($scope.readonly == 'false') {
             $scope.ifValidateId = IDCARD_REGEXP.test(rr.Residents[0].IdentityCard);
-        } else {
-            // Readonly mode, just show.
-            $scope.ifValidateId = false;
         }
 
         var owner = $filter('filter')($scope.items, { RelationshipType: '户主' }, true)[0];
