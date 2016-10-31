@@ -22,19 +22,23 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.items = $scope.rr.Residents;
     InitCtrl($scope, $modal, 'resident', RestService, {}, false);
 
+    $scope.isLoading = false;
+
     $scope.ok = function () {
         // Check RelocationType & DocumentNumber.
         if ($scope.rr.RelocationType != '居住') {
             $scope.rr.DocumentNumber = null;
         }
 
+        $scope.isLoading = true;
         // submit relocation record
         RestService.getclient('rr').save($scope.rr, function (data) {
-           
-            $location.path('/resident/detail/' + data.Id + "/readonly=" + true)
+            $location.path('/resident/detail/' + data.Id + "/readonly=" + true);
         }, function (err) {
-            if(err.status == 409)
-                alert("记录重复，可能由于该户主已经存在")
+            if (err.status == 409) {
+                alert("记录重复，可能由于该户主已经存在");
+            }
+            $scope.isLoading = false;
         });
     }
 
@@ -361,21 +365,28 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     } else {
         $scope.buttonshow = true;
     }
+
+    $scope.isLoading = false;
+
     $scope.ok = function () {
         // Check RelocationType & DocumentNumber.
         if ($scope.rr.RelocationType != '居住') {
             $scope.rr.DocumentNumber = null;
         }
 
+        $scope.isLoading = true;
+
         //update the record
         RestService.getclient('rr').update({ Id: $scope.rr.Id }, $scope.rr, function () {
             $location.path('/resident/detail/' + $scope.rr.Id + "/readonly=" + true)
         }, function (err) {
             alert(err);
+            $scope.isLoading = false;
         });
 
     }
     $scope.edit = function () {
+        $scope.isLoading = true;
         //update the record
         $location.path('/resident/detail/' + $scope.rr.Id + "/readonly=false");
     }

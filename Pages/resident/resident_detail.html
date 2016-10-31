@@ -346,7 +346,14 @@
            
         </div>
         <hr/>
-        <button ng-show="buttonshow" class="btn btn-primary" ng-disabled="msForm.$invalid" ng-click="ok()">提交</button>
-        <button ng-show="rr.Id!=null && user.Roles[0].Id!=3 && readonly=='true' " class="btn btn-primary" ng-disabled="msForm.$invalid" ng-click="edit()">修改</button>
-    </form>
+        <div class="form-group has-feedback">
+            <div class="col-sm-2">
+                <button ng-show="buttonshow" class="btn btn-primary" ng-disabled="msForm.$invalid || isLoading" ng-click="ok()">提交</button>
+                <button ng-show="rr.Id!=null && user.Roles[0].Id!=3 && readonly=='true' " class="btn btn-primary" ng-disabled="msForm.$invalid || isLoading" ng-click="edit()">修改</button>
+            </div>
+            <div class="col-sm-1" ng-show="isLoading">
+                    <img src="/Content/loading.gif" />
+            </div>
+        </div>
+</form>
 </div>
