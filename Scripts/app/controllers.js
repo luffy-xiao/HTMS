@@ -377,10 +377,15 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         $scope.isLoading = true;
 
         //update the record
+        // Check whether relocationbase has changed
+        if ($scope.rr.RelocationBaseId != $scope.rr.RelocationBase.Id) {
+            $scope.rr.RelocationBase = $filter('filter')($scope.rbs, { Id: $scope.rr.RelocationBaseId }, true)[0];   
+        }
         RestService.getclient('rr').update({ Id: $scope.rr.Id }, $scope.rr, function () {
             $location.path('/resident/detail/' + $scope.rr.Id + "/readonly=" + true)
         }, function (err) {
-            alert(err);
+            alert("更新失败！");
+            console.log(err.data.ExceptionMessage);
             $scope.isLoading = false;
         });
 
