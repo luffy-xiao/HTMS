@@ -133,10 +133,17 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     var prepareData = function (rr, rrIndex) {
         // Handle relocation base.
         rr.RelocationBase = getRelocationBase(rr.RelocationBaseId).Name;
-        rr.RBId = getRelocationBase(rr.RelocationBaseId).RBId
+        rr.RBId = getRelocationBase(rr.RelocationBaseId).RBId;
+
+        // Get resident master.
+        var mainResident = $filter('filter')(rr.Residents, { RelationshipType: '户主' }, true)[0];
+        if (mainResident == null) {
+            mainResident = rr.Residents[0];
+        }
+
         // Add resident master.
         for (var rf in residentMaster) {
-            rr[rf] = rr.Residents[0][residentMaster[rf]];
+            rr[rf] = mainResident[residentMaster[rf]];
         }
 
         // Whether show all residents depends on whether checked 'showAllResidents' and also whether exactly search by Name or IdentityCard.
@@ -170,7 +177,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
             // Show master if anything wrong.
             if (residentsShown.length == 0) {
-                residentsShown.push(rr.Residents[0]);
+                residentsShown.push(mainResident);
             }
 
             residentsShown.forEach(function (rShown) {
@@ -345,15 +352,16 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         $scope.vlist = RestService.getclient('village').query();
         $scope.items = rr.Residents;
 
-        // In edit mode, dynamically determine whether idcard is special without validation.
-        if ($scope.readonly == 'false') {
-            $scope.ifValidateId = IDCARD_REGEXP.test(rr.Residents[0].IdentityCard);
-        }
-
         var owner = $filter('filter')($scope.items, { RelationshipType: '户主' }, true)[0];
         if (owner == null) {
             owner = $scope.items[0];
         }
+
+        // In edit mode, dynamically determine whether idcard is special without validation.
+        if ($scope.readonly == 'false') {
+            $scope.ifValidateId = IDCARD_REGEXP.test(owner.IdentityCard);
+        }
+
         $scope.items.splice($scope.items.indexOf(owner), 1);
         $scope.items.unshift(owner);
         InitCtrl($scope, $modal, 'resident', RestService, { RelocationRecordId: $scope.rr.Id }, true);
@@ -788,9 +796,15 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             rr[d] = $filter('date')(rr[d], 'yyyy-MM-dd');
         });
 
+        // Get resident master.
+        var mainResident = $filter('filter')(rr.Residents, { RelationshipType: '户主' }, true)[0];
+        if (mainResident == null) {
+            mainResident = rr.Residents[0];
+        }
+
         // Add resident master.
         for (var rf in residentMaster) {
-            rr[rf] = rr.Residents[0][residentMaster[rf]];
+            rr[rf] = mainResident[residentMaster[rf]];
         }
         if (rr.ResidentsCount == null) {
             rr.ResidentsCount = rr.Residents.length;
@@ -829,7 +843,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
             // Show master if anything wrong.
             if (residentsShown.length == 0) {
-                residentsShown.push(rr.Residents[0]);
+                residentsShown.push(mainResident);
             }
 
             residentsShown.forEach(function (rShown) {
