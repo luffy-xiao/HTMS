@@ -6,7 +6,7 @@ var appDirectives = angular.module('ms.site.directives',[]);
 
 var IDCARD_REGEXP = /(^\d{17}(\d|X)$)/;
 var INTEGER_REGEXP = /^\-?\d+$/;
-var MONEY_REGEXP = /^\d+(\.\d{1,2})?$/;
+var MONEY_REGEXP = /^-?\d+(\.\d{1,2})?$/;
 
 function validateidenttiycard(id) {
     var arr = id.split(''), sum = 0, vc = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
