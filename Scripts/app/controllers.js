@@ -653,7 +653,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     var t5 = ['RRId', 'mResidentName', 'Name', 'ResidentsCount', 'MeasuredSize', 'ApprovedSize', 'EffectiveSize', 'NoConstructionSize', 'UncertifiedSize'];
 
     // 过渡费发放汇总表
-    var t6 = ['RRId', 'mResidentName', 'Name', 'EffectiveSize', 'DeliveryDate', 'NewVillageDate', 'TransitionFee'];
+    var t6 = ['RRId', 'RelocationBase', 'mResidentName', 'Name', 'EffectiveSize', 'DeliveryDate', 'NewVillageDate', 'TransitionFee'];
 
     // xxx基地拆迁户付款汇总表 TODO 银行存单
     var t7 = ['RRId', 'mResidentName', 'Name', 'mResidentIdentityCard', 'CashPaid'];
