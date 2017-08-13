@@ -622,6 +622,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     // Searching.
     initResidentSearch($scope, RestService);
 
+//    RestService.getclient('rrStats').query();
+
     $scope.model = { Name: 'rr' };
 
     // Table data.
