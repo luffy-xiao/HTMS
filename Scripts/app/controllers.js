@@ -622,8 +622,6 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     // Searching.
     initResidentSearch($scope, RestService);
 
-//    RestService.getclient('rrStats').query();
-
     $scope.model = { Name: 'rr' };
 
     // Table data.
@@ -631,6 +629,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     $scope.colList = [];
     $scope.cols = [];
     $scope.dataSource = [];
+    $scope.showMoneyForAllRb = false;
+    $scope.showSizeForAllRb = false;
 
     // Columns need special handling.
     var residentMaster = { mResidentName: 'Name',  mResidentIdentityCard: 'IdentityCard' };
@@ -675,6 +675,11 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     // 动迁户人员情况
     var t12 = ['RBId', 'RelocationBase', 'RRId', 'mResidentName', 'Phone', 'Name', 'IdentityCard', 'Gender', 'RelationshipType', 'Village', 'Group', 'DeliveryDate', 'ResidentsCount', 'EffectiveResidentsCount', 'RelocationType'];
 
+    // 各基地补偿款汇总表(居住1，非居2，合计Sum)
+    var t13 = ['RBId', 'RelocationBase', 'rrCount1', 'rrCount2', 'rrCountSum', 'TotalPayable1', 'CashPayable1', 'TotalCompensation1', 'TotalCompensation2', 'TotalCompensationSum'];
+
+    // 各基地面积汇总表
+    var t14 = ['RBId', 'RelocationBase',  'MeasuredSize', 'EffectiveSize', 'NoConstructionSize', 'UncertifiedSize'];
 
     $scope.exportTmpls = [
         { id: '1', name: '动迁补偿款发放明细表', lst: t1, summary: true },
@@ -688,7 +693,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         { id: '9', name: '动迁户水电费情况', lst: t9, summary: true },
         { id: '10', name: '安置面积汇总表', lst: t10, summary: true },
         { id: '11', name: '大病补助汇总表', lst: t11, summary: true },
-        { id: '12', name: '动迁户人员情况', lst: t12, summary: false }
+        { id: '12', name: '动迁户人员情况', lst: t12, summary: false },
+        { id: '13', name: '各基地补偿款汇总表', lst: t13, summary: false },
+        { id: '14', name: '各基地面积汇总表', lst: t14, summary: false }
     ];
 
     // Summary fields.
@@ -773,6 +780,48 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             $scope.colList.push({
                 name: 'RBId',
                 displayName: '动迁基地编号',
+                visible: true
+            });
+
+            // Special cols for t13
+            $scope.colList.push({
+                name: 'rrCount1',
+                displayName: '居住户数',
+                visible: true
+            });
+            $scope.colList.push({
+                name: 'rrCount2',
+                displayName: '非居住户数',
+                visible: true
+            });
+            $scope.colList.push({
+                name: 'rrCountSum',
+                displayName: '动迁户数合计',
+                visible: true
+            });
+            $scope.colList.push({
+                name: 'TotalPayable1',
+                displayName: '居住购房款',
+                visible: true
+            });
+            $scope.colList.push({
+                name: 'CashPayable1',
+                displayName: '居住应付现款',
+                visible: true
+            });
+            $scope.colList.push({
+                name: 'TotalCompensation1',
+                displayName: '居住补偿总额',
+                visible: true
+            });
+            $scope.colList.push({
+                name: 'TotalCompensation2',
+                displayName: '非居补偿总额',
+                visible: true
+            });
+            $scope.colList.push({
+                name: 'TotalCompensationSum',
+                displayName: '补偿款合计',
                 visible: true
             });
 
@@ -873,8 +922,12 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     var buildTableName = function () {
         // Build table name.
         var tableName = '';
-        if ($scope.searchparams.RelocationBaseId != null && $scope.searchparams.RelocationBaseId != '') {
-            tableName += getRelocationBase($scope.searchparams.RelocationBaseId).Name + '基地';
+        
+        // For all rb, will not trigger by 'search'.
+        if (!$scope.showMoneyForAllRb && !$scope.showSizeForAllRb) {
+            if ($scope.searchparams.RelocationBaseId != null && $scope.searchparams.RelocationBaseId != '') {
+                tableName += getRelocationBase($scope.searchparams.RelocationBaseId).Name + '基地';
+            }
         }
 
         if ($scope.selectedTmpl == '' || $scope.selectedTmpl == null) {
@@ -885,15 +938,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
         $scope.tableName = tableName;
     };
-
-    // Load table data.
-    $scope.search = function () {
-        var filterstring = getResidentFilters($scope, $filter);
-        if (filterstring.rs.length == 0 && filterstring.rr.length == 0) {
-            alert('请输入至少一项查询条件。');
-            return;
-        }
-
+    
+    var onRefresh = function () {
         // Build table name.
         buildTableName();
 
@@ -903,6 +949,17 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
 
         $scope.dataSource = [];
         resetSummary($scope.summary);
+    };
+
+    // Load table data.
+    $scope.search = function () {
+        var filterstring = getResidentFilters($scope, $filter);
+        if (filterstring.rs.length == 0 && filterstring.rr.length == 0) {
+            alert('请输入至少一项查询条件。');
+            return;
+        }
+
+        onRefresh();
 
         if ($scope.searchBy == 'rr') {
             // Search by rr.
@@ -948,12 +1005,76 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         }
     };
 
+    $scope.loadSummary = function () {
+        onRefresh();
+
+        if ($scope.showMoneyForAllRb) {
+            RestService.getclient('rrStats').query({}, function (result) {
+                var grouping = {};
+                result.forEach(function (item) {
+                    if (grouping[item.RelocationBaseId] == null) {
+                        grouping[item.RelocationBaseId] = {};
+                        // Handle relocation base.
+                        var rbTemp = getRelocationBase(item.RelocationBaseId);
+                        grouping[item.RelocationBaseId].RelocationBase = rbTemp.Name;
+                        grouping[item.RelocationBaseId].RBId = rbTemp.RBId;
+                        // init 0 to avoid empty
+                        grouping[item.RelocationBaseId].rrCount1 = 0;
+                        grouping[item.RelocationBaseId].rrCount2 = 0;
+                        grouping[item.RelocationBaseId].rrCountSum = 0;
+                        grouping[item.RelocationBaseId].TotalPayable1 = 0;
+                        grouping[item.RelocationBaseId].CashPayable1 = 0;
+                        grouping[item.RelocationBaseId].TotalCompensation1 = 0;
+                        grouping[item.RelocationBaseId].TotalCompensation2 = 0;
+                        grouping[item.RelocationBaseId].TotalCompensationSum = 0;
+                    }
+
+                    if (item.RelocationType == '居住') {
+                        grouping[item.RelocationBaseId].rrCount1 = item.rrCount;
+                        grouping[item.RelocationBaseId].rrCountSum += item.rrCount;
+                        grouping[item.RelocationBaseId].TotalPayable1 = item.TotalPayable;
+                        grouping[item.RelocationBaseId].CashPayable1 = item.CashPayable;
+                        grouping[item.RelocationBaseId].TotalCompensation1 = item.TotalCompensation;
+                        grouping[item.RelocationBaseId].TotalCompensationSum += item.TotalCompensation;
+
+                    } else if (item.RelocationType == '非居住') {
+                        grouping[item.RelocationBaseId].rrCount2 = item.rrCount;
+                        grouping[item.RelocationBaseId].rrCountSum += item.rrCount;
+                        grouping[item.RelocationBaseId].TotalCompensation2 = item.TotalCompensation;
+                        grouping[item.RelocationBaseId].TotalCompensationSum += item.TotalCompensation;
+                    }
+                });
+                for (var g in grouping) {
+                    $scope.dataSource.push(grouping[g]);
+                }
+
+                $scope.showResult = true;
+            });
+        } else if ($scope.showSizeForAllRb) {
+            RestService.getclient('rrStatsSize').query({}, function (result) {
+                result.forEach(function (item) {
+                        // Handle relocation base.
+                        var rbTemp = getRelocationBase(item.RelocationBaseId);
+                        item.RelocationBase = rbTemp.Name;
+                        item.RBId = rbTemp.RBId;
+
+                        $scope.dataSource.push(item);
+                });
+
+                $scope.showResult = true;
+            });
+        }
+    }
+
     // Load template data.
     $scope.loadTmpl = function () {
         if ($scope.selectedTmpl == null || $scope.selectedTmpl == '') {
             $scope.cols = [];
             return;
         }
+        // Whether show t13 or t14
+        $scope.showMoneyForAllRb = ($scope.selectedTmpl.id == '13');
+        $scope.showSizeForAllRb = ($scope.selectedTmpl.id == '14');
 
         // Build table name.
         buildTableName();
@@ -967,6 +1088,11 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             selectedCols.push($filter('filter')($scope.colList, {name: field}, true)[0]);
         });
         $scope.cols = selectedCols;
+
+        // load summary.
+        if ($scope.showMoneyForAllRb || $scope.showSizeForAllRb) {
+            $scope.loadSummary();
+        }
     };
 }])
 .controller('BulkCreateCtrl', ['$scope', '$modal', 'RestService', '$interval', '$rootScope', '$filter', function ($scope, $modal, RestService, $interval, $rootScope, $filter) {

@@ -114,7 +114,9 @@ appDirectives.directive('exportTable', function () {
             summary: '=',
             showSummary: '=',
             orderBy: '=',
-            tips: '='
+            tips: '=',
+            summarizeMoney: '=',
+            summarizeSize: '='
         },
         controller: ['$scope', '$filter', '$window', function ($scope, $filter, $window) {
             // Print html table.

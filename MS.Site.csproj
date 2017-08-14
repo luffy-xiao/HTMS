@@ -245,6 +245,8 @@
     <Compile Include="Controllers\RelationshipTypesController.cs" />
     <Compile Include="Controllers\RelocationBasesController.cs" />
     <Compile Include="Controllers\RelocationRecordsController.cs" />
+    <Compile Include="Controllers\RelocationRecordsStatsSizeController.cs" />
+    <Compile Include="Controllers\RelocationRecordsStatsController.cs" />
     <Compile Include="Controllers\ResidentsController.cs" />
     <Compile Include="Controllers\VillagesController.cs" />
     <Compile Include="Custom\PagingQueryableAttribute.cs" />
@@ -311,6 +313,8 @@
     <Compile Include="Models\Model.cs" />
     <Compile Include="Models\RelocationBase.cs" />
     <Compile Include="Models\RelocationRecord.cs" />
+    <Compile Include="Models\RRSizeStats.cs" />
+    <Compile Include="Models\RRMoneyStats.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserRole.cs" />
     <Compile Include="Models\WebApplication6Context.cs" />
@@ -499,6 +503,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\RelocationRecordsStats\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
