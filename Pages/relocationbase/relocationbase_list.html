@@ -6,7 +6,10 @@
             <th>动迁基地名称</th>
             <th>开始时间</th>
             <th>回购单价（元/平方）</th>
-            <th ng-show="user.Roles[0].Id == 1 || user.Roles[0].Id == 2"><input type="button" class="btn btn-primary btn-sm" value="添加动迁基地" ng-click="add()" /></th>
+            <th class="noprint">
+                <input ng-show="user.Roles[0].Id == 1 || user.Roles[0].Id == 2" type="button" class="btn btn-primary btn-sm" value="添加动迁基地" ng-click="add()" />
+                <input type="button" class="btn btn-success btn-sm" value="打印" ng-click="print()" />
+            </th>
         </tr>
         <tr ng-repeat="base in items">
             <td>{{$index +1}}</td>
@@ -14,7 +17,7 @@
             <td>{{base.Name}}</td>
             <td>{{base.CreatedTime | date:"yyyy-MM-dd"}}</td>
             <td>{{base.RepurchasePrice}}</td>
-            <td ng-show="user.Roles[0].Id == 1 || user.Roles[0].Id == 2">
+            <td class="noprint" ng-show="user.Roles[0].Id == 1 || user.Roles[0].Id == 2">
                 <input type="button" class="btn btn-default btn-xs" value="修改" ng-click="modify($index)" />
                 <input type="button" class="btn btn-warning btn-xs" value="删除" ng-click="del($index)" />
             </td>

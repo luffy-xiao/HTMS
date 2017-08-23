@@ -110,9 +110,13 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
             }
         });
     };
-}]).controller('RBListCtrl', ['$scope', '$modal', 'RestService', function ($scope, $modal, RestService) {
+}]).controller('RBListCtrl', ['$scope', '$modal', '$window', 'RestService', function ($scope, $modal, $window, RestService) {
     $scope.items = RestService.getclient('rb').query();
     InitCtrl($scope, $modal, 'rb', RestService, {});
+
+    $scope.print = function () {
+        $window.print();
+    };
 }]).controller('ResidentSearchCtrl', ['$scope', '$modal', 'RestService', '$location', '$filter', '$q', '$routeParams', '$window', function ($scope, $modal, RestService, $location, $filter, $q, $routeParams, $window) {
     // Init resident query.
     var preconds = initResidentSearch($scope, RestService);

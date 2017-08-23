@@ -25,7 +25,8 @@ namespace WebApplication6.Controllers
             string query = "select RelocationBaseId, sum(MeasuredSize) as MeasuredSize, "
                 + "sum(EffectiveSize) as EffectiveSize, sum(NoConstructionSize) as NoConstructionSize, " 
                 + "sum(UncertifiedSize) as UncertifiedSize from dbo.RelocationRecords "
-                + "where Status = 1 group by RelocationBaseId";
+                + "where Status = 1 group by RelocationBaseId "
+                + "ORDER BY RelocationBaseId";
             IEnumerable<RRSizeStats> stats = db.Database.SqlQuery<RRSizeStats>(query);
             return stats.ToList();
         }
