@@ -683,7 +683,10 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     var t13 = ['RBId', 'RelocationBase', 'rrCount1', 'rrCount2', 'rrCountSum', 'TotalPayable1', 'CashPayable1', 'TotalCompensation1', 'TotalCompensation2', 'TotalCompensationSum'];
 
     // 各基地面积汇总表
-    var t14 = ['RBId', 'RelocationBase',  'MeasuredSize', 'EffectiveSize', 'NoConstructionSize', 'UncertifiedSize'];
+    var t14 = ['RBId', 'RelocationBase', 'MeasuredSize', 'EffectiveSize', 'NoConstructionSize', 'UncertifiedSize'];
+
+    // xxx基地动迁补偿款汇总表
+    var t15 = ['RRId', 'mResidentName', 'mResidentIdentityCard', 'TotalCompensation', 'TotalPayable', 'CashPayable', 'NewVillageDate'];
 
     $scope.exportTmpls = [
         { id: '1', name: '动迁补偿款发放明细表', lst: t1, summary: true },
@@ -699,7 +702,8 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         { id: '11', name: '大病补助汇总表', lst: t11, summary: true },
         { id: '12', name: '动迁户人员情况', lst: t12, summary: false },
         { id: '13', name: '各基地补偿款汇总表', lst: t13, summary: false },
-        { id: '14', name: '各基地面积汇总表', lst: t14, summary: false }
+        { id: '14', name: '各基地面积汇总表', lst: t14, summary: false },
+        { id: '15', name: '动迁补偿款汇总表', lst: t15, summary: false }
     ];
 
     // Summary fields.
