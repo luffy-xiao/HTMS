@@ -947,7 +947,9 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         $scope.tableName = tableName;
     };
     
+    $scope.isLoading = false;
     var onRefresh = function () {
+        $scope.isLoading = true;
         // Build table name.
         buildTableName();
 
@@ -977,6 +979,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 });
 
                 $scope.showResult = true;
+                $scope.isLoading = false;
             });
         } else {
             // Search by rs.
@@ -997,6 +1000,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 });
 
                 $scope.showResult = true;
+                $scope.isLoading = false;
 
                 var idFilters = queryByBatch(rrIds, null, 'Id', false);
                 var fstr;
@@ -1053,6 +1057,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                     }
                 });
                 for (var g in grouping) {
+                    grouping[g].TotalCompensationSum = (grouping[g].TotalCompensationSum).toFixed(2);
                     $scope.dataSource.push(grouping[g]);
                 }
 
