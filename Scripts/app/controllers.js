@@ -686,7 +686,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
     var t14 = ['RBId', 'RelocationBase', 'MeasuredSize', 'EffectiveSize', 'NoConstructionSize', 'UncertifiedSize'];
 
     // xxx基地动迁补偿款汇总表
-    var t15 = ['RRId', 'mResidentName', 'mResidentIdentityCard', 'TotalCompensation', 'TotalPayable', 'CashPayable', 'NewVillageDate'];
+    var t15 = ['RRId', 'mResidentName', 'Name', 'IdentityCard', 'TotalCompensation', 'TotalPayable', 'CashPayable', 'NewVillageDate'];
 
     $scope.exportTmpls = [
         { id: '1', name: '动迁补偿款发放明细表', lst: t1, summary: true },
@@ -703,7 +703,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
         { id: '12', name: '动迁户人员情况', lst: t12, summary: false },
         { id: '13', name: '各基地补偿款汇总表', lst: t13, summary: false },
         { id: '14', name: '各基地面积汇总表', lst: t14, summary: false },
-        { id: '15', name: '动迁补偿款汇总表', lst: t15, summary: false }
+        { id: '15', name: '动迁补偿款汇总表', lst: t15, summary: true }
     ];
 
     // Summary fields.
@@ -1062,6 +1062,7 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 }
 
                 $scope.showResult = true;
+                $scope.isLoading = false;
             });
         } else if ($scope.showSizeForAllRb) {
             RestService.getclient('rrStatsSize').query({}, function (result) {
@@ -1075,16 +1076,24 @@ appControllers.controller('ResidentCreateCtrl', ['$scope', '$modal', 'RestServic
                 });
 
                 $scope.showResult = true;
+                $scope.isLoading = false;
             });
         }
     }
 
     // Load template data.
-    $scope.loadTmpl = function () {
+    $scope.loadTmpl = function (previousId) {
         if ($scope.selectedTmpl == null || $scope.selectedTmpl == '') {
             $scope.cols = [];
             return;
         }
+
+        if (previousId == '13' || previousId == '14') {
+            if ($scope.selectedTmpl.id != '13' && $scope.selectedTmpl.id != '14') {
+                $scope.search();
+            }
+        }
+
         // Whether show t13 or t14
         $scope.showMoneyForAllRb = ($scope.selectedTmpl.id == '13');
         $scope.showSizeForAllRb = ($scope.selectedTmpl.id == '14');
